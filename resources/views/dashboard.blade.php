@@ -14,6 +14,14 @@
         'ar' => 'العربية',
     ];
     $t = fn (string $key): string => __("elasticsearch-monitoring::messages.{$key}", [], $locale);
+    $indexManagementLabel = [
+        'tr' => 'İndeks Yönetimi',
+        'en' => 'Index Management',
+        'es' => 'Gestión de índices',
+        'zh_CN' => '索引管理',
+        'hi' => 'इंडेक्स प्रबंधन',
+        'ar' => 'إدارة الفهارس',
+    ][$locale] ?? 'Index Management';
     $uiText = [
         'tr' => ['overview'=>'Küme genel görünümü','performance'=>'Performans','storage'=>'Depolama','cpu'=>'CPU kullanımı','cpu_history'=>'CPU kullanım grafiği','cpu_hint'=>'Node başına ortalama CPU kullanımı','index_history'=>'İndeks depolama grafiği','index_hint'=>'İndeks verilerinin toplam boyutunun zaman içindeki değişimi','disk_history'=>'Disk kullanımı','disk_hint'=>'Kullanılan disk alanının zaman içindeki değişimi','search_history'=>'Arama hızı','indexing_history'=>'İndeksleme hızı','segments_history'=>'Segment sayısı','documents_history'=>'Belge sayısı','filesystem_hint'=>'Kullanılan ve kullanılabilir disk alanı','heap_hint'=>'JVM heap bellek kullanımı','rates_hint'=>'Saniyedeki arama ve indeksleme işlem sayısı','live'=>'Otomatik yenileme · 30 sn'],
         'en' => ['overview'=>'Cluster overview','performance'=>'Performance','storage'=>'Storage','cpu'=>'CPU usage','cpu_history'=>'CPU utilization','cpu_hint'=>'Average CPU usage across nodes over time','index_history'=>'Index storage trend','index_hint'=>'Total Elasticsearch index data size over time','disk_history'=>'Disk usage','disk_hint'=>'Filesystem space in use over time','search_history'=>'Search rate','indexing_history'=>'Indexing rate','segments_history'=>'Segment count','documents_history'=>'Document count','filesystem_hint'=>'Used and available disk capacity','heap_hint'=>'JVM heap memory utilization','rates_hint'=>'Search and indexing operations per second','live'=>'Auto refresh · 30 sec'],
@@ -78,7 +86,7 @@
                     @endforeach
                 </select>
             </form>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">Index Management</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
             <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
         </div>
     </div>
