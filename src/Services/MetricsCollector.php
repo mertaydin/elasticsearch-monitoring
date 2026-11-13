@@ -1,0 +1,90 @@
+<?php
+
+namespace ElasticsearchMonitoring\Services;
+
+use ElasticsearchMonitoring\Models\MetricSnapshot;
+use Illuminate\Support\Carbon;
+use Throwable;
+
+class MetricsCollector
+{
+    public function __construct(private readonly ElasticsearchClient $client)
+    {
+    }
+
+    /** @return array<string, mixed> */
+    public function collect(): array
+    {
+        $this->client->assertSupportedVersion();
+
+        $responses = [
+            'health' => $this->client->request('_cluster/health'),
+            'nodes' => $this->client->request('_nodes/stats/jvm,process,os,fs,thread_pool,indices'),
+            'cluster' => $this->client->request('_cluster/stats'),
+        ];
+
+        $metrics = $this->normalize($responses);
+        MetricSnapshot::query()->create([
+            'collected_at' => Carbon::now(),
+            'elasticsearch_version' => $this->client->version(),
+            'metrics' => $metrics,
+        ]);
+
+        $retention = (int) config('elasticsearch-monitoring.collection.retention_days', 30);
+        if ($retention > 0) {
+            MetricSnapshot::query()->where('collected_at', '<', now()->subDays($retention))->delete();
+        }
+
+        return $metrics;
+    }
+
+    /** @param array<string, mixed> $responses
+     *  @return array<string, mixed>
+     */
+    private function normalize(array $responses): array
+    {
+        $nodes = (array) data_get($responses, 'nodes.nodes', []);
+        $heapUsed = $heapMax = $cpu = $readOps = $writeOps = 0;
+        $search = $index = $docs = $shards = $queue = $rejected = 0;
+        $filesystemTotal = $filesystemAvailable = 0;
+
+        foreach ($nodes as $node) {
+            $heapUsed += (int) data_get($node, 'jvm.mem.heap_used_in_bytes', 0);
+            $heapMax += (int) data_get($node, 'jvm.mem.heap_max_in_bytes', 0);
+            $cpu += (int) data_get($node, 'process.cpu.percent', 0);
+            $search += (int) data_get($node, 'indices.search.query_total', 0);
+            $index += (int) data_get($node, 'indices.indexing.index_total', 0);
+            $docs += (int) data_get($node, 'indices.docs.count', 0);
+            $shards += (int) data_get($node, 'indices.shard_stats.total_count', 0);
+            $queue += (int) data_get($node, 'thread_pool.search.queue', 0);
+            $rejected += (int) data_get($node, 'thread_pool.search.rejected', 0);
+            $filesystemTotal += (int) data_get($node, 'fs.total.total_in_bytes', 0);
+            $filesystemAvailable += (int) data_get($node, 'fs.total.available_in_bytes', 0);
+            $readOps += (int) data_get($node, 'fs.io_stats.total.read_operations', 0);
+            $writeOps += (int) data_get($node, 'fs.io_stats.total.write_operations', 0);
+        }
+
+        return [
+            'cluster' => [
+                'name' => data_get($responses, 'health.cluster_name'),
+                'status' => data_get($responses, 'health.status'),
+                'number_of_nodes' => (int) data_get($responses, 'health.number_of_nodes', 0),
+                'active_shards' => (int) data_get($responses, 'health.active_shards', 0),
+                'unassigned_shards' => (int) data_get($responses, 'health.unassigned_shards', 0),
+            ],
+            'nodes' => count($nodes),
+            'jvm' => ['heap_used_bytes' => $heapUsed, 'heap_max_bytes' => $heapMax],
+            'cpu' => ['percent_sum' => $cpu],
+            'filesystem' => [
+                'total_bytes' => $filesystemTotal,
+                'available_bytes' => $filesystemAvailable,
+                'read_operations' => $readOps,
+                'write_operations' => $writeOps,
+            ],
+            'indices' => ['documents' => $docs, 'shards' => $shards],
+            'thread_pool' => ['search_queue' => $queue, 'search_rejected' => $rejected],
+            'counters' => ['search_total' => $search, 'index_total' => $index],
+            'collected_at' => now()->toIso8601String(),
+        ];
+    }
+}
