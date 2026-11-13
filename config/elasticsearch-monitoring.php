@@ -10,7 +10,6 @@ return [
         'verify' => (bool) env('ELASTICSEARCH_MONITORING_VERIFY', true),
     ],
     'collection' => [
-        'enabled' => true,
         'retention_days' => 30,
     ],
     'dashboard' => [

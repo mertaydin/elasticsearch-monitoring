@@ -42,6 +42,8 @@ jobs:
           composer update --prefer-dist --no-interaction --no-audit
       - name: Validate Composer
         run: composer validate --strict
+      - name: Audit runtime dependencies
+        run: composer audit --no-dev
       - name: Check PHP syntax
         run: find config database routes src tests -name '*.php' -print0 | xargs -0 -n1 php -l
       - name: Run tests
