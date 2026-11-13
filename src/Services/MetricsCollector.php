@@ -25,16 +25,9 @@ class MetricsCollector
         $metrics = $this->normalize($responses);
         $previous = MetricSnapshot::query()->latest('collected_at')->first();
 
-        if ($previous !== null) {
-            $metrics['rates'] = $this->calculateRates(
-                (array) $previous->metrics,
-                $metrics,
-                $previous->collected_at,
-                now()
-            );
-        } else {
-            $metrics['rates'] = ['search_per_second' => null, 'indexing_per_second' => null];
-        }
+        $metrics['rates'] = $previous !== null
+            ? $this->calculateRates((array) $previous->metrics, $metrics, $previous->collected_at, now())
+            : ['search_per_second' => null, 'indexing_per_second' => null];
 
         MetricSnapshot::query()->create([
             'collected_at' => Carbon::now(),
@@ -57,6 +50,7 @@ class MetricsCollector
     private function normalize(array $responses): array
     {
         $nodes = (array) data_get($responses, 'nodes.nodes', []);
+        $nodeCount = count($nodes);
         $heapUsed = $heapMax = $cpu = $search = $index = $docs = $shards = 0;
         $searchQueue = $searchRejected = $bulkQueue = $bulkRejected = 0;
         $filesystemTotal = $filesystemAvailable = $readOps = $writeOps = 0;
@@ -87,9 +81,9 @@ class MetricsCollector
                 'active_shards' => (int) data_get($responses, 'health.active_shards', 0),
                 'unassigned_shards' => (int) data_get($responses, 'health.unassigned_shards', 0),
             ],
-            'nodes' => count($nodes),
+            'nodes' => $nodeCount,
             'jvm' => ['heap_used_bytes' => $heapUsed, 'heap_max_bytes' => $heapMax],
-            'cpu' => ['percent_sum' => $cpu],
+            'cpu' => ['percent_average' => $nodeCount > 0 ? round($cpu / $nodeCount, 2) : null],
             'filesystem' => [
                 'total_bytes' => $filesystemTotal,
                 'available_bytes' => $filesystemAvailable,

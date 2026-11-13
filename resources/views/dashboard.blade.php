@@ -8,7 +8,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $t('title') }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    @if ($locale === 'ar')
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    @else
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    @endif
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body class="bg-light">
@@ -30,7 +34,7 @@
             'rejected' => 'search_rejections',
             'cpu' => 'cpu',
         ] as $id => $label)
-            <div class="col-md-4 col-lg- @if($id === 'cpu') 4 @else 3 @endif">
+            <div class="col-md-4 col-lg-3">
                 <div class="card card-body h-100"><small class="text-muted">{{ $id === 'cpu' ? 'CPU' : $t($label) }}</small><strong id="{{ $id }}">—</strong></div>
             </div>
         @endforeach
@@ -77,7 +81,7 @@ async function loadMetrics() {
         set('rejected', m.thread_pool?.search_rejected);
         set('search-rate', m.rates?.search_per_second);
         set('index-rate', m.rates?.indexing_per_second);
-        set('cpu', m.cpu?.percent_sum);
+        set('cpu', m.cpu?.percent_average == null ? '—' : m.cpu.percent_average.toFixed(1) + '%');
         set('updated', labels.lastCollected + ': ' + payload.latest.collected_at);
         const used = Number(m.jvm?.heap_used_bytes || 0) / 1048576;
         const max = Number(m.jvm?.heap_max_bytes || 0) / 1048576;
