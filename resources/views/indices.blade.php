@@ -56,8 +56,8 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable"><div class="modal-content border-0 rounded-4">
         <div class="modal-header"><div><h5 class="modal-title fw-bold" id="modalTitle">{{ $text['details'] }}</h5><div class="small text-secondary" id="lifecycle"></div></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{{ $text['close'] }}"></button></div>
         <div class="modal-body">
-            <ul class="nav nav-tabs mb-3"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#mapping-tab">{{ $text['mapping'] }}</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#settings-tab">{{ $text['settings'] }}</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#lifecycle-tab">{{ $text['lifecycle'] }}</button></li></ul>
-            <div class="tab-content"><div class="tab-pane fade show active" id="mapping-tab"><pre class="json-view" id="mapping-json">{{ $text['loading'] }}</pre></div><div class="tab-pane fade" id="settings-tab"><pre class="json-view" id="settings-json">{{ $text['loading'] }}</pre></div><div class="tab-pane fade" id="lifecycle-tab"><div id="lifecycle-summary" class="row g-3 mb-3"></div><pre class="json-view" id="lifecycle-json">{{ $text['loading'] }}</pre></div></div>
+            <ul class="nav nav-tabs mb-3"><li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#mapping-tab">{{ $text['mapping'] }}</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#settings-tab">{{ $text['settings'] }}</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#lifecycle-tab">{{ $text['lifecycle'] }}</button></li><li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#indexing-tab">{{ $locale === 'tr' ? 'İndeksleme istatistikleri' : 'Indexing statistics' }}</button></li></ul>
+            <div class="tab-content"><div class="tab-pane fade show active" id="mapping-tab"><pre class="json-view" id="mapping-json">{{ $text['loading'] }}</pre></div><div class="tab-pane fade" id="settings-tab"><pre class="json-view" id="settings-json">{{ $text['loading'] }}</pre></div><div class="tab-pane fade" id="lifecycle-tab"><div id="lifecycle-summary" class="row g-3 mb-3"></div><pre class="json-view" id="lifecycle-json">{{ $text['loading'] }}</pre></div><div class="tab-pane fade" id="indexing-tab"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><p class="small text-secondary mb-0">{{ $locale === 'tr' ? 'Seçilen indeksin indeksleme ve silme sayaçları.' : 'Indexing and deletion counters for the selected index.' }}</p><button class="btn btn-sm btn-outline-primary" id="refresh-indexing">{{ $locale === 'tr' ? 'Yenile' : 'Refresh' }}</button></div><div class="row g-3 mb-3" id="indexing-cards"></div><div class="table-responsive"><table class="table table-sm table-bordered align-middle"><thead><tr><th>{{ $locale === 'tr' ? 'Metrik' : 'Metric' }}</th><th>{{ $locale === 'tr' ? 'Primary' : 'Primaries' }}</th><th>{{ $locale === 'tr' ? 'Toplam' : 'Total' }}</th></tr></thead><tbody id="indexing-table"><tr><td colspan="3" class="text-center text-secondary py-4">{{ $text['loading'] }}</td></tr></tbody></table></div></div></div>
         </div>
         <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">{{ $text['close'] }}</button></div>
     </div></div>
@@ -65,10 +65,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 const labels=@json($text);
+const statsLabels={"tr":{"tab":"İndeksleme istatistikleri","description":"Seçilen indeksin indeksleme ve silme sayaçları (primary ve toplam).","refresh":"İstatistikleri yenile","indexTotal":"Toplam indeksleme","indexTime":"İndeksleme süresi","indexCurrent":"Devam eden indeksleme","deleteTotal":"Toplam silme","deleteTime":"Silme süresi","deleteCurrent":"Devam eden silme","noop":"No-op güncelleme","throttle":"Throttle durumu","throttleTime":"Throttle süresi","primaries":"Primary","total":"Toplam","yes":"Evet","no":"Hayır"},"en":{"tab":"Indexing statistics","description":"Indexing and deletion counters for the selected index (primaries and total).","refresh":"Refresh statistics","indexTotal":"Total indexing operations","indexTime":"Indexing time","indexCurrent":"Current indexing operations","deleteTotal":"Total deletes","deleteTime":"Delete time","deleteCurrent":"Current deletes","noop":"No-op updates","throttle":"Throttled","throttleTime":"Throttle time","primaries":"Primaries","total":"Total","yes":"Yes","no":"No"},"es":{"tab":"Estadísticas de indexación","description":"Contadores de indexación y eliminación del índice seleccionado (primarios y total).","refresh":"Actualizar estadísticas","indexTotal":"Operaciones de indexación","indexTime":"Tiempo de indexación","indexCurrent":"Indexaciones actuales","deleteTotal":"Eliminaciones totales","deleteTime":"Tiempo de eliminación","deleteCurrent":"Eliminaciones actuales","noop":"Actualizaciones no-op","throttle":"Limitado","throttleTime":"Tiempo de limitación","primaries":"Primarios","total":"Total","yes":"Sí","no":"No"},"zh_CN":{"tab":"索引统计","description":"所选索引的索引和删除计数器（主分片及总计）。","refresh":"刷新统计","indexTotal":"索引操作总数","indexTime":"索引耗时","indexCurrent":"当前索引操作","deleteTotal":"删除总数","deleteTime":"删除耗时","deleteCurrent":"当前删除操作","noop":"无操作更新","throttle":"是否限流","throttleTime":"限流时间","primaries":"主分片","total":"总计","yes":"是","no":"否"},"hi":{"tab":"इंडेक्सिंग आँकड़े","description":"चयनित इंडेक्स के इंडेक्सिंग और डिलीट काउंटर (प्राइमरी और कुल)।","refresh":"आँकड़े रीफ़्रेश करें","indexTotal":"कुल इंडेक्सिंग ऑपरेशन","indexTime":"इंडेक्सिंग समय","indexCurrent":"वर्तमान इंडेक्सिंग","deleteTotal":"कुल डिलीट","deleteTime":"डिलीट समय","deleteCurrent":"वर्तमान डिलीट","noop":"No-op अपडेट","throttle":"थ्रॉटल स्थिति","throttleTime":"थ्रॉटल समय","primaries":"प्राइमरी","total":"कुल","yes":"हाँ","no":"नहीं"},"ar":{"tab":"إحصاءات الفهرسة","description":"عدادات الفهرسة والحذف للفهرس المحدد (الأجزاء الأساسية والإجمالي).","refresh":"تحديث الإحصاءات","indexTotal":"إجمالي عمليات الفهرسة","indexTime":"وقت الفهرسة","indexCurrent":"عمليات الفهرسة الحالية","deleteTotal":"إجمالي عمليات الحذف","deleteTime":"وقت الحذف","deleteCurrent":"عمليات الحذف الحالية","noop":"تحديثات بلا تغيير","throttle":"حالة التقييد","throttleTime":"وقت التقييد","primaries":"الأجزاء الأساسية","total":"الإجمالي","yes":"نعم","no":"لا"}}[@json($locale)] || {"tab":"Indexing statistics","description":"Indexing and deletion counters for the selected index (primaries and total).","refresh":"Refresh statistics","indexTotal":"Total indexing operations","indexTime":"Indexing time","indexCurrent":"Current indexing operations","deleteTotal":"Total deletes","deleteTime":"Delete time","deleteCurrent":"Current deletes","noop":"No-op updates","throttle":"Throttled","throttleTime":"Throttle time","primaries":"Primaries","total":"Total","yes":"Yes","no":"No"};
 const listUrl=@json(route('elasticsearch-monitoring.indices.data'));
 const detailBase=@json(route('elasticsearch-monitoring.indices.details',['index'=>'__INDEX__']));
+const indexingStatsBase=@json(route('elasticsearch-monitoring.indices.indexing-stats',['index'=>'__INDEX__']));
 const rows=document.getElementById('indices');
 let allIndices=[];
+let selectedIndex=null;
+let indexingRefreshTimer=null;
 const modal=new bootstrap.Modal(document.getElementById('detailsModal'));
 const number=v=>Number(v||0).toLocaleString();
 const bytes=value=>{let n=Number(value||0);if(n>=1024**3)return (n/1024**3).toFixed(2)+' GB';if(n>=1024**2)return (n/1024**2).toFixed(2)+' MB';if(n>=1024)return (n/1024).toFixed(2)+' KB';return n+' B';};
@@ -86,6 +90,23 @@ async function load(){
     try{const r=await fetch(listUrl+'?'+params,{headers:{Accept:'application/json'}});const data=await r.json();if(!r.ok)throw new Error(data.error||labels.error);allIndices=data.indices||[];render();}
     catch(e){rows.innerHTML='<tr><td colspan="12" class="text-center text-danger py-5">'+escapeHtml(e.message||labels.error)+'</td></tr>';}
 }
+
+function formatDuration(value){const ms=Number(value||0);if(ms<1000)return number(ms)+' ms';if(ms<60000)return (ms/1000).toFixed(2)+' s';return (ms/60000).toFixed(2)+' min';}
+function renderIndexingStats(data){
+ const primary=data.primaries||{},total=data.total||{};
+ const cards=[[statsLabels.indexTotal,number(total.index_total)],[statsLabels.indexTime,formatDuration(total.index_time_in_millis)],[statsLabels.indexCurrent,number(total.index_current)],[statsLabels.deleteTotal,number(total.delete_total)],[statsLabels.deleteTime,formatDuration(total.delete_time_in_millis)],[statsLabels.deleteCurrent,number(total.delete_current)]];
+ const container=document.getElementById('indexing-cards');container.replaceChildren();
+ cards.forEach(([label,value])=>{const col=document.createElement('div');col.className='col-6 col-xl-4';const card=document.createElement('div');card.className='border rounded-3 p-3 h-100 bg-light';const heading=document.createElement('div');heading.className='small text-secondary mb-1';heading.textContent=label;const content=document.createElement('div');content.className='fs-5 fw-bold';content.textContent=value;card.append(heading,content);col.append(card);container.append(col);});
+ const metrics=[[statsLabels.indexTotal,'index_total','number'],[statsLabels.indexTime,'index_time_in_millis','duration'],[statsLabels.indexCurrent,'index_current','number'],[statsLabels.deleteTotal,'delete_total','number'],[statsLabels.deleteTime,'delete_time_in_millis','duration'],[statsLabels.deleteCurrent,'delete_current','number'],[statsLabels.noop,'noop_update_total','number'],[statsLabels.throttle,'is_throttled','boolean'],[statsLabels.throttleTime,'throttle_time_in_millis','duration']];
+ document.getElementById('indexing-table').innerHTML=metrics.map(([label,key,type])=>{const fmt=v=>v===undefined||v===null?'—':type==='duration'?formatDuration(v):type==='boolean'?(v?statsLabels.yes:statsLabels.no):number(v);return '<tr><td>'+escapeHtml(label)+'</td><td>'+escapeHtml(fmt(primary[key]))+'</td><td>'+escapeHtml(fmt(total[key]))+'</td></tr>';}).join('');
+}
+async function loadIndexingStats(name){
+ selectedIndex=name;const cards=document.getElementById('indexing-cards'),table=document.getElementById('indexing-table');
+ cards.innerHTML='<div class="col-12 text-secondary small">'+labels.loading+'</div>';table.innerHTML='<tr><td colspan="3" class="text-center text-secondary py-4">'+labels.loading+'</td></tr>';
+ try{const url=indexingStatsBase.replace('__INDEX__',encodeURIComponent(name));const response=await fetch(url,{headers:{Accept:'application/json'}});const data=await response.json();if(!response.ok)throw new Error(data.error||'Unable to load indexing statistics.');renderIndexingStats(data);}
+ catch(error){cards.innerHTML='<div class="col-12 text-danger small">'+escapeHtml(error.message)+'</div>';table.innerHTML='<tr><td colspan="3" class="text-center text-danger py-4">'+escapeHtml(error.message)+'</td></tr>';}
+}
+
 async function showDetails(name){
     document.getElementById('modalTitle').textContent=name;
     document.getElementById('lifecycle').textContent='';
@@ -94,6 +115,7 @@ async function showDetails(name){
     document.getElementById('lifecycle-json').textContent=labels.loading;
     document.getElementById('lifecycle-summary').replaceChildren();
     modal.show();
+    loadIndexingStats(name);
     try{
         const url=detailBase.replace('__INDEX__',encodeURIComponent(name));
         const r=await fetch(url,{headers:{Accept:'application/json'}});
@@ -113,6 +135,9 @@ document.getElementById('reload').addEventListener('click',load);
 document.getElementById('search').addEventListener('input',render);
 document.getElementById('hidden').addEventListener('change',load);
 document.getElementById('rollup').addEventListener('change',load);
+document.getElementById('refresh-indexing').addEventListener('click',()=>{if(selectedIndex)loadIndexingStats(selectedIndex);});
+document.getElementById('detailsModal').addEventListener('shown.bs.modal',()=>{clearInterval(indexingRefreshTimer);indexingRefreshTimer=setInterval(()=>{if(selectedIndex&&document.getElementById('indexing-tab').classList.contains('active'))loadIndexingStats(selectedIndex);},30000);});
+document.getElementById('detailsModal').addEventListener('hidden.bs.modal',()=>{selectedIndex=null;clearInterval(indexingRefreshTimer);});
 load();
 </script>
 </body>
