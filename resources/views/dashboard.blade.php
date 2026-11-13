@@ -68,6 +68,13 @@
         .metric-card{padding:18px 19px;transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(29,41,74,.08)}
         .metric-card small{font-weight:600;color:#778198}.metric-card strong{display:block;margin-top:12px;font-size:1.5rem;letter-spacing:-.04em}
         .chart-card{padding:20px}.chart-card h2{font-size:.95rem;font-weight:700}.chart-card .text-muted{font-size:.75rem}
+        .insight-card{background:#fff;border:1px solid #e9edf4;border-radius:17px;padding:22px;box-shadow:0 5px 18px rgba(29,41,74,.035)}
+        .section-title{font-size:1rem;font-weight:750;color:#29334d}.health-score{font-size:3rem;line-height:1;font-weight:800;letter-spacing:-.06em;color:#29334d}
+        .health-score.healthy{color:#16a36a}.health-score.warning{color:#d58a20}.health-score.critical{color:#dc5147}
+        .alert-list{display:grid;gap:9px}.alert-item{display:flex;gap:12px;align-items:flex-start;border:1px solid #edf0f5;border-radius:12px;padding:11px 13px}
+        .alert-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:none}.alert-dot.warning{background:#e6a23c}.alert-dot.critical{background:#dc5147}
+        .alert-item strong{font-size:.85rem}.alert-item p{font-size:.77rem;color:#7d879a;margin:3px 0 0}
+        .table thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:#8791a5;white-space:nowrap}.table tbody td{font-size:.82rem;white-space:nowrap}
         @media(max-width:1199px){#summary-cards>.col-xl-3{max-width:50%}}
         @media(max-width:767px){.hero{padding:21px;border-radius:18px}#summary-cards>.col-xl-3{max-width:100%}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}.dashboard-chart-grid .chart-card{min-height:320px}}
     </style>
@@ -121,6 +128,19 @@
             </div>
         @endforeach
     </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-xl-4"><section class="insight-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="section-title mb-0">{{ $t('health_score') }}</h2><span class="badge text-bg-light" id="health-status">—</span></div>
+            <div class="d-flex align-items-end gap-2"><strong class="health-score" id="health-score">—</strong><span class="text-muted mb-2">/ 100</span></div>
+            <div class="progress mt-2" style="height:9px"><div id="health-progress" class="progress-bar" role="progressbar" style="width:0%"></div></div>
+            <p class="small text-muted mt-3 mb-0" id="health-summary">—</p>
+        </section></div>
+        <div class="col-12 col-xl-8"><section class="insight-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0">{{ $t('active_alerts') }}</h2><span class="badge rounded-pill text-bg-light" id="alert-count">0</span></div>
+            <div id="health-alerts" class="alert-list"><p class="text-muted small mb-0">{{ $t('no_alerts') }}</p></div>
+        </section></div>
+    </div>
     <div class="row g-3">
         @foreach ([
             'status' => 'status',
@@ -143,6 +163,17 @@
             </div>
         @endforeach
     </div>
+
+    <section class="insight-card mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div><h2 class="section-title mb-1">{{ $t('node_comparison') }}</h2><p class="small text-muted mb-0">{{ $t('node_comparison_hint') }}</p></div>
+            <span class="small text-muted" id="node-count">—</span>
+        </div>
+        <div class="table-responsive"><table class="table table-hover align-middle mb-0">
+            <thead><tr><th>{{ $t('node') }}</th><th>CPU</th><th>{{ $t('heap_usage') }}</th><th>{{ $t('disk_usage') }}</th><th>{{ $t('documents') }}</th><th>{{ $t('shards') }}</th><th>{{ $t('search_total') }}</th><th>{{ $t('indexing_total') }}</th></tr></thead>
+            <tbody id="node-comparison"><tr><td colspan="8" class="text-muted text-center py-4">—</td></tr></tbody>
+        </table></div>
+    </section>
     <div class="row g-3 dashboard-chart-grid">
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
@@ -186,6 +217,44 @@ async function loadMetrics() {
         }
         alert.classList.add('d-none');
         const m = payload.latest.metrics || {};
+        const health = m.health || {};
+        const healthScore = Number(health.score ?? 0);
+        const healthStatus = health.status || 'unknown';
+        const scoreElement = document.getElementById('health-score');
+        scoreElement.textContent = health.score ?? '—';
+        scoreElement.className = 'health-score ' + healthStatus;
+        document.getElementById('health-status').textContent = healthStatus.toUpperCase();
+        document.getElementById('health-progress').style.width = healthScore + '%';
+        document.getElementById('health-progress').className = 'progress-bar ' + (healthStatus === 'healthy' ? 'bg-success' : healthStatus === 'warning' ? 'bg-warning' : 'bg-danger');
+        const activeAlerts = health.alerts || [];
+        document.getElementById('health-summary').textContent = activeAlerts.length + ' ' + @json($t('active_alerts'));
+        document.getElementById('alert-count').textContent = activeAlerts.length;
+        const alertContainer = document.getElementById('health-alerts');
+        alertContainer.replaceChildren();
+        if (!activeAlerts.length) {
+            const empty = document.createElement('p'); empty.className = 'text-muted small mb-0'; empty.textContent = @json($t('no_alerts')); alertContainer.appendChild(empty);
+        } else {
+            activeAlerts.forEach(item => {
+                const row = document.createElement('div'); row.className = 'alert-item';
+                const dot = document.createElement('span'); dot.className = 'alert-dot ' + item.severity;
+                const body = document.createElement('div');
+                const title = document.createElement('strong'); title.textContent = item.title;
+                const message = document.createElement('p'); message.textContent = item.message + ' (' + item.value + ')';
+                body.append(title, message); row.append(dot, body); alertContainer.appendChild(row);
+            });
+        }
+        const nodes = m.node_details || [];
+        document.getElementById('node-count').textContent = nodes.length + ' nodes';
+        const nodeBody = document.getElementById('node-comparison');
+        const escapeHtml = value => String(value ?? '—').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+        nodeBody.innerHTML = nodes.length ? nodes.map(node =>
+            '<tr><td><strong>' + escapeHtml(node.name) + '</strong><div class="text-muted small">' + escapeHtml((node.roles || []).join(', ')) + '</div></td>' +
+            '<td>' + (node.cpu_percent == null ? '—' : Number(node.cpu_percent).toFixed(1)+'%') + '</td>' +
+            '<td>' + (node.heap_percent == null ? '—' : Number(node.heap_percent).toFixed(1)+'%') + '</td>' +
+            '<td>' + (node.filesystem_used_percent == null ? '—' : Number(node.filesystem_used_percent).toFixed(1)+'%') + '</td>' +
+            '<td>' + Number(node.documents || 0).toLocaleString() + '</td><td>' + Number(node.shards || 0).toLocaleString() + '</td>' +
+            '<td>' + Number(node.search_total || 0).toLocaleString() + '</td><td>' + Number(node.indexing_total || 0).toLocaleString() + '</td></tr>'
+        ).join('') : '<tr><td colspan="8" class="text-muted text-center py-4">—</td></tr>';
         const set = (id, value) => document.getElementById(id).textContent = value ?? '—';
         set('status', (m.cluster?.status || 'unknown').toUpperCase());
         set('nodes', m.nodes);
