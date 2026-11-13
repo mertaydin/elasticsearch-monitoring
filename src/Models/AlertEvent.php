@@ -2,6 +2,7 @@
 
 namespace ElasticsearchMonitoring\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $message
  * @property mixed $value
  * @property mixed $threshold
- * @property \Carbon\CarbonImmutable $first_seen_at
+ * @property CarbonImmutable $first_seen_at
  * @property \Carbon\CarbonImmutable $last_seen_at
  * @property \Carbon\CarbonImmutable|null $resolved_at
  * @property int $occurrences
