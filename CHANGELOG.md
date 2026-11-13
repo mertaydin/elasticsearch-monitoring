@@ -1,4 +1,4 @@
-# Changelog
+# Changelog\n\n## [0.4.0] - 2026-11-13\n\n- Add a dedicated read-only Data Streams page with backing-index details, generation, template, ILM metadata, document counts, and storage usage.\n- Keep Data Streams separate from the main dashboard and index-management workflow.\n- Preserve stream discovery when index statistics or ILM privileges are unavailable.\n
 
 ## [0.3.0] - 2026-11-13
 

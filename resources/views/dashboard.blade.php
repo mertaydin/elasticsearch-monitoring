@@ -100,7 +100,7 @@
                     @endforeach
                 </select>
             </form>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>\n            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.data-streams', ['locale' => $locale]) }}">Data Streams</a>
             <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
         </div>
     </div>

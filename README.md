@@ -39,7 +39,7 @@ ELASTICSEARCH_MONITORING_VERIFY=true
 
 Collect a snapshot with `php artisan elasticsearch:collect`.
 
-Dashboard: `/monitoring/elasticsearch`
+Dashboard: `/monitoring/elasticsearch`  \nIndex management: `/monitoring/elasticsearch/indices`  \nData Streams: `/monitoring/elasticsearch/data-streams`
 
 The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
@@ -74,7 +74,7 @@ Turkish (`tr`), English (`en`), Simplified Chinese (`zh_CN`), Hindi (`hi`), Span
 
 ## Security
 
-Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features. Index details display ILM policy, phase, action, step, index age, rollover alias, and any failed-step information in read-only form.
+Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features. Index details display ILM policy, phase, action, step, index age, rollover alias, and any failed-step information in read-only form. A separate Data Streams page displays stream metadata, backing indices, generation, template, ILM policy, document counts, and storage usage. Clusters using only classic indices can continue using the package without any Data Streams configuration.
 
 ## Development
 
