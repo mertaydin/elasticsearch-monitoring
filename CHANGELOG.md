@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2026-11-13
+
+- Refresh the monitoring dashboard visual design.
+- Add CPU utilization and index storage history charts.
+- Improve chart labels and descriptions for localized dashboards.
+- Refresh dashboard metrics automatically every 30 seconds.
+
 ## [0.1.1] - 2026-11-13
 
 - Add a dashboard language selector with browser preference persistence.
