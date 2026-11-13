@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property mixed $value
  * @property mixed $threshold
  * @property CarbonImmutable $first_seen_at
- * @property \Carbon\CarbonImmutable $last_seen_at
- * @property \Carbon\CarbonImmutable|null $resolved_at
+ * @property CarbonImmutable $last_seen_at
+ * @property CarbonImmutable|null $resolved_at
  * @property int $occurrences
  */
 class AlertEvent extends Model
