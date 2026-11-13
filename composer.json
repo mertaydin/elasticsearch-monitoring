@@ -19,12 +19,12 @@
   },
   "autoload": {
     "psr-4": {
-      "ElasticsearchMonitoring\\\\": "src/"
+      "ElasticsearchMonitoring\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ElasticsearchMonitoring\\\\Tests\\\\": "tests/"
+      "ElasticsearchMonitoring\\Tests\\": "tests/"
     }
   },
   "scripts": {
@@ -36,7 +36,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "ElasticsearchMonitoring\\\\ElasticsearchMonitoringServiceProvider"
+        "ElasticsearchMonitoring\\ElasticsearchMonitoringServiceProvider"
       ]
     }
   },
