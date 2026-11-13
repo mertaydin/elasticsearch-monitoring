@@ -175,6 +175,8 @@ async function loadMetrics() {
         const searchPoints = history.map(point => [point.time, point.metrics.rates?.search_per_second]).filter(point => point[1] !== null && point[1] !== undefined);
         const indexingPoints = history.map(point => [point.time, point.metrics.rates?.indexing_per_second]).filter(point => point[1] !== null && point[1] !== undefined);
         const segmentPoints = history.map(point => [point.time, Number(point.metrics.indices?.segments_total || 0)]).filter(point => point[1] > 0);
+        const primarySegmentPoints = history.map(point => [point.time, Number(point.metrics.indices?.segments_primaries || 0)]).filter(point => point[1] > 0);
+        const primaryStoragePoints = history.map(point => [point.time, Number(point.metrics.indices?.primary_store_size_bytes || 0)]).filter(point => point[1] > 0);
         const documentPoints = history.map(point => [point.time, Number(point.metrics.indices?.documents || 0)]).filter(point => point[1] >= 0);
         const chartBase = {
             chart:{type:'area',height:270,toolbar:{show:false},zoom:{enabled:false}},
@@ -187,12 +189,12 @@ async function loadMetrics() {
             yaxis:{min:0,max:100,labels:{formatter:v=>v.toFixed(0)+'%'}},
             tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(1)+'%'}}});
         const formatBytes = value => value >= 1073741824 ? (value/1073741824).toFixed(2)+' GB' : (value/1048576).toFixed(1)+' MB';
-        renderChart('#storage-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.storage,data:storagePoints}],
+        renderChart('#storage-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.storage,data:storagePoints},{name:'Primary Store',data:primaryStoragePoints}],
             yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
         renderChart('#search-chart',{...chartBase,colors:['#20b6a5'],series:[{name:labels.search,data:searchPoints}],yaxis:{min:0},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(2)+' /s'}}});
         renderChart('#indexing-chart',{...chartBase,colors:['#3978b8'],series:[{name:labels.indexing,data:indexingPoints}],yaxis:{min:0},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(2)+' /s'}}});
         renderChart('#disk-chart',{...chartBase,colors:['#e39a36'],series:[{name:labels.disk,data:diskPoints}],yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
-        renderChart('#segments-chart',{...chartBase,colors:['#8064c8'],series:[{name:labels.segments,data:segmentPoints}],yaxis:{min:0,labels:{formatter:v=>Math.round(v)}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
+        renderChart('#segments-chart',{...chartBase,colors:['#8064c8'],series:[{name:labels.segments,data:segmentPoints},{name:'Primary Segments',data:primarySegmentPoints}],yaxis:{min:0,labels:{formatter:v=>Math.round(v)}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
         renderChart('#documents-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.documents,data:documentPoints}],yaxis:{labels:{formatter:v=>v.toLocaleString()}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
     } catch (error) {
         alert.textContent = labels.loadError + ': ' + error.message;

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.4] - 2026-11-13
+
+- Show primary and total shard storage and segment counts as separate chart series.
+
+
 ## [0.1.3] - 2026-11-13
 
 - Add disk usage, search rate, indexing rate, segment count, and document count history charts.
