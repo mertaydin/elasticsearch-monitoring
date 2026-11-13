@@ -62,7 +62,7 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 
 ## Metrics
 
-Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Rates are available after at least two successful collections.
+Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Rates are available after at least two successful collections. Alert history records when an alert first appears, each subsequent observation, its latest value, and when it is resolved. Open `/monitoring/elasticsearch/alerts` to review active and resolved events. Existing installations should run `php artisan migrate` after updating.
 
 ## Compatibility
 

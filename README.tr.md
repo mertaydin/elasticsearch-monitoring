@@ -51,7 +51,7 @@ public function boot(): void
 
 Callback tanımlamazsanız mevcut davranış korunur; varsayılan `web,auth` middleware'i oturum açmış kullanıcıları kabul eder. Callback'iniz kimlik doğrulamayı da kendisi yapmıyorsa `auth` middleware'ini kaldırmayın.
 
-Küme sağlık puanı, aktif uyarılar, node bazında CPU/JVM/disk kullanımı, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. Uyarı eşikleri paket yapılandırmasındaki `alerts.thresholds` altında değiştirilebilir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir.
+Küme sağlık puanı, aktif uyarılar, node bazında CPU/JVM/disk kullanımı, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. Uyarı eşikleri paket yapılandırmasındaki `alerts.thresholds` altında değiştirilebilir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir. Alarm geçmişi, alarmın ilk oluşma zamanını, sonraki gözlemleri, son değerini ve çözülme zamanını kaydeder. Aktif ve çözülmüş kayıtları `/monitoring/elasticsearch/alerts` adresinden inceleyebilirsiniz. Güncelleme sonrasında mevcut kurulumlarda `php artisan migrate` çalıştırılmalıdır.
 
 Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
 
