@@ -57,12 +57,19 @@
         .summary-value{font-size:1.85rem;line-height:1.25;font-weight:750;letter-spacing:-.055em;color:#29334d;margin-top:7px;white-space:nowrap}
         .summary-change{font-size:.72rem;font-weight:700;padding:4px 7px;border-radius:7px;background:#f1f4f9;color:#8b94a7;white-space:nowrap}
         .summary-change.positive{background:#e5f8ee;color:#1aaf68}.summary-change.negative{background:#fff0ed;color:#e05d4b}
-        .summary-chart{height:58px;margin:7px -5px -2px}\n        #summary-cards>.col-xl-3{max-width:25%}\n        .dashboard-chart-grid>.col-xl-4{display:flex}\n        .dashboard-chart-grid .chart-card{width:100%;min-height:350px}\n        .dashboard-chart-grid .chart-card>div[id]{min-height:260px}\n        .dashboard-chart-grid .chart-card h2{min-height:2.5rem;margin-bottom:.35rem}\n        .dashboard-chart-grid .chart-card p{min-height:2.25rem;margin-bottom:.5rem}
+        .summary-chart{height:58px;margin:7px -5px -2px}
+        #summary-cards>.col-xl-3{max-width:25%}
+        .dashboard-chart-grid>.col-xl-4{display:flex}
+        .dashboard-chart-grid .chart-card{width:100%;min-height:350px}
+        .dashboard-chart-grid .chart-card>div[id]{min-height:260px}
+        .dashboard-chart-grid .chart-card h2{min-height:2.5rem;margin-bottom:.35rem}
+        .dashboard-chart-grid .chart-card p{min-height:2.25rem;margin-bottom:.5rem}
 
         .metric-card{padding:18px 19px;transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(29,41,74,.08)}
         .metric-card small{font-weight:600;color:#778198}.metric-card strong{display:block;margin-top:12px;font-size:1.5rem;letter-spacing:-.04em}
         .chart-card{padding:20px}.chart-card h2{font-size:.95rem;font-weight:700}.chart-card .text-muted{font-size:.75rem}
-        @media(max-width:1199px){#summary-cards>.col-xl-3{max-width:50%}}\n        @media(max-width:767px){.hero{padding:21px;border-radius:18px}#summary-cards>.col-xl-3{max-width:100%}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}.dashboard-chart-grid .chart-card{min-height:320px}}
+        @media(max-width:1199px){#summary-cards>.col-xl-3{max-width:50%}}
+        @media(max-width:767px){.hero{padding:21px;border-radius:18px}#summary-cards>.col-xl-3{max-width:100%}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}.dashboard-chart-grid .chart-card{min-height:320px}}
     </style>
 </head>
 <body class="bg-light">
