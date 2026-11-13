@@ -106,8 +106,8 @@ class IndexController
             $lifecycle = is_array($lifecycleResponse)
                 ? (array) ($lifecycleResponse['indices'][$index] ?? $lifecycleResponse[$index] ?? [])
                 : [];
-            $policy = data_get($indexSettings, 'index.lifecycle.name');
-            $rolloverAlias = data_get($indexSettings, 'index.lifecycle.rollover_alias');
+            $policy = $indexSettings['index.lifecycle.name'] ?? null;
+            $rolloverAlias = $indexSettings['index.lifecycle.rollover_alias'] ?? null;
 
             return response()->json([
                 'index' => $index,
