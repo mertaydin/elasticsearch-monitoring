@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0] - 2026-11-13
 
 - Add read-only per-index indexing statistics for indexing, deletion, no-op update, and throttling counters, with primary and total comparisons.
 
