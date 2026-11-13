@@ -4,8 +4,8 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Requirements
 
-- PHP 8.2+
-- Laravel 11 or 12
+- PHP 8.2+ for Laravel 12; PHP 8.3+ for Laravel 13
+- Laravel 12 or 13
 - Elasticsearch 8.18+ or 9.x
 
 ## Installation

@@ -10,22 +10,29 @@ class DashboardController
 {
     public function index(): View
     {
-        return view('elasticsearch-monitoring::dashboard');
+        /** @var view-string $viewName */
+        $viewName = 'elasticsearch-monitoring::dashboard';
+
+        return view($viewName);
     }
 
     public function data(): JsonResponse
     {
         $latest = MetricSnapshot::query()->latest('collected_at')->first();
-        $history = MetricSnapshot::query()
+        $snapshots = MetricSnapshot::query()
             ->latest('collected_at')
             ->limit(60)
             ->get()
             ->reverse()
-            ->values()
-            ->map(fn (MetricSnapshot $snapshot): array => [
+            ->values();
+
+        $history = $snapshots->map(static function ($snapshot): array {
+            /** @var MetricSnapshot $snapshot */
+            return [
                 'collected_at' => $snapshot->collected_at?->toIso8601String(),
                 'metrics' => $snapshot->metrics,
-            ]);
+            ];
+        });
 
         return response()->json([
             'latest' => $latest,

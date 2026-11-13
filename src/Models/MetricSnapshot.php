@@ -2,8 +2,15 @@
 
 namespace ElasticsearchMonitoring\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property CarbonImmutable $collected_at
+ * @property string $elasticsearch_version
+ * @property array<string, mixed> $metrics
+ */
 class MetricSnapshot extends Model
 {
     protected $table = 'elasticsearch_metric_snapshots';

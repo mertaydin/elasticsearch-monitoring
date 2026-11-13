@@ -1,6 +1,6 @@
 # Elasticsearch Monitoring
 
-Laravel 11 ve 12 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
+Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Kurulum
 

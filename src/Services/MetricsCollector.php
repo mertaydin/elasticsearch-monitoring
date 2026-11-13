@@ -23,6 +23,7 @@ class MetricsCollector
         ];
 
         $metrics = $this->normalize($responses);
+        /** @var MetricSnapshot|null $previous */
         $previous = MetricSnapshot::query()->latest('collected_at')->first();
 
         $metrics['rates'] = $previous !== null
