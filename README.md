@@ -58,6 +58,13 @@ composer analyse
 composer pint-test
 ```
 
+## Documentation
+
+- [Türkçe README](README.tr.md)
+- [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+
 ## License
 
 MIT

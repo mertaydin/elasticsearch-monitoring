@@ -76,7 +76,12 @@ class MetricsCollectorTest extends TestCase
             }
 
             if ($path === '/_cluster/stats') {
-                return Http::response(['status' => 'ok']);
+                return Http::response(['indices' => [
+                    'count' => 1,
+                    'docs' => ['count' => 25],
+                    'shards' => ['total' => 4],
+                    'store' => ['size_in_bytes' => 2048],
+                ]]);
             }
 
             return Http::response(['error' => 'Unexpected endpoint'], 404);
@@ -88,6 +93,8 @@ class MetricsCollectorTest extends TestCase
         $this->assertNull($first['rates']['search_per_second']);
         $this->assertSame('green', $first['cluster']['status']);
         $this->assertSame(20.0, $first['cpu']['percent_average']);
+        $this->assertSame(25, $first['indices']['documents']);
+        $this->assertSame(2048, $first['indices']['store_size_bytes']);
         $this->assertSame(1, MetricSnapshot::query()->count());
 
         Carbon::setTestNow(Carbon::parse('2026-11-13 10:02:00'));

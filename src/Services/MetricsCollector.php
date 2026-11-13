@@ -90,7 +90,12 @@ class MetricsCollector
                 'read_operations' => $readOps,
                 'write_operations' => $writeOps,
             ],
-            'indices' => ['documents' => $docs, 'shards' => $shards],
+            'indices' => [
+                'count' => (int) data_get($responses, 'cluster.indices.count', 0),
+                'documents' => (int) data_get($responses, 'cluster.indices.docs.count', $docs),
+                'shards' => (int) data_get($responses, 'cluster.indices.shards.total', $shards),
+                'store_size_bytes' => (int) data_get($responses, 'cluster.indices.store.size_in_bytes', 0),
+            ],
             'thread_pool' => [
                 'search_queue' => $searchQueue,
                 'search_rejected' => $searchRejected,
