@@ -79,4 +79,32 @@ class IndexManagementTest extends TestCase
         $this->assertSame('applications', $payload['lifecycle']['rollover_alias']);
         $this->assertSame('rollover', $payload['lifecycle']['action']);
     }
+
+    public function test_it_returns_indexing_statistics_for_the_selected_index(): void
+    {
+        Http::fake(function ($request) {
+            if (str_ends_with(parse_url($request->url(), PHP_URL_PATH), '/_stats/indexing')) {
+                return Http::response([
+                    'indices' => [
+                        'applications' => [
+                            'primaries' => ['indexing' => ['index_total' => 120, 'index_time_in_millis' => 2400, 'index_current' => 2, 'delete_total' => 8, 'delete_time_in_millis' => 160, 'delete_current' => 1, 'noop_update_total' => 3, 'is_throttled' => false, 'throttle_time_in_millis' => 0]],
+                            'total' => ['indexing' => ['index_total' => 240, 'index_time_in_millis' => 4800, 'index_current' => 4, 'delete_total' => 16, 'delete_time_in_millis' => 320, 'delete_current' => 2, 'noop_update_total' => 6, 'is_throttled' => false, 'throttle_time_in_millis' => 0]],
+                        ],
+                    ],
+                ]);
+            }
+
+            return Http::response([], 404);
+        });
+
+        $response = app(IndexController::class)->indexingStats('applications');
+
+        $this->assertSame(200, $response->getStatusCode());
+        $payload = $response->getData(true);
+        $this->assertSame('applications', $payload['index']);
+        $this->assertSame(120, $payload['primaries']['index_total']);
+        $this->assertSame(240, $payload['total']['index_total']);
+        $this->assertSame(16, $payload['total']['delete_total']);
+    }
+
 }
