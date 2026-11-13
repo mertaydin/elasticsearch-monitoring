@@ -106,5 +106,4 @@ class IndexManagementTest extends TestCase
         $this->assertSame(240, $payload['total']['index_total']);
         $this->assertSame(16, $payload['total']['delete_total']);
     }
-
 }
