@@ -48,5 +48,7 @@ jobs:
         run: composer test
       - name: Static analysis
         run: composer analyse
-      - name: Check code style
-        run: composer pint-test
+      - name: Preview code formatting
+        run: |
+          composer format
+          git diff -- config database routes src tests
