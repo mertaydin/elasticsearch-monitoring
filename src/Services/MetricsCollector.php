@@ -3,7 +3,7 @@
 namespace ElasticsearchMonitoring\Services;
 
 use ElasticsearchMonitoring\Models\MetricSnapshot;
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 
 class MetricsCollector
 {
@@ -107,7 +107,7 @@ class MetricsCollector
      * @param array<string, mixed> $current
      * @return array<string, float|null>
      */
-    private function calculateRates(array $previous, array $current, Carbon $previousAt, Carbon $currentAt): array
+    private function calculateRates(array $previous, array $current, CarbonInterface $previousAt, CarbonInterface $currentAt): array
     {
         $seconds = max(0.001, (float) $previousAt->diffInMilliseconds($currentAt) / 1000);
         $previousSearch = (int) data_get($previous, 'counters.search_total', 0);
