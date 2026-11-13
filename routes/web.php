@@ -4,6 +4,7 @@ use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
+use ElasticsearchMonitoring\Http\Controllers\NodeController;
 use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/data-streams', [DataStreamController::class, 'index'])->name('data-streams');
         Route::get('/data-streams/data', [DataStreamController::class, 'data'])->name('data-streams.data');
         Route::get('/data-streams/{name}/details', [DataStreamController::class, 'details'])->where('name', '[A-Za-z0-9_.-]+')->name('data-streams.details');
+        Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');
+        Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');
         Route::get('/alerts', [AlertHistoryController::class, 'index'])->name('alerts');
         Route::get('/alerts/data', [AlertHistoryController::class, 'data'])->name('alerts.data');
     });

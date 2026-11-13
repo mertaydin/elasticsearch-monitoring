@@ -25,7 +25,8 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,sans-serif}.pa
 <div><div class="d-flex flex-wrap gap-2 mb-2">
 <a href="{{ route('elasticsearch-monitoring.index',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">← {{ $text['back'] }}</a>
 <a href="{{ route('elasticsearch-monitoring.indices',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">{{ $text['indices'] }}</a>
-<a href="{{ route('elasticsearch-monitoring.data-streams',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">{{ $text['streams'] }}</a>
+<a href="{{ route('elasticsearch-monitoring.data-streams',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">
+<a href="{{ route('elasticsearch-monitoring.nodes',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>{{ $text['streams'] }}</a>
 </div><h1 class="h3 fw-bold mb-1">{{ $text['title'] }}</h1><p class="text-secondary mb-0">{{ $text['description'] }}</p></div>
 <button class="btn btn-success" id="refresh">↻ {{ $text['refresh'] }}</button>
 </div>

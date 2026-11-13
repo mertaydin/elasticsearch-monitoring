@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0] - 2026-11-13
+
+- Add a dedicated node performance history page with per-node CPU, JVM heap, filesystem, search/indexing rate, and thread-pool charts.
+- Add a node comparison table and selector using persisted metric snapshots (up to 1,440 latest collections).
+- Calculate per-node search and indexing rates from counter deltas without additional Elasticsearch requests or schema changes.
+- Add navigation links and localized labels for all six supported locales.
+
+
 ## [0.5.0] - 2026-11-13
 
 - Add persistent alert lifecycle history with first/last seen timestamps, occurrence counts, and resolution timestamps.

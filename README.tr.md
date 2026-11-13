@@ -32,7 +32,7 @@ ELASTICSEARCH_MONITORING_TIMEOUT=10
 ELASTICSEARCH_MONITORING_VERIFY=true
 ```
 
-Panel: `/monitoring/elasticsearch`. İndeks yönetimi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
+Panel: `/monitoring/elasticsearch`. İndeks yönetimi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
 
 ### Panel yetkilendirmesi
 
@@ -51,7 +51,7 @@ public function boot(): void
 
 Callback tanımlamazsanız mevcut davranış korunur; varsayılan `web,auth` middleware'i oturum açmış kullanıcıları kabul eder. Callback'iniz kimlik doğrulamayı da kendisi yapmıyorsa `auth` middleware'ini kaldırmayın.
 
-Küme sağlık puanı, aktif uyarılar, node bazında CPU/JVM/disk kullanımı, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. Uyarı eşikleri paket yapılandırmasındaki `alerts.thresholds` altında değiştirilebilir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir. Alarm geçmişi, alarmın ilk oluşma zamanını, sonraki gözlemleri, son değerini ve çözülme zamanını kaydeder. Aktif ve çözülmüş kayıtları `/monitoring/elasticsearch/alerts` adresinden inceleyebilirsiniz. Güncelleme sonrasında mevcut kurulumlarda `php artisan migrate` çalıştırılmalıdır.
+Küme sağlık puanı, aktif uyarılar, node bazında CPU/JVM/disk kullanımı, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. `/monitoring/elasticsearch/nodes` ekranında node seçerek CPU, JVM heap, disk, arama/indeksleme hızı ve kuyruk geçmişini son 1.440 ölçüme kadar grafiklerle inceleyebilirsiniz. Uyarı eşikleri paket yapılandırmasındaki `alerts.thresholds` altında değiştirilebilir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir. Alarm geçmişi, alarmın ilk oluşma zamanını, sonraki gözlemleri, son değerini ve çözülme zamanını kaydeder. Aktif ve çözülmüş kayıtları `/monitoring/elasticsearch/alerts` adresinden inceleyebilirsiniz. Güncelleme sonrasında mevcut kurulumlarda `php artisan migrate` çalıştırılmalıdır.
 
 Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
 
