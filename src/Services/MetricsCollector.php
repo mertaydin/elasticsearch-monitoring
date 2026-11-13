@@ -7,7 +7,7 @@ use ElasticsearchMonitoring\Models\MetricSnapshot;
 
 class MetricsCollector
 {
-    public function __construct(private readonly ElasticsearchClient $client) {}
+    public function __construct(private readonly ElasticsearchClient $client, private readonly HealthAnalyzer $healthAnalyzer) {}
 
     /** @return array<string, mixed> */
     public function collect(): array
@@ -28,6 +28,7 @@ class MetricsCollector
         $metrics['rates'] = $previous !== null
             ? $this->calculateRates((array) $previous->metrics, $metrics, $previous->collected_at, now())
             : ['search_per_second' => null, 'indexing_per_second' => null];
+        $metrics['health'] = $this->healthAnalyzer->analyze($metrics);
 
         MetricSnapshot::query()->create([
             'collected_at' => now(),
@@ -55,7 +56,9 @@ class MetricsCollector
         $searchQueue = $searchRejected = $bulkQueue = $bulkRejected = 0;
         $filesystemTotal = $filesystemAvailable = $readOps = $writeOps = 0;
 
-        foreach ($nodes as $node) {
+        $nodeDetails = [];
+
+        foreach ($nodes as $nodeId => $node) {
             $heapUsed += (int) data_get($node, 'jvm.mem.heap_used_in_bytes', 0);
             $heapMax += (int) data_get($node, 'jvm.mem.heap_max_in_bytes', 0);
             $cpu += (int) data_get($node, 'process.cpu.percent', 0);
@@ -71,6 +74,27 @@ class MetricsCollector
             $filesystemAvailable += (int) data_get($node, 'fs.total.available_in_bytes', 0);
             $readOps += (int) data_get($node, 'fs.io_stats.total.read_operations', 0);
             $writeOps += (int) data_get($node, 'fs.io_stats.total.write_operations', 0);
+
+            $nodeHeapUsed = (int) data_get($node, 'jvm.mem.heap_used_in_bytes', 0);
+            $nodeHeapMax = (int) data_get($node, 'jvm.mem.heap_max_in_bytes', 0);
+            $nodeFsTotal = (int) data_get($node, 'fs.total.total_in_bytes', 0);
+            $nodeFsAvailable = (int) data_get($node, 'fs.total.available_in_bytes', 0);
+            $nodeDetails[] = [
+                'id' => (string) $nodeId,
+                'name' => (string) data_get($node, 'name', $nodeId),
+                'roles' => (array) data_get($node, 'roles', []),
+                'cpu_percent' => data_get($node, 'process.cpu.percent'),
+                'heap_percent' => $nodeHeapMax > 0 ? round(($nodeHeapUsed / $nodeHeapMax) * 100, 2) : null,
+                'filesystem_used_percent' => $nodeFsTotal > 0 ? round((($nodeFsTotal - $nodeFsAvailable) / $nodeFsTotal) * 100, 2) : null,
+                'documents' => (int) data_get($node, 'indices.docs.count', 0),
+                'shards' => (int) data_get($node, 'indices.shard_stats.total_count', 0),
+                'search_total' => (int) data_get($node, 'indices.search.query_total', 0),
+                'indexing_total' => (int) data_get($node, 'indices.indexing.index_total', 0),
+                'search_queue' => (int) data_get($node, 'thread_pool.search.queue', 0),
+                'search_rejected' => (int) data_get($node, 'thread_pool.search.rejected', 0),
+                'write_queue' => (int) data_get($node, 'thread_pool.write.queue', data_get($node, 'thread_pool.bulk.queue', 0)),
+                'write_rejected' => (int) data_get($node, 'thread_pool.write.rejected', data_get($node, 'thread_pool.bulk.rejected', 0)),
+            ];
         }
 
         return [
@@ -83,6 +107,7 @@ class MetricsCollector
                 'unassigned_shards' => (int) data_get($responses, 'health.unassigned_shards', 0),
             ],
             'nodes' => $nodeCount,
+            'node_details' => $nodeDetails,
             'jvm' => ['heap_used_bytes' => $heapUsed, 'heap_max_bytes' => $heapMax],
             'cpu' => ['percent_average' => $nodeCount > 0 ? round($cpu / $nodeCount, 2) : null],
             'filesystem' => [

@@ -18,5 +18,17 @@ return [
         'locale' => 'en',
         'available_locales' => ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar'],
     ],
+    'alerts' => [
+        'thresholds' => [
+            'cpu_warning' => 80,
+            'cpu_critical' => 90,
+            'heap_warning' => 75,
+            'heap_critical' => 85,
+            'disk_warning' => 80,
+            'disk_critical' => 90,
+            'unassigned_shards_warning' => 1,
+            'unassigned_shards_critical' => 5,
+        ],
+    ],
     'register_schedule' => false,
 ];

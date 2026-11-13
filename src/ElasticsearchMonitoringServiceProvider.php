@@ -5,6 +5,7 @@ namespace ElasticsearchMonitoring;
 use ElasticsearchMonitoring\Console\CollectMetricsCommand;
 use ElasticsearchMonitoring\Services\DashboardAuthorizer;
 use ElasticsearchMonitoring\Services\ElasticsearchClient;
+use ElasticsearchMonitoring\Services\HealthAnalyzer;
 use ElasticsearchMonitoring\Services\MetricsCollector;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +18,7 @@ class ElasticsearchMonitoringServiceProvider extends ServiceProvider
 
         $this->app->singleton(DashboardAuthorizer::class);
         $this->app->singleton(ElasticsearchClient::class);
+        $this->app->singleton(HealthAnalyzer::class);
         $this->app->singleton(MetricsCollector::class);
     }
 
