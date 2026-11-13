@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Add read-only per-index indexing statistics for indexing, deletion, no-op update, and throttling counters, with primary and total comparisons.
+
+
 ## [0.6.0] - 2026-11-13
 
 - Add a dedicated node performance history page with per-node CPU, JVM heap, filesystem, search/indexing rate, and thread-pool charts.
