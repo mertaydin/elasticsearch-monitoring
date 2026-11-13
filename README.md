@@ -74,7 +74,7 @@ Turkish (`tr`), English (`en`), Simplified Chinese (`zh_CN`), Hindi (`hi`), Span
 
 ## Security
 
-Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features.
+Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features. Index details display ILM policy, phase, action, step, index age, rollover alias, and any failed-step information in read-only form.
 
 ## Development
 

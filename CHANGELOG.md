@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0] - 2026-11-13
+
+- Expand read-only ILM lifecycle and rollover visibility in index details.
+- Show lifecycle policy, phase, action, step, age, rollover alias, and failed-step information.
+- Correct index lifecycle metadata columns and index details response parsing.
+
+
 ## [0.2.0] - 2026-11-13
 
 - Add configurable cluster health scoring and active alerts for cluster, shard, CPU, JVM, disk, and thread-pool conditions.

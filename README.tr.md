@@ -57,7 +57,7 @@ Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel sch
 
 ## Güvenlik ve salt okunur çalışma
 
-Paket Elasticsearch üzerinde hiçbir veri veya yapılandırma değişikliği yapmaz. İndeks, mapping, settings, shard veya ILM politikalarını değiştiren bir özellik içermez.
+Paket Elasticsearch üzerinde hiçbir veri veya yapılandırma değişikliği yapmaz. İndeks, mapping, settings, shard veya ILM politikalarını değiştiren bir özellik içermez. İndeks detaylarında ILM politikası, aşama, işlem, adım, indeks yaşı, rollover alias ve varsa hata adımı salt okunur olarak görüntülenir.
 
 ## Lisans
 

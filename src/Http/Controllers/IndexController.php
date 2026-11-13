@@ -74,6 +74,7 @@ class IndexController
                     'data_stream' => $dataStreams[$name] ?? null,
                     'lifecycle_status' => is_array($lifecycle) ? ((bool) ($lifecycle['managed'] ?? false) ? 'managed' : 'unmanaged') : '—',
                     'lifecycle_phase' => is_array($lifecycle) ? (string) ($lifecycle['phase'] ?? '—') : '—',
+                    'lifecycle_policy' => is_array($lifecycle) ? (string) ($lifecycle['policy'] ?? '—') : '—',
                 ];
             }, array_filter($rows, 'is_array'));
 
@@ -93,18 +94,38 @@ class IndexController
             $mapping = $this->client->request($encodedIndex.'/_mapping');
             $settings = $this->client->request($encodedIndex.'/_settings?include_defaults=true&flat_settings=true');
 
-            $lifecycle = null;
+            $indexSettings = (array) data_get($settings, $index.'.settings', []);
+            $lifecycleResponse = null;
             try {
-                $lifecycle = $this->client->request('_ilm/explain/'.$encodedIndex);
+                $lifecycleResponse = $this->client->request('_ilm/explain/'.$encodedIndex);
             } catch (Throwable) {
                 // ILM may be disabled or unavailable for the current user.
             }
 
+            // Elasticsearch wraps explain responses in an "indices" object.
+            $lifecycle = is_array($lifecycleResponse)
+                ? (array) data_get($lifecycleResponse, 'indices.'.$index, data_get($lifecycleResponse, $index, []))
+                : [];
+            $policy = data_get($indexSettings, 'index.lifecycle.name');
+            $rolloverAlias = data_get($indexSettings, 'index.lifecycle.rollover_alias');
+
             return response()->json([
                 'index' => $index,
                 'mapping' => $mapping[$index]['mappings'] ?? $mapping,
-                'settings' => $settings[$index]['settings'] ?? $settings,
-                'lifecycle' => $lifecycle[$index] ?? null,
+                'settings' => $indexSettings,
+                'lifecycle' => [
+                    'managed' => (bool) data_get($lifecycle, 'managed', false),
+                    'policy' => data_get($lifecycle, 'policy', $policy),
+                    'phase' => data_get($lifecycle, 'phase'),
+                    'action' => data_get($lifecycle, 'action'),
+                    'step' => data_get($lifecycle, 'step'),
+                    'age' => data_get($lifecycle, 'age'),
+                    'lifecycle_date' => data_get($lifecycle, 'lifecycle_date'),
+                    'rollover_alias' => $rolloverAlias,
+                    'failed_step' => data_get($lifecycle, 'failed_step'),
+                    'step_info' => data_get($lifecycle, 'step_info'),
+                    'explain' => $lifecycle,
+                ],
             ]);
         } catch (Throwable $exception) {
             return response()->json([
