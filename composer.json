@@ -11,21 +11,33 @@
     "illuminate/support": "^11.0 || ^12.0",
     "illuminate/view": "^11.0 || ^12.0"
   },
+  "require-dev": {
+    "larastan/larastan": "^2.9 || ^3.0",
+    "laravel/pint": "^1.0",
+    "orchestra/testbench": "^9.0 || ^10.0",
+    "phpunit/phpunit": "^11.0"
+  },
   "autoload": {
     "psr-4": {
-      "ElasticsearchMonitoring\\": "src/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "ElasticsearchMonitoring\\ElasticsearchMonitoringServiceProvider"
-      ]
+      "ElasticsearchMonitoring\\\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ElasticsearchMonitoring\\Tests\\": "tests/"
+      "ElasticsearchMonitoring\\\\Tests\\\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "analyse": "phpstan analyse --no-progress",
+    "format": "pint",
+    "pint-test": "pint --test"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ElasticsearchMonitoring\\\\ElasticsearchMonitoringServiceProvider"
+      ]
     }
   },
   "minimum-stability": "stable",
