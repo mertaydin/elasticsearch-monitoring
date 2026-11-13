@@ -134,4 +134,25 @@ class IndexController
             ], 502);
         }
     }
+
+    public function indexingStats(string $index): JsonResponse
+    {
+        try {
+            $encodedIndex = rawurlencode($index);
+            $response = $this->client->request($encodedIndex.'/_stats/indexing');
+            $indexStats = (array) (($response['indices'] ?? [])[$index] ?? []);
+
+            return response()->json([
+                'index' => $index,
+                'primaries' => (array) data_get($indexStats, 'primaries.indexing', []),
+                'total' => (array) data_get($indexStats, 'total.indexing', []),
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json([
+                'message' => 'Unable to retrieve index indexing statistics.',
+                'error' => $exception->getMessage(),
+            ], 502);
+        }
+    }
+
 }
