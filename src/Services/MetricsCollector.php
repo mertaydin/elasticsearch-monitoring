@@ -79,6 +79,7 @@ class MetricsCollector
                 'status' => data_get($responses, 'health.status'),
                 'number_of_nodes' => (int) data_get($responses, 'health.number_of_nodes', 0),
                 'active_shards' => (int) data_get($responses, 'health.active_shards', 0),
+                'active_primary_shards' => (int) data_get($responses, 'health.active_primary_shards', 0),
                 'unassigned_shards' => (int) data_get($responses, 'health.unassigned_shards', 0),
             ],
             'nodes' => $nodeCount,

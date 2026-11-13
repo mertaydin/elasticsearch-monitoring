@@ -43,7 +43,14 @@
         .hero h1{font-weight:800;letter-spacing:-.04em}.hero p{color:#d5d9f2}
         .hero .form-select{min-width:125px;background-color:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
         .hero .form-select option{color:#182238}.hero .btn{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.1)}
-        .metric-card,.chart-card{background:#fff;border:1px solid #e9edf4;border-radius:17px;box-shadow:0 5px 18px rgba(29,41,74,.035);height:100%}
+         .metric-card,.chart-card,.summary-card{background:#fff;border:1px solid #e9edf4;border-radius:17px;box-shadow:0 5px 18px rgba(29,41,74,.035);height:100%}
+        .summary-card{padding:17px 19px 9px;overflow:hidden;position:relative;min-height:164px}
+        .summary-label{font-size:.82rem;font-weight:600;color:#8992a6}
+        .summary-value{font-size:1.85rem;line-height:1.25;font-weight:750;letter-spacing:-.055em;color:#29334d;margin-top:7px;white-space:nowrap}
+        .summary-change{font-size:.72rem;font-weight:700;padding:4px 7px;border-radius:7px;background:#f1f4f9;color:#8b94a7;white-space:nowrap}
+        .summary-change.positive{background:#e5f8ee;color:#1aaf68}.summary-change.negative{background:#fff0ed;color:#e05d4b}
+        .summary-chart{height:58px;margin:7px -5px -2px}
+
         .metric-card{padding:18px 19px;transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(29,41,74,.08)}
         .metric-card small{font-weight:600;color:#778198}.metric-card strong{display:block;margin-top:12px;font-size:1.5rem;letter-spacing:-.04em}
         .chart-card{padding:20px}.chart-card h2{font-size:.95rem;font-weight:700}.chart-card .text-muted{font-size:.75rem}
@@ -76,6 +83,28 @@
     </div>
     <div id="alert" class="alert alert-warning d-none"></div>
     <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h6 fw-bold mb-0">{{ $uiText['overview'] }}</h2><small class="text-muted">● {{ $uiText['live'] }}</small></div>
+    <div class="row g-3 mb-4" id="summary-cards">
+        @foreach ([
+            ['id'=>'docs','label'=>$t('documents'),'unit'=>'','color'=>'#20b6a5'],
+            ['id'=>'active-shards','label'=>$t('active_shards'),'unit'=>'','color'=>'#3978b8'],
+            ['id'=>'unassigned','label'=>$t('unassigned_shards'),'unit'=>'','color'=>'#e39a36'],
+            ['id'=>'search-rate','label'=>$uiText['search_history'],'unit'=>' /s','color'=>'#20b6a5'],
+            ['id'=>'index-rate','label'=>$uiText['indexing_history'],'unit'=>' /s','color'=>'#3978b8'],
+            ['id'=>'cpu','label'=>$uiText['cpu'],'unit'=>'%','color'=>'#8064c8'],
+            ['id'=>'store-size','label'=>$t('store_size'),'unit'=>'','color'=>'#16a085'],
+        ] as $card)
+            <div class="col-12 col-sm-6 col-xl-3">
+                <div class="summary-card" style="--spark-color: {{ $card['color'] }}">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <span class="summary-label">{{ $card['label'] }}</span>
+                        <span class="summary-change" id="{{ $card['id'] }}-change">—</span>
+                    </div>
+                    <div class="summary-value" id="{{ $card['id'] }}">—</div>
+                    <div class="summary-chart" id="{{ $card['id'] }}-spark"></div>
+                </div>
+            </div>
+        @endforeach
+    </div>
     <div class="row g-3">
         @foreach ([
             'status' => 'status',
@@ -120,6 +149,7 @@ const labels = {
     available: @json($t('available')), cpu: @json($uiText['cpu']), storage: @json($t('store_size')), disk: @json($uiText['disk_history']), search: @json($uiText['search_history']), indexing: @json($uiText['indexing_history']), segments: @json($uiText['segments_history']), documents: @json($uiText['documents_history'])
 };
 const charts = {};
+const sparkCharts = {};
 function renderChart(id, options) {
     if (charts[id]) charts[id].destroy();
     charts[id] = new ApexCharts(document.querySelector(id), options);
@@ -142,8 +172,8 @@ async function loadMetrics() {
         set('status', (m.cluster?.status || 'unknown').toUpperCase());
         set('nodes', m.nodes);
         set('docs', Number(m.indices?.documents || 0).toLocaleString());
-        set('shards', m.cluster?.active_shards);
-        set('unassigned', m.cluster?.unassigned_shards);
+        set('active-shards', Number(m.cluster?.active_shards || 0).toLocaleString());
+        set('unassigned', Number(m.cluster?.unassigned_shards || 0).toLocaleString());
         set('rejected', m.thread_pool?.search_rejected);
         set('search-queue', m.thread_pool?.search_queue);
         set('write-queue', m.thread_pool?.write_queue);
@@ -151,8 +181,8 @@ async function loadMetrics() {
         set('index-count', m.indices?.count);
         const storeBytes = Number(m.indices?.store_size_bytes || 0);
         set('store-size', storeBytes >= 1073741824 ? (storeBytes / 1073741824).toFixed(2) + ' GB' : (storeBytes / 1048576).toFixed(1) + ' MB');
-        set('search-rate', m.rates?.search_per_second);
-        set('index-rate', m.rates?.indexing_per_second);
+        set('search-rate', m.rates?.search_per_second == null ? '—' : Number(m.rates.search_per_second).toFixed(2) + ' /s');
+        set('index-rate', m.rates?.indexing_per_second == null ? '—' : Number(m.rates.indexing_per_second).toFixed(2) + ' /s');
         set('cpu', m.cpu?.percent_average == null ? '—' : m.cpu.percent_average.toFixed(1) + '%');
         set('updated', labels.lastCollected + ': ' + payload.latest.collected_at);
         const used = Number(m.jvm?.heap_used_bytes || 0) / 1048576;
@@ -178,6 +208,34 @@ async function loadMetrics() {
         const primarySegmentPoints = history.map(point => [point.time, Number(point.metrics.indices?.segments_primaries || 0)]).filter(point => point[1] > 0);
         const primaryStoragePoints = history.map(point => [point.time, Number(point.metrics.indices?.primary_store_size_bytes || 0)]).filter(point => point[1] > 0);
         const documentPoints = history.map(point => [point.time, Number(point.metrics.indices?.documents || 0)]).filter(point => point[1] >= 0);
+        const sparkConfigs = [
+            {id:'docs',path:p=>Number(p.metrics.indices?.documents || 0),format:v=>Math.round(v).toLocaleString(),inverse:false},
+            {id:'active-shards',path:p=>Number(p.metrics.cluster?.active_shards || 0),format:v=>Math.round(v).toLocaleString(),inverse:false},
+            {id:'unassigned',path:p=>Number(p.metrics.cluster?.unassigned_shards || 0),format:v=>Math.round(v).toLocaleString(),inverse:true},
+            {id:'search-rate',path:p=>p.metrics.rates?.search_per_second,format:v=>Number(v).toFixed(2)+' /s',inverse:false},
+            {id:'index-rate',path:p=>p.metrics.rates?.indexing_per_second,format:v=>Number(v).toFixed(2)+' /s',inverse:false},
+            {id:'cpu',path:p=>p.metrics.cpu?.percent_average,format:v=>Number(v).toFixed(1)+'%',inverse:true},
+            {id:'store-size',path:p=>Number(p.metrics.indices?.store_size_bytes || 0),format:formatBytes,inverse:false}
+        ];
+        sparkConfigs.forEach(config=>{
+            const points=history.map(p=>[p.time,config.path(p)]).filter(p=>p[1]!==null&&p[1]!==undefined&&Number.isFinite(Number(p[1])));
+            const current=points.at(-1)?.[1], previous=points.at(-2)?.[1];
+            const change=document.getElementById(config.id+'-change');
+            if(current!==undefined&&previous!==undefined&&Number(previous)!==0){
+                const delta=((Number(current)-Number(previous))/Math.abs(Number(previous)))*100;
+                const good=config.inverse?delta<0:delta>0;
+                change.textContent=(delta>0?'↑ ':delta<0?'↓ ':'→ ')+Math.abs(delta).toFixed(1)+'%';
+                change.className='summary-change '+(delta===0?'':good?'positive':'negative');
+            }else{change.textContent='—';change.className='summary-change';}
+            if(sparkCharts[config.id])sparkCharts[config.id].destroy();
+            sparkCharts[config.id]=new ApexCharts(document.querySelector('#'+config.id+'-spark'),{
+                chart:{type:'area',height:58,sparkline:{enabled:true},toolbar:{show:false},animations:{enabled:false}},
+                series:[{data:points}],colors:[getComputedStyle(document.querySelector('#'+config.id+'-spark')).getPropertyValue('--spark-color').trim()||'#3978b8'],
+                stroke:{curve:'smooth',width:2},fill:{type:'gradient',gradient:{opacityFrom:.22,opacityTo:.015,stops:[0,100]}},
+                tooltip:{x:{show:false},y:{formatter:v=>config.format(Number(v))}},markers:{size:0},noData:{text:''}
+            });
+            sparkCharts[config.id].render();
+        });
         const chartBase = {
             chart:{type:'area',height:270,toolbar:{show:false},zoom:{enabled:false}},
             dataLabels:{enabled:false},stroke:{curve:'smooth',width:2.5},

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.5] - 2026-11-13
+
+- Add compact KPI cards with live values, change indicators, and sparkline trends for key cluster metrics.
+- Include active primary shard counts in collected cluster health metrics.
+
+
 ## [0.1.4] - 2026-11-13
 
 - Show primary and total shard storage and segment counts as separate chart series.
