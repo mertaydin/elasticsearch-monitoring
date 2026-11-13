@@ -93,7 +93,7 @@ class NodeHistoryTest extends TestCase
         $node = collect($payload['nodes'])->firstWhere('id', 'node-a');
 
         $this->assertNotNull($node);
-        $this->assertSame(30.0, $node['latest']['cpu_percent']);
+        $this->assertSame(30, $node['latest']['cpu_percent']);
         $this->assertSame(0.5, $node['latest']['search_per_second']);
         $this->assertSame(0.25, $node['latest']['indexing_per_second']);
         $this->assertCount(2, $node['history']);
