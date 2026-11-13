@@ -1,0 +1,33 @@
+{
+  "name": "mertaydin/elasticsearch-monitoring",
+  "description": "A Laravel dashboard and metric collector for Elasticsearch clusters.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "illuminate/console": "^11.0 || ^12.0",
+    "illuminate/database": "^11.0 || ^12.0",
+    "illuminate/http": "^11.0 || ^12.0",
+    "illuminate/support": "^11.0 || ^12.0",
+    "illuminate/view": "^11.0 || ^12.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "ElasticsearchMonitoring\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ElasticsearchMonitoring\\ElasticsearchMonitoringServiceProvider"
+      ]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ElasticsearchMonitoring\\Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
