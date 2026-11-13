@@ -137,7 +137,7 @@ class HealthAnalyzer
         float $critical,
         string $message
     ): void {
-        if ($value === null || !is_numeric($value)) {
+        if ($value === null || ! is_numeric($value)) {
             return;
         }
 
