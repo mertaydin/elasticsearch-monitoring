@@ -4,7 +4,6 @@ namespace ElasticsearchMonitoring\Services;
 
 use ElasticsearchMonitoring\Models\MetricSnapshot;
 use Illuminate\Support\Carbon;
-use Throwable;
 
 class MetricsCollector
 {
@@ -24,6 +23,19 @@ class MetricsCollector
         ];
 
         $metrics = $this->normalize($responses);
+        $previous = MetricSnapshot::query()->latest('collected_at')->first();
+
+        if ($previous !== null) {
+            $metrics['rates'] = $this->calculateRates(
+                (array) $previous->metrics,
+                $metrics,
+                $previous->collected_at,
+                now()
+            );
+        } else {
+            $metrics['rates'] = ['search_per_second' => null, 'indexing_per_second' => null];
+        }
+
         MetricSnapshot::query()->create([
             'collected_at' => Carbon::now(),
             'elasticsearch_version' => $this->client->version(),
@@ -38,15 +50,16 @@ class MetricsCollector
         return $metrics;
     }
 
-    /** @param array<string, mixed> $responses
-     *  @return array<string, mixed>
+    /**
+     * @param array<string, mixed> $responses
+     * @return array<string, mixed>
      */
     private function normalize(array $responses): array
     {
         $nodes = (array) data_get($responses, 'nodes.nodes', []);
-        $heapUsed = $heapMax = $cpu = $readOps = $writeOps = 0;
-        $search = $index = $docs = $shards = $queue = $rejected = 0;
-        $filesystemTotal = $filesystemAvailable = 0;
+        $heapUsed = $heapMax = $cpu = $search = $index = $docs = $shards = 0;
+        $searchQueue = $searchRejected = $bulkQueue = $bulkRejected = 0;
+        $filesystemTotal = $filesystemAvailable = $readOps = $writeOps = 0;
 
         foreach ($nodes as $node) {
             $heapUsed += (int) data_get($node, 'jvm.mem.heap_used_in_bytes', 0);
@@ -56,8 +69,10 @@ class MetricsCollector
             $index += (int) data_get($node, 'indices.indexing.index_total', 0);
             $docs += (int) data_get($node, 'indices.docs.count', 0);
             $shards += (int) data_get($node, 'indices.shard_stats.total_count', 0);
-            $queue += (int) data_get($node, 'thread_pool.search.queue', 0);
-            $rejected += (int) data_get($node, 'thread_pool.search.rejected', 0);
+            $searchQueue += (int) data_get($node, 'thread_pool.search.queue', 0);
+            $searchRejected += (int) data_get($node, 'thread_pool.search.rejected', 0);
+            $bulkQueue += (int) data_get($node, 'thread_pool.write.queue', data_get($node, 'thread_pool.bulk.queue', 0));
+            $bulkRejected += (int) data_get($node, 'thread_pool.write.rejected', data_get($node, 'thread_pool.bulk.rejected', 0));
             $filesystemTotal += (int) data_get($node, 'fs.total.total_in_bytes', 0);
             $filesystemAvailable += (int) data_get($node, 'fs.total.available_in_bytes', 0);
             $readOps += (int) data_get($node, 'fs.io_stats.total.read_operations', 0);
@@ -82,9 +97,33 @@ class MetricsCollector
                 'write_operations' => $writeOps,
             ],
             'indices' => ['documents' => $docs, 'shards' => $shards],
-            'thread_pool' => ['search_queue' => $queue, 'search_rejected' => $rejected],
+            'thread_pool' => [
+                'search_queue' => $searchQueue,
+                'search_rejected' => $searchRejected,
+                'write_queue' => $bulkQueue,
+                'write_rejected' => $bulkRejected,
+            ],
             'counters' => ['search_total' => $search, 'index_total' => $index],
             'collected_at' => now()->toIso8601String(),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $previous
+     * @param array<string, mixed> $current
+     * @return array<string, float|null>
+     */
+    private function calculateRates(array $previous, array $current, Carbon $previousAt, Carbon $currentAt): array
+    {
+        $seconds = max(0.001, (float) $previousAt->diffInMilliseconds($currentAt) / 1000);
+        $previousSearch = (int) data_get($previous, 'counters.search_total', 0);
+        $previousIndex = (int) data_get($previous, 'counters.index_total', 0);
+        $currentSearch = (int) data_get($current, 'counters.search_total', 0);
+        $currentIndex = (int) data_get($current, 'counters.index_total', 0);
+
+        return [
+            'search_per_second' => $currentSearch >= $previousSearch ? round(($currentSearch - $previousSearch) / $seconds, 2) : null,
+            'indexing_per_second' => $currentIndex >= $previousIndex ? round(($currentIndex - $previousIndex) / $seconds, 2) : null,
         ];
     }
 }
