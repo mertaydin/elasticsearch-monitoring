@@ -10,7 +10,7 @@ jobs:
     if: >-
       ${{ github.event.workflow_run.conclusion == 'success'
         && github.event.workflow_run.head_branch == 'main'
-        && startsWith(github.event.workflow_run.head_commit.message, 'Release ') }}
+        && startsWith(github.event.workflow_run.display_title, 'Release ') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
