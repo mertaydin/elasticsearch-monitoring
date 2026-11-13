@@ -104,6 +104,10 @@ class MetricsCollectorTest extends TestCase
         $this->assertSame(2048, $first['indices']['store_size_bytes']);
         $this->assertSame(1536, $first['indices']['primary_store_size_bytes']);
         $this->assertSame(4, $first['indices']['segments_total']);
+        $this->assertSame('healthy', $first['health']['status']);
+        $this->assertSame(100, $first['health']['score']);
+        $this->assertSame('node-1', $first['node_details'][0]['id']);
+        $this->assertSame(20, $first['node_details'][0]['cpu_percent']);
         $this->assertSame(3, $first['indices']['segments_primaries']);
         $this->assertSame(600, $first['filesystem']['used_bytes']);
         $this->assertSame(1, MetricSnapshot::query()->count());

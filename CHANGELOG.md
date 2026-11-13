@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0] - 2026-11-13
+
+- Add configurable cluster health scoring and active alerts for cluster, shard, CPU, JVM, disk, and thread-pool conditions.
+- Collect per-node resource, document, shard, and operation counters and show a node comparison table.
+- Keep Elasticsearch interactions strictly read-only.
+
+
 ## [0.1.9] - 2026-11-13
 
 - Add a LogViewer-style dashboard authorization callback through the ElasticsearchMonitoring facade.
