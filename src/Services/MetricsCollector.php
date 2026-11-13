@@ -7,7 +7,11 @@ use ElasticsearchMonitoring\Models\MetricSnapshot;
 
 class MetricsCollector
 {
-    public function __construct(private readonly ElasticsearchClient $client, private readonly HealthAnalyzer $healthAnalyzer) {}
+    public function __construct(
+        private readonly ElasticsearchClient $client,
+        private readonly HealthAnalyzer $healthAnalyzer,
+        private readonly AlertHistoryRecorder $alertHistoryRecorder
+    ) {}
 
     /** @return array<string, mixed> */
     public function collect(): array
@@ -29,6 +33,7 @@ class MetricsCollector
             ? $this->calculateRates((array) $previous->metrics, $metrics, $previous->collected_at, now())
             : ['search_per_second' => null, 'indexing_per_second' => null];
         $metrics['health'] = $this->healthAnalyzer->analyze($metrics);
+        $this->alertHistoryRecorder->record($metrics['health']['alerts']);
 
         MetricSnapshot::query()->create([
             'collected_at' => now(),

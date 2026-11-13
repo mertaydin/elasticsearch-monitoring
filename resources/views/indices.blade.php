@@ -33,7 +33,7 @@
 <body>
 <main class="container-fluid page py-4 px-3 px-lg-4">
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
-        <div><div class="d-flex align-items-center gap-2 mb-2"><a href="{{ route('elasticsearch-monitoring.index', ['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">← {{ $text['back'] }}</a><a href="{{ route('elasticsearch-monitoring.data-streams', ['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">Data Streams</a></div><h1 class="h3 fw-bold mb-1">{{ $text['title'] }}</h1><p class="text-secondary mb-0">{{ $text['description'] }}</p></div>
+        <div><div class="d-flex align-items-center gap-2 mb-2"><a href="{{ route('elasticsearch-monitoring.index', ['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">← {{ $text['back'] }}</a><a href="{{ route('elasticsearch-monitoring.data-streams', ['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">Data Streams</a><a href="{{ route('elasticsearch-monitoring.alerts', ['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">{{ $locale === 'tr' ? 'Alarm Geçmişi' : 'Alert History' }}</a></div><h1 class="h3 fw-bold mb-1">{{ $text['title'] }}</h1><p class="text-secondary mb-0">{{ $text['description'] }}</p></div>
         <button class="btn btn-success" id="reload">↻ {{ $text['reload'] }}</button>
     </div>
     <div class="panel toolbar mb-3">

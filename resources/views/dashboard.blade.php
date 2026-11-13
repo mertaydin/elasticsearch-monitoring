@@ -101,6 +101,7 @@
                 </select>
             </form>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>\n            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.data-streams', ['locale' => $locale]) }}">Data Streams</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarm Geçmişi' : 'Alert History' }}</a>
             <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
         </div>
     </div>
