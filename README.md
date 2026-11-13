@@ -10,6 +10,8 @@
 
 A Laravel package for monitoring Elasticsearch clusters with metric collection and a lightweight dashboard.
 
+**Read-only by design:** the package only reads Elasticsearch metrics, index metadata, mappings, settings, and lifecycle information. It never creates, updates, closes, or deletes indices, and never changes mappings, settings, shard allocation, or ILM policies.
+
 ## Requirements
 
 - PHP 8.2+ for Laravel 12; PHP 8.3+ for Laravel 13
@@ -60,7 +62,7 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 
 ## Metrics
 
-Cluster health, nodes, JVM heap, CPU, filesystem, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. Rates are available after at least two successful collections.
+Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Rates are available after at least two successful collections.
 
 ## Compatibility
 
@@ -72,7 +74,7 @@ Turkish (`tr`), English (`en`), Simplified Chinese (`zh_CN`), Hindi (`hi`), Span
 
 ## Security
 
-Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production.
+Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features.
 
 ## Development
 

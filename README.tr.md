@@ -10,6 +10,8 @@
 
 Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
+**Tasarım gereği salt okunurdur:** paket yalnızca Elasticsearch metriklerini, indeks metaverilerini, mapping, settings ve lifecycle bilgilerini okur. İndeks oluşturmaz, güncellemez, kapatmaz veya silmez; mapping, settings, shard dağılımı ya da ILM politikalarını değiştirmez.
+
 ## Kurulum
 
 ```bash
@@ -49,9 +51,13 @@ public function boot(): void
 
 Callback tanımlamazsanız mevcut davranış korunur; varsayılan `web,auth` middleware'i oturum açmış kullanıcıları kabul eder. Callback'iniz kimlik doğrulamayı da kendisi yapmıyorsa `auth` middleware'ini kaldırmayın.
 
-Küme sağlığı, node, JVM heap, CPU, dosya sistemi, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir.
+Küme sağlık puanı, aktif uyarılar, node bazında CPU/JVM/disk kullanımı, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. Uyarı eşikleri paket yapılandırmasındaki `alerts.thresholds` altında değiştirilebilir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir.
 
 Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
+
+## Güvenlik ve salt okunur çalışma
+
+Paket Elasticsearch üzerinde hiçbir veri veya yapılandırma değişikliği yapmaz. İndeks, mapping, settings, shard veya ILM politikalarını değiştiren bir özellik içermez.
 
 ## Lisans
 
