@@ -75,15 +75,15 @@ function render(){
     const q=document.getElementById('search').value.toLowerCase();
     const filtered=allIndices.filter(x=>x.name.toLowerCase().includes(q));
     document.getElementById('count').textContent=number(filtered.length)+' / '+number(allIndices.length);
-    if(!filtered.length){rows.innerHTML='<tr><td colspan="11" class="text-center text-secondary py-5">'+labels.empty+'</td></tr>';return;}
+    if(!filtered.length){rows.innerHTML='<tr><td colspan="12" class="text-center text-secondary py-5">'+labels.empty+'</td></tr>';return;}
     rows.innerHTML=filtered.map(x=>'<tr><td class="ps-3"><a href="#" class="index-name" data-index="'+encodeURIComponent(x.name)+'">'+escapeHtml(x.name)+'</a></td><td><span class="health-dot health-'+escapeHtml(x.health)+'"></span>'+escapeHtml(x.health)+'</td><td>'+escapeHtml(x.status)+'</td><td>'+escapeHtml(x.lifecycle_status||'—')+'</td><td>'+escapeHtml(x.lifecycle_phase||'—')+'</td><td>'+escapeHtml(x.lifecycle_policy||'—')+'</td><td>'+number(x.primaries)+'</td><td>'+number(x.replicas)+'</td><td class="text-end">'+number(x.documents_count)+'</td><td class="text-end">'+bytes(x.storage_bytes)+'</td><td>'+escapeHtml(x.data_stream||'—')+'</td><td class="text-end pe-3"><button class="btn btn-sm btn-outline-primary" data-index="'+encodeURIComponent(x.name)+'">'+labels.details+'</button></td></tr>').join('');
 }
 function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 async function load(){
-    rows.innerHTML='<tr><td colspan="11" class="text-center text-secondary py-5">'+labels.loading+'</td></tr>';
+    rows.innerHTML='<tr><td colspan="12" class="text-center text-secondary py-5">'+labels.loading+'</td></tr>';
     const params=new URLSearchParams({include_hidden:document.getElementById('hidden').checked?'1':'0',include_rollup:document.getElementById('rollup').checked?'1':'0'});
     try{const r=await fetch(listUrl+'?'+params,{headers:{Accept:'application/json'}});const data=await r.json();if(!r.ok)throw new Error(data.error||labels.error);allIndices=data.indices||[];render();}
-    catch(e){rows.innerHTML='<tr><td colspan="11" class="text-center text-danger py-5">'+escapeHtml(e.message||labels.error)+'</td></tr>';}
+    catch(e){rows.innerHTML='<tr><td colspan="12" class="text-center text-danger py-5">'+escapeHtml(e.message||labels.error)+'</td></tr>';}
 }
 async function showDetails(name){
     document.getElementById('modalTitle').textContent=name;
