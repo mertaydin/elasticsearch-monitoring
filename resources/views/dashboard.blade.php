@@ -190,6 +190,7 @@ async function loadMetrics() {
     }
 }
 loadMetrics();
+setInterval(loadMetrics, 30000);
 </script>
 </body>
 </html>
