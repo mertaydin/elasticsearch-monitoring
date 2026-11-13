@@ -15,12 +15,12 @@
     ];
     $t = fn (string $key): string => __("elasticsearch-monitoring::messages.{$key}", [], $locale);
     $uiText = [
-        'tr' => ['overview'=>'Küme genel görünümü','performance'=>'Performans','storage'=>'Depolama','cpu'=>'CPU kullanımı','cpu_history'=>'CPU kullanım grafiği','cpu_hint'=>'Node başına ortalama CPU kullanımı','index_history'=>'İndeks depolama grafiği','index_hint'=>'İndeks verilerinin toplam boyutunun zaman içindeki değişimi','filesystem_hint'=>'Kullanılan ve kullanılabilir disk alanı','heap_hint'=>'JVM heap bellek kullanımı','rates_hint'=>'Saniyedeki arama ve indeksleme işlem sayısı','live'=>'Otomatik yenileme · 30 sn'],
-        'en' => ['overview'=>'Cluster overview','performance'=>'Performance','storage'=>'Storage','cpu'=>'CPU usage','cpu_history'=>'CPU utilization','cpu_hint'=>'Average CPU usage across nodes over time','index_history'=>'Index storage trend','index_hint'=>'Total Elasticsearch index data size over time','filesystem_hint'=>'Used and available disk capacity','heap_hint'=>'JVM heap memory utilization','rates_hint'=>'Search and indexing operations per second','live'=>'Auto refresh · 30 sec'],
-        'es' => ['overview'=>'Resumen del clúster','performance'=>'Rendimiento','storage'=>'Almacenamiento','cpu'=>'Uso de CPU','cpu_history'=>'Uso de CPU','cpu_hint'=>'Uso medio de CPU de los nodos a lo largo del tiempo','index_history'=>'Tendencia del almacenamiento de índices','index_hint'=>'Tamaño total de los datos de índices a lo largo del tiempo','filesystem_hint'=>'Espacio de disco usado y disponible','heap_hint'=>'Uso de memoria heap de JVM','rates_hint'=>'Búsquedas e indexaciones por segundo','live'=>'Actualización automática · 30 s'],
-        'zh_CN' => ['overview'=>'集群概览','performance'=>'性能','storage'=>'存储','cpu'=>'CPU 使用率','cpu_history'=>'CPU 使用趋势','cpu_hint'=>'各节点平均 CPU 使用率随时间的变化','index_history'=>'索引存储趋势','index_hint'=>'Elasticsearch 索引数据总量随时间的变化','filesystem_hint'=>'已用和可用磁盘空间','heap_hint'=>'JVM 堆内存使用率','rates_hint'=>'每秒搜索和索引操作数','live'=>'每 30 秒自动刷新'],
-        'hi' => ['overview'=>'क्लस्टर अवलोकन','performance'=>'प्रदर्शन','storage'=>'स्टोरेज','cpu'=>'CPU उपयोग','cpu_history'=>'CPU उपयोग का रुझान','cpu_hint'=>'समय के साथ नोड्स का औसत CPU उपयोग','index_history'=>'इंडेक्स स्टोरेज का रुझान','index_hint'=>'समय के साथ Elasticsearch इंडेक्स डेटा का कुल आकार','filesystem_hint'=>'उपयोग किया गया और उपलब्ध डिस्क स्थान','heap_hint'=>'JVM हीप मेमोरी उपयोग','rates_hint'=>'प्रति सेकंड खोज और इंडेक्सिंग ऑपरेशन','live'=>'हर 30 सेकंड में अपडेट'],
-        'ar' => ['overview'=>'نظرة عامة على المجموعة','performance'=>'الأداء','storage'=>'التخزين','cpu'=>'استخدام المعالج','cpu_history'=>'استخدام المعالج','cpu_hint'=>'متوسط استخدام المعالج عبر العقد بمرور الوقت','index_history'=>'اتجاه تخزين الفهارس','index_hint'=>'إجمالي حجم بيانات فهارس Elasticsearch بمرور الوقت','filesystem_hint'=>'مساحة القرص المستخدمة والمتاحة','heap_hint'=>'استخدام ذاكرة JVM','rates_hint'=>'عمليات البحث والفهرسة في الثانية','live'=>'تحديث تلقائي كل 30 ثانية'],
+        'tr' => ['overview'=>'Küme genel görünümü','performance'=>'Performans','storage'=>'Depolama','cpu'=>'CPU kullanımı','cpu_history'=>'CPU kullanım grafiği','cpu_hint'=>'Node başına ortalama CPU kullanımı','index_history'=>'İndeks depolama grafiği','index_hint'=>'İndeks verilerinin toplam boyutunun zaman içindeki değişimi','disk_history'=>'Disk kullanımı','disk_hint'=>'Kullanılan disk alanının zaman içindeki değişimi','search_history'=>'Arama hızı','indexing_history'=>'İndeksleme hızı','segments_history'=>'Segment sayısı','documents_history'=>'Belge sayısı','filesystem_hint'=>'Kullanılan ve kullanılabilir disk alanı','heap_hint'=>'JVM heap bellek kullanımı','rates_hint'=>'Saniyedeki arama ve indeksleme işlem sayısı','live'=>'Otomatik yenileme · 30 sn'],
+        'en' => ['overview'=>'Cluster overview','performance'=>'Performance','storage'=>'Storage','cpu'=>'CPU usage','cpu_history'=>'CPU utilization','cpu_hint'=>'Average CPU usage across nodes over time','index_history'=>'Index storage trend','index_hint'=>'Total Elasticsearch index data size over time','disk_history'=>'Disk usage','disk_hint'=>'Filesystem space in use over time','search_history'=>'Search rate','indexing_history'=>'Indexing rate','segments_history'=>'Segment count','documents_history'=>'Document count','filesystem_hint'=>'Used and available disk capacity','heap_hint'=>'JVM heap memory utilization','rates_hint'=>'Search and indexing operations per second','live'=>'Auto refresh · 30 sec'],
+        'es' => ['overview'=>'Resumen del clúster','performance'=>'Rendimiento','storage'=>'Almacenamiento','cpu'=>'Uso de CPU','cpu_history'=>'Uso de CPU','cpu_hint'=>'Uso medio de CPU de los nodos a lo largo del tiempo','index_history'=>'Tendencia del almacenamiento de índices','index_hint'=>'Tamaño total de los datos de índices a lo largo del tiempo','disk_history'=>'Uso del disco','disk_hint'=>'Espacio del sistema de archivos utilizado a lo largo del tiempo','search_history'=>'Tasa de búsqueda','indexing_history'=>'Tasa de indexación','segments_history'=>'Número de segmentos','documents_history'=>'Número de documentos','filesystem_hint'=>'Espacio de disco usado y disponible','heap_hint'=>'Uso de memoria heap de JVM','rates_hint'=>'Búsquedas e indexaciones por segundo','live'=>'Actualización automática · 30 s'],
+        'zh_CN' => ['overview'=>'集群概览','performance'=>'性能','storage'=>'存储','cpu'=>'CPU 使用率','cpu_history'=>'CPU 使用趋势','cpu_hint'=>'各节点平均 CPU 使用率随时间的变化','index_history'=>'索引存储趋势','index_hint'=>'Elasticsearch 索引数据总量随时间的变化','disk_history'=>'磁盘使用量','disk_hint'=>'文件系统已用空间随时间的变化','search_history'=>'搜索速率','indexing_history'=>'索引速率','segments_history'=>'分段数量','documents_history'=>'文档数量','filesystem_hint'=>'已用和可用磁盘空间','heap_hint'=>'JVM 堆内存使用率','rates_hint'=>'每秒搜索和索引操作数','live'=>'每 30 秒自动刷新'],
+        'hi' => ['overview'=>'क्लस्टर अवलोकन','performance'=>'प्रदर्शन','storage'=>'स्टोरेज','cpu'=>'CPU उपयोग','cpu_history'=>'CPU उपयोग का रुझान','cpu_hint'=>'समय के साथ नोड्स का औसत CPU उपयोग','index_history'=>'इंडेक्स स्टोरेज का रुझान','index_hint'=>'समय के साथ Elasticsearch इंडेक्स डेटा का कुल आकार','disk_history'=>'डिस्क उपयोग','disk_hint'=>'समय के साथ उपयोग किया गया फ़ाइल सिस्टम स्थान','search_history'=>'खोज दर','indexing_history'=>'इंडेक्सिंग दर','segments_history'=>'सेगमेंट की संख्या','documents_history'=>'दस्तावेज़ों की संख्या','filesystem_hint'=>'उपयोग किया गया और उपलब्ध डिस्क स्थान','heap_hint'=>'JVM हीप मेमोरी उपयोग','rates_hint'=>'प्रति सेकंड खोज और इंडेक्सिंग ऑपरेशन','live'=>'हर 30 सेकंड में अपडेट'],
+        'ar' => ['overview'=>'نظرة عامة على المجموعة','performance'=>'الأداء','storage'=>'التخزين','cpu'=>'استخدام المعالج','cpu_history'=>'استخدام المعالج','cpu_hint'=>'متوسط استخدام المعالج عبر العقد بمرور الوقت','index_history'=>'اتجاه تخزين الفهارس','index_hint'=>'إجمالي حجم بيانات فهارس Elasticsearch بمرور الوقت','disk_history'=>'استخدام القرص','disk_hint'=>'مساحة نظام الملفات المستخدمة بمرور الوقت','search_history'=>'معدل البحث','indexing_history'=>'معدل الفهرسة','segments_history'=>'عدد المقاطع','documents_history'=>'عدد المستندات','filesystem_hint'=>'مساحة القرص المستخدمة والمتاحة','heap_hint'=>'استخدام ذاكرة JVM','rates_hint'=>'عمليات البحث والفهرسة في الثانية','live'=>'تحديث تلقائي كل 30 ثانية'],
     ][$locale] ?? [];
 
 @endphp
@@ -99,7 +99,11 @@
         @endforeach
         <div class="col-md-6"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
         <div class="col-md-6"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
-        <div class="col-12"><div class="chart-card"><h2>{{ $t('rates') }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="rates"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['search_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="search-chart"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['indexing_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="indexing-chart"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['disk_history'] }}</h2><p class="text-muted">{{ $uiText['disk_hint'] }}</p><div id="disk-chart"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['segments_history'] }}</h2><p class="text-muted">{{ $uiText['segments_history'] }}</p><div id="segments-chart"></div></div></div>
+        <div class="col-12"><div class="chart-card"><h2>{{ $uiText['documents_history'] }}</h2><p class="text-muted">{{ $uiText['documents_history'] }}</p><div id="documents-chart"></div></div></div>
         <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['cpu_history'] }}</h2><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
         <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['index_history'] }}</h2><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
     </div>
@@ -113,7 +117,7 @@ const labels = {
     loadError: @json($t('load_error')),
     heapUsed: @json($t('heap_used')),
     used: @json($t('used')),
-    available: @json($t('available')), cpu: @json($uiText['cpu']), storage: @json($t('store_size'))
+    available: @json($t('available')), cpu: @json($uiText['cpu']), storage: @json($t('store_size')), disk: @json($uiText['disk_history']), search: @json($uiText['search_history']), indexing: @json($uiText['indexing_history']), segments: @json($uiText['segments_history']), documents: @json($uiText['documents_history'])
 };
 const charts = {};
 function renderChart(id, options) {
@@ -167,6 +171,11 @@ async function loadMetrics() {
         }));
         const cpuPoints = history.map(point => [point.time, point.metrics.cpu?.percent_average]).filter(point => point[1] !== null && point[1] !== undefined);
         const storagePoints = history.map(point => [point.time, Number(point.metrics.indices?.store_size_bytes || 0)]).filter(point => point[1] > 0);
+        const diskPoints = history.map(point => [point.time, Number(point.metrics.filesystem?.used_bytes ?? ((point.metrics.filesystem?.total_bytes || 0) - (point.metrics.filesystem?.available_bytes || 0)))]).filter(point => point[1] > 0);
+        const searchPoints = history.map(point => [point.time, point.metrics.rates?.search_per_second]).filter(point => point[1] !== null && point[1] !== undefined);
+        const indexingPoints = history.map(point => [point.time, point.metrics.rates?.indexing_per_second]).filter(point => point[1] !== null && point[1] !== undefined);
+        const segmentPoints = history.map(point => [point.time, Number(point.metrics.indices?.segments_total || 0)]).filter(point => point[1] > 0);
+        const documentPoints = history.map(point => [point.time, Number(point.metrics.indices?.documents || 0)]).filter(point => point[1] >= 0);
         const chartBase = {
             chart:{type:'area',height:270,toolbar:{show:false},zoom:{enabled:false}},
             dataLabels:{enabled:false},stroke:{curve:'smooth',width:2.5},
@@ -180,10 +189,11 @@ async function loadMetrics() {
         const formatBytes = value => value >= 1073741824 ? (value/1073741824).toFixed(2)+' GB' : (value/1048576).toFixed(1)+' MB';
         renderChart('#storage-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.storage,data:storagePoints}],
             yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
-        renderChart('#rates', {chart:{type:'line',height:280,toolbar:{show:false}},series:[
-            {name:'Search / sec',data:ratePoints.map(point => [point.time, point.search])},
-            {name:'Indexing / sec',data:ratePoints.map(point => [point.time, point.indexing])}
-        ],xaxis:{type:'datetime'},stroke:{curve:'smooth',width:2},noData:{text:'—'}});
+        renderChart('#search-chart',{...chartBase,colors:['#20b6a5'],series:[{name:labels.search,data:searchPoints}],yaxis:{min:0},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(2)+' /s'}}});
+        renderChart('#indexing-chart',{...chartBase,colors:['#3978b8'],series:[{name:labels.indexing,data:indexingPoints}],yaxis:{min:0},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(2)+' /s'}}});
+        renderChart('#disk-chart',{...chartBase,colors:['#e39a36'],series:[{name:labels.disk,data:diskPoints}],yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
+        renderChart('#segments-chart',{...chartBase,colors:['#8064c8'],series:[{name:labels.segments,data:segmentPoints}],yaxis:{min:0,labels:{formatter:v=>Math.round(v)}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
+        renderChart('#documents-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.documents,data:documentPoints}],yaxis:{labels:{formatter:v=>v.toLocaleString()}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
     } catch (error) {
         alert.textContent = labels.loadError + ': ' + error.message;
         alert.classList.remove('d-none');

@@ -18,6 +18,7 @@ class MetricsCollector
             'health' => $this->client->request('_cluster/health'),
             'nodes' => $this->client->request('_nodes/stats/jvm,process,os,fs,thread_pool,indices'),
             'cluster' => $this->client->request('_cluster/stats'),
+            'indices_stats' => $this->client->request('_stats/docs,store,segments'),
         ];
 
         $metrics = $this->normalize($responses);
@@ -86,6 +87,7 @@ class MetricsCollector
             'filesystem' => [
                 'total_bytes' => $filesystemTotal,
                 'available_bytes' => $filesystemAvailable,
+                'used_bytes' => max(0, $filesystemTotal - $filesystemAvailable),
                 'read_operations' => $readOps,
                 'write_operations' => $writeOps,
             ],
@@ -93,7 +95,10 @@ class MetricsCollector
                 'count' => (int) data_get($responses, 'cluster.indices.count', 0),
                 'documents' => (int) data_get($responses, 'cluster.indices.docs.count', $docs),
                 'shards' => (int) data_get($responses, 'cluster.indices.shards.total', $shards),
-                'store_size_bytes' => (int) data_get($responses, 'cluster.indices.store.size_in_bytes', 0),
+                'store_size_bytes' => (int) data_get($responses, 'indices_stats._all.total.store.size_in_bytes', data_get($responses, 'cluster.indices.store.size_in_bytes', 0)),
+                'primary_store_size_bytes' => (int) data_get($responses, 'indices_stats._all.primaries.store.size_in_bytes', 0),
+                'segments_total' => (int) data_get($responses, 'indices_stats._all.total.segments.count', 0),
+                'segments_primaries' => (int) data_get($responses, 'indices_stats._all.primaries.segments.count', 0),
             ],
             'thread_pool' => [
                 'search_queue' => $searchQueue,
