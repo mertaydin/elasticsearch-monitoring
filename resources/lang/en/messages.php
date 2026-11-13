@@ -20,4 +20,10 @@ return [
     'heap_used' => 'Heap used %',
     'used' => 'Used',
     'available' => 'Available',
+    'search_queue' => 'Search queue',
+    'write_queue' => 'Write queue',
+    'write_rejections' => 'Write rejections',
+    'index_count' => 'Indices',
+    'store_size' => 'Index storage',
+    'rates' => 'Operations per second',
 ];

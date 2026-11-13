@@ -7,4 +7,10 @@ return [
     'search_rejections' => 'عمليات البحث المرفوضة', 'heap' => 'ذاكرة JVM', 'filesystem' => 'نظام الملفات',
     'no_metrics' => 'لا توجد مقاييس بعد. شغّل php artisan elasticsearch:collect.', 'last_collected' => 'آخر جمع',
     'load_error' => 'تعذّر تحميل بيانات المراقبة', 'heap_used' => 'استخدام الذاكرة %', 'used' => 'مستخدم', 'available' => 'متاح',
+    'search_queue' => 'قائمة انتظار البحث',
+    'write_queue' => 'قائمة انتظار الكتابة',
+    'write_rejections' => 'حالات رفض الكتابة',
+    'index_count' => 'الفهارس',
+    'store_size' => 'تخزين الفهارس',
+    'rates' => 'العمليات في الثانية',
 ];

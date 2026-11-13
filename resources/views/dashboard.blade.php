@@ -32,6 +32,11 @@
             'index-rate' => 'index_rate',
             'unassigned' => 'unassigned_shards',
             'rejected' => 'search_rejections',
+            'search-queue' => 'search_queue',
+            'write-queue' => 'write_queue',
+            'write-rejected' => 'write_rejections',
+            'index-count' => 'index_count',
+            'store-size' => 'store_size',
             'cpu' => 'cpu',
         ] as $id => $label)
             <div class="col-md-4 col-lg-3">
@@ -40,6 +45,7 @@
         @endforeach
         <div class="col-md-6"><div class="card card-body"><h2 class="h6">{{ $t('heap') }}</h2><div id="heap"></div></div></div>
         <div class="col-md-6"><div class="card card-body"><h2 class="h6">{{ $t('filesystem') }}</h2><div id="filesystem"></div></div></div>
+        <div class="col-12"><div class="card card-body"><h2 class="h6">{{ $t('rates') }}</h2><div id="rates"></div></div></div>
     </div>
     <p class="small text-muted mt-3" id="updated"></p>
 </main>
@@ -79,6 +85,12 @@ async function loadMetrics() {
         set('shards', m.cluster?.active_shards);
         set('unassigned', m.cluster?.unassigned_shards);
         set('rejected', m.thread_pool?.search_rejected);
+        set('search-queue', m.thread_pool?.search_queue);
+        set('write-queue', m.thread_pool?.write_queue);
+        set('write-rejected', m.thread_pool?.write_rejected);
+        set('index-count', m.indices?.count);
+        const storeBytes = Number(m.indices?.store_size_bytes || 0);
+        set('store-size', storeBytes >= 1073741824 ? (storeBytes / 1073741824).toFixed(2) + ' GB' : (storeBytes / 1048576).toFixed(1) + ' MB');
         set('search-rate', m.rates?.search_per_second);
         set('index-rate', m.rates?.indexing_per_second);
         set('cpu', m.cpu?.percent_average == null ? '—' : m.cpu.percent_average.toFixed(1) + '%');
@@ -89,6 +101,15 @@ async function loadMetrics() {
         const available = Number(m.filesystem?.available_bytes || 0);
         renderChart('#heap', {chart:{type:'radialBar',height:230},series:[max ? Math.round(used/max*100) : 0],labels:[labels.heapUsed]});
         renderChart('#filesystem', {chart:{type:'donut',height:230},series:[Math.max(0,total-available),available],labels:[labels.used,labels.available],legend:{position:'bottom'}});
+        const ratePoints = (payload.history || []).filter(point => point.metrics?.rates).map(point => ({
+            time: new Date(point.collected_at).getTime(),
+            search: point.metrics.rates.search_per_second,
+            indexing: point.metrics.rates.indexing_per_second
+        }));
+        renderChart('#rates', {chart:{type:'line',height:280,toolbar:{show:false}},series:[
+            {name:'Search / sec',data:ratePoints.map(point => [point.time, point.search])},
+            {name:'Indexing / sec',data:ratePoints.map(point => [point.time, point.indexing])}
+        ],xaxis:{type:'datetime'},stroke:{curve:'smooth',width:2},noData:{text:'—'}});
     } catch (error) {
         alert.textContent = labels.loadError + ': ' + error.message;
         alert.classList.remove('d-none');

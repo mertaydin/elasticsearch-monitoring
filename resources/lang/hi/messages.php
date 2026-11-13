@@ -7,4 +7,10 @@ return [
     'search_rejections' => 'खोज अस्वीकृतियां', 'heap' => 'JVM हीप', 'filesystem' => 'फ़ाइल सिस्टम',
     'no_metrics' => 'अभी तक कोई मेट्रिक नहीं। php artisan elasticsearch:collect चलाएं।', 'last_collected' => 'अंतिम संग्रह',
     'load_error' => 'निगरानी डेटा लोड नहीं हो सका', 'heap_used' => 'हीप उपयोग %', 'used' => 'उपयोग किया गया', 'available' => 'उपलब्ध',
+    'search_queue' => 'खोज कतार',
+    'write_queue' => 'लेखन कतार',
+    'write_rejections' => 'लेखन अस्वीकृतियां',
+    'index_count' => 'इंडेक्स',
+    'store_size' => 'इंडेक्स स्टोरेज',
+    'rates' => 'प्रति सेकंड ऑपरेशन',
 ];

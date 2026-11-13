@@ -20,4 +20,10 @@ return [
     'heap_used' => 'Heap kullanımı %',
     'used' => 'Kullanılan',
     'available' => 'Boş',
+    'search_queue' => 'Arama kuyruğu',
+    'write_queue' => 'Yazma kuyruğu',
+    'write_rejections' => 'Yazma reddi',
+    'index_count' => 'İndeks sayısı',
+    'store_size' => 'İndeks depolama',
+    'rates' => 'Saniyedeki işlemler',
 ];
