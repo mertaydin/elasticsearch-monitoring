@@ -57,6 +57,7 @@ class DataStreamTest extends TestCase
             if (str_contains($request->url(), '_ilm/explain/')) {
                 return Http::response(['indices' => ['.ds-app-logs-2026.11.13-000002' => ['managed' => true, 'policy' => 'logs-policy', 'phase' => 'hot', 'action' => 'rollover', 'step' => 'check-rollover-ready']]]);
             }
+
             return Http::response([], 404);
         });
 
