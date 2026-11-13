@@ -30,7 +30,7 @@ class MetricsCollector
             : ['search_per_second' => null, 'indexing_per_second' => null];
 
         MetricSnapshot::query()->create([
-            'collected_at' => Carbon::now(),
+            'collected_at' => now(),
             'elasticsearch_version' => $this->client->version(),
             'metrics' => $metrics,
         ]);
