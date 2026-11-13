@@ -1,12 +1,11 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Tests\\Feature;
+namespace ElasticsearchMonitoring\Tests\Feature;
 
-use ElasticsearchMonitoring\\Http\\Controllers\\IndexController;
-use ElasticsearchMonitoring\\Services\\ElasticsearchClient;
-use ElasticsearchMonitoring\\Tests\\TestCase;
-use Illuminate\\Http\\Request;
-use Illuminate\\Support\\Facades\\Http;
+use ElasticsearchMonitoring\Http\Controllers\IndexController;
+use ElasticsearchMonitoring\Tests\TestCase;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class IndexManagementTest extends TestCase
 {
