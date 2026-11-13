@@ -2,14 +2,12 @@
 
 namespace ElasticsearchMonitoring\Services;
 
-use ElasticsearchMonitoring\Models\MetricSnapshot;
 use Carbon\CarbonInterface;
+use ElasticsearchMonitoring\Models\MetricSnapshot;
 
 class MetricsCollector
 {
-    public function __construct(private readonly ElasticsearchClient $client)
-    {
-    }
+    public function __construct(private readonly ElasticsearchClient $client) {}
 
     /** @return array<string, mixed> */
     public function collect(): array
@@ -45,7 +43,7 @@ class MetricsCollector
     }
 
     /**
-     * @param array<string, mixed> $responses
+     * @param  array<string, mixed>  $responses
      * @return array<string, mixed>
      */
     private function normalize(array $responses): array
@@ -109,8 +107,8 @@ class MetricsCollector
     }
 
     /**
-     * @param array<string, mixed> $previous
-     * @param array<string, mixed> $current
+     * @param  array<string, mixed>  $previous
+     * @param  array<string, mixed>  $current
      * @return array<string, float|null>
      */
     private function calculateRates(array $previous, array $current, CarbonInterface $previousAt, CarbonInterface $currentAt): array
