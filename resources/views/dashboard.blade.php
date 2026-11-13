@@ -208,6 +208,7 @@ async function loadMetrics() {
         const primarySegmentPoints = history.map(point => [point.time, Number(point.metrics.indices?.segments_primaries || 0)]).filter(point => point[1] > 0);
         const primaryStoragePoints = history.map(point => [point.time, Number(point.metrics.indices?.primary_store_size_bytes || 0)]).filter(point => point[1] > 0);
         const documentPoints = history.map(point => [point.time, Number(point.metrics.indices?.documents || 0)]).filter(point => point[1] >= 0);
+        const formatBytes = value => value >= 1073741824 ? (value/1073741824).toFixed(2)+' GB' : (value/1048576).toFixed(1)+' MB';
         const sparkConfigs = [
             {id:'docs',path:p=>Number(p.metrics.indices?.documents || 0),format:v=>Math.round(v).toLocaleString(),inverse:false},
             {id:'active-shards',path:p=>Number(p.metrics.cluster?.active_shards || 0),format:v=>Math.round(v).toLocaleString(),inverse:false},
@@ -246,7 +247,6 @@ async function loadMetrics() {
         renderChart('#cpu-chart',{...chartBase,colors:['#635bff'],series:[{name:labels.cpu,data:cpuPoints}],
             yaxis:{min:0,max:100,labels:{formatter:v=>v.toFixed(0)+'%'}},
             tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(1)+'%'}}});
-        const formatBytes = value => value >= 1073741824 ? (value/1073741824).toFixed(2)+' GB' : (value/1048576).toFixed(1)+' MB';
         renderChart('#storage-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.storage,data:storagePoints},{name:'Primary Store',data:primaryStoragePoints}],
             yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
         renderChart('#search-chart',{...chartBase,colors:['#20b6a5'],series:[{name:labels.search,data:searchPoints}],yaxis:{min:0},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(2)+' /s'}}});

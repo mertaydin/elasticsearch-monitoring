@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.6] - 2026-11-13
+
+- Fix dashboard metric loading by initializing the byte formatter before KPI sparkline charts.
+
+
 ## [0.1.5] - 2026-11-13
 
 - Add compact KPI cards with live values, change indicators, and sparkline trends for key cluster metrics.
