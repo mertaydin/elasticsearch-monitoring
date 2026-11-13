@@ -75,6 +75,13 @@ class MetricsCollectorTest extends TestCase
                 ]);
             }
 
+            if ($path === '/_stats/docs,store,segments') {
+                return Http::response(['_all' => [
+                    'primaries' => ['store' => ['size_in_bytes' => 1536], 'segments' => ['count' => 3]],
+                    'total' => ['store' => ['size_in_bytes' => 2048], 'segments' => ['count' => 4]],
+                ]]);
+            }
+
             if ($path === '/_cluster/stats') {
                 return Http::response(['indices' => [
                     'count' => 1,
@@ -95,6 +102,10 @@ class MetricsCollectorTest extends TestCase
         $this->assertSame(20.0, $first['cpu']['percent_average']);
         $this->assertSame(25, $first['indices']['documents']);
         $this->assertSame(2048, $first['indices']['store_size_bytes']);
+        $this->assertSame(1536, $first['indices']['primary_store_size_bytes']);
+        $this->assertSame(4, $first['indices']['segments_total']);
+        $this->assertSame(3, $first['indices']['segments_primaries']);
+        $this->assertSame(600, $first['filesystem']['used_bytes']);
         $this->assertSame(1, MetricSnapshot::query()->count());
 
         Carbon::setTestNow(Carbon::parse('2026-11-13 10:02:00'));
