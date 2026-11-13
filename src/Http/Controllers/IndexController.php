@@ -10,7 +10,12 @@ use Throwable;
 
 class IndexController
 {
-    public function __construct(private readonly ElasticsearchClient $client) {}
+    private readonly ElasticsearchClient $client;
+
+    public function __construct(ElasticsearchClient $client)
+    {
+        $this->client = $client;
+    }
 
     public function index(): View
     {
