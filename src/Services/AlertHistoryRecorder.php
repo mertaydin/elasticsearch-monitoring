@@ -47,7 +47,7 @@ class AlertHistoryRecorder
 
             foreach ($active as $code => $event) {
                 if (! in_array($code, $seen, true)) {
-                    $event->resolved_at = $now;
+                    $event->resolved_at = $now->toImmutable();
                     $event->save();
                 }
             }
