@@ -39,6 +39,14 @@ class IndexController
             ]);
             $rows = $this->client->request('_cat/indices?'.$query);
             $dataStreams = [];
+            $lifecycleIndices = [];
+
+            try {
+                $lifecycleResponse = $this->client->request('_ilm/explain');
+                $lifecycleIndices = (array) data_get($lifecycleResponse, 'indices', []);
+            } catch (Throwable) {
+                // ILM may be disabled or unavailable for users with restricted cluster privileges.
+            }
 
             try {
                 $streamResponse = $this->client->request('_data_stream');
@@ -52,15 +60,20 @@ class IndexController
             }
 
             $indices = array_map(static function (array $row) use ($dataStreams): array {
+                $name = (string) ($row['index'] ?? '');
+                $lifecycle = $lifecycleIndices[$name] ?? null;
+
                 return [
-                    'name' => (string) ($row['index'] ?? ''),
+                    'name' => $name,
                     'health' => (string) ($row['health'] ?? 'unknown'),
                     'status' => (string) ($row['status'] ?? 'unknown'),
                     'primaries' => (int) ($row['pri'] ?? 0),
                     'replicas' => (int) ($row['rep'] ?? 0),
                     'documents_count' => (int) ($row['docs.count'] ?? 0),
                     'storage_bytes' => (int) ($row['store.size'] ?? 0),
-                    'data_stream' => $dataStreams[(string) ($row['index'] ?? '')] ?? null,
+                    'data_stream' => $dataStreams[$name] ?? null,
+                    'lifecycle_status' => is_array($lifecycle) ? ((bool) ($lifecycle['managed'] ?? false) ? 'managed' : 'unmanaged') : '—',
+                    'lifecycle_phase' => is_array($lifecycle) ? (string) ($lifecycle['phase'] ?? '—') : '—',
                 ];
             }, array_filter($rows, 'is_array'));
 
