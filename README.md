@@ -39,7 +39,9 @@ ELASTICSEARCH_MONITORING_VERIFY=true
 
 Collect a snapshot with `php artisan elasticsearch:collect`.
 
-Dashboard: `/monitoring/elasticsearch`  \nIndex management: `/monitoring/elasticsearch/indices`  \nData Streams: `/monitoring/elasticsearch/data-streams`
+Dashboard: `/monitoring/elasticsearch`  
+Index management: `/monitoring/elasticsearch/indices`  
+Data Streams: `/monitoring/elasticsearch/data-streams`
 
 The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
