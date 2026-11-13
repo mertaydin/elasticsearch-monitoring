@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7] - 2026-11-13
+
+- Add an index management page with health, status, shard, document, storage, and data stream information.
+- Add per-index mapping, settings, and optional ILM lifecycle inspection.
+- Support filtering and optional inclusion of hidden and rollup indices.
+
+
 ## [0.1.6] - 2026-11-13
 
 - Fix dashboard metric loading by initializing the byte formatter before KPI sparkline charts.
