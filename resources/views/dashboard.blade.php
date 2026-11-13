@@ -1,5 +1,18 @@
 @php
-    $locale = config('elasticsearch-monitoring.dashboard.locale', 'en');
+    $availableLocales = config('elasticsearch-monitoring.dashboard.available_locales', ['tr', 'en']);
+    $defaultLocale = config('elasticsearch-monitoring.dashboard.locale', 'en');
+    $requestedLocale = request()->query('locale', request()->cookie('elasticsearch_monitoring_locale', $defaultLocale));
+    $locale = in_array($requestedLocale, $availableLocales, true)
+        ? $requestedLocale
+        : (in_array($defaultLocale, $availableLocales, true) ? $defaultLocale : 'en');
+    $languageNames = [
+        'tr' => 'Türkçe',
+        'en' => 'English',
+        'zh_CN' => '简体中文',
+        'hi' => 'हिन्दी',
+        'es' => 'Español',
+        'ar' => 'العربية',
+    ];
     $t = fn (string $key): string => __("elasticsearch-monitoring::messages.{$key}", [], $locale);
 @endphp
 <!doctype html>
@@ -17,9 +30,27 @@
 </head>
 <body class="bg-light">
 <main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
         <div><h1 class="h3 mb-1">{{ $t('title') }}</h1><p class="text-muted mb-0">{{ $t('subtitle') }}</p></div>
-        <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
+        <div class="d-flex align-items-center gap-2">
+            <form method="GET" action="{{ route('elasticsearch-monitoring.index') }}" class="d-flex align-items-center gap-2">
+                <label for="dashboard-locale" class="visually-hidden">Dashboard language</label>
+                <select
+                    id="dashboard-locale"
+                    name="locale"
+                    class="form-select form-select-sm"
+                    aria-label="Dashboard language"
+                    onchange="document.cookie = 'elasticsearch_monitoring_locale=' + encodeURIComponent(this.value) + '; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); this.form.submit()"
+                >
+                    @foreach ($availableLocales as $availableLocale)
+                        <option value="{{ $availableLocale }}" @selected($locale === $availableLocale)>
+                            {{ $languageNames[$availableLocale] ?? strtoupper($availableLocale) }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
+            <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
+        </div>
     </div>
     <div id="alert" class="alert alert-warning d-none"></div>
     <div class="row g-3">
