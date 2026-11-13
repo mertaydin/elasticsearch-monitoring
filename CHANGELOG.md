@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-11-13
+
+- Add a dashboard language selector with browser preference persistence.
+- Allow switching between the six bundled locales without editing configuration.
+
 ## [0.1.0] - 2026-11-13
 
 - Add Elasticsearch 8.18+ and 9.x version detection.
