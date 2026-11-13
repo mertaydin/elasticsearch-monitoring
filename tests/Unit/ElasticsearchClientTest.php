@@ -22,6 +22,35 @@ class ElasticsearchClientTest extends TestCase
         $this->assertSame('8.19.14', app(ElasticsearchClient::class)->version());
     }
 
+    public function test_it_accepts_the_minimum_supported_elasticsearch_eight_version(): void
+    {
+        Http::fake([
+            '*/' => Http::response([
+                'version' => ['number' => '8.18.0'],
+            ]),
+        ]);
+
+        app(ElasticsearchClient::class)->assertSupportedVersion();
+
+        $this->assertSame('8.18.0', app(ElasticsearchClient::class)->version());
+    }
+
+    public function test_it_sends_api_key_authorization_header(): void
+    {
+        config(['elasticsearch-monitoring.connection.api_key' => 'encoded-api-key']);
+
+        Http::fake([
+            '*' => Http::response(['ok' => true]),
+        ]);
+
+        app(ElasticsearchClient::class)->request('_cluster/health');
+
+        Http::assertSent(fn ($request): bool => $request->hasHeader(
+            'Authorization',
+            'ApiKey encoded-api-key'
+        ));
+    }
+
     public function test_it_accepts_elasticsearch_nine(): void
     {
         Http::fake([
