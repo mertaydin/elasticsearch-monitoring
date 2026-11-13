@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0] - 2026-11-13
+
+- Add persistent alert lifecycle history with first/last seen timestamps, occurrence counts, and resolution timestamps.
+- Add a dedicated localized alert history page with active/resolved filters and summary counters.
+- Keep alert history persistence in the package database; Elasticsearch access remains read-only.
+
 ## [0.4.0] - 2026-11-13
 
 - Add a dedicated read-only Data Streams page with backing-index details, generation, template, ILM metadata, document counts, and storage usage.
