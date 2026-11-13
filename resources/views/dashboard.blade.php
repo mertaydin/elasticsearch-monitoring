@@ -78,6 +78,7 @@
                     @endforeach
                 </select>
             </form>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">Index Management</a>
             <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
         </div>
     </div>
