@@ -1,11 +1,11 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Http\\Controllers;
+namespace ElasticsearchMonitoring\Http\Controllers;
 
-use ElasticsearchMonitoring\\Services\\ElasticsearchClient;
-use Illuminate\\Http\\JsonResponse;
-use Illuminate\\Http\\Request;
-use Illuminate\\View\\View;
+use ElasticsearchMonitoring\Services\ElasticsearchClient;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Throwable;
 
 class IndexController
@@ -59,7 +59,7 @@ class IndexController
                 // Data stream APIs may be unavailable to users with restricted cluster privileges.
             }
 
-            $indices = array_map(static function (array $row) use ($dataStreams): array {
+            $indices = array_map(static function (array $row) use ($dataStreams, $lifecycleIndices): array {
                 $name = (string) ($row['index'] ?? '');
                 $lifecycle = $lifecycleIndices[$name] ?? null;
 
