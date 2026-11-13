@@ -15,7 +15,7 @@ class AuthorizeDashboard
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $this->authorizer->allows($request)) {
+        if ($this->authorizer->allows($request) === false) {
             abort(403, 'You are not authorized to access the Elasticsearch monitoring dashboard.');
         }
 

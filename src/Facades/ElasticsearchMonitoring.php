@@ -2,17 +2,18 @@
 
 namespace ElasticsearchMonitoring\Facades;
 
+use ElasticsearchMonitoring\Services\DashboardAuthorizer;
 use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void auth(callable $callback)
  *
- * @see \ElasticsearchMonitoring\Services\DashboardAuthorizer
+ * @see DashboardAuthorizer
  */
 class ElasticsearchMonitoring extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \ElasticsearchMonitoring\Services\DashboardAuthorizer::class;
+        return DashboardAuthorizer::class;
     }
 }
