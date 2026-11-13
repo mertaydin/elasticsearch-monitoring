@@ -1,8 +1,8 @@
 <?php
 
+use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
-use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use Illuminate\Support\Facades\Route;

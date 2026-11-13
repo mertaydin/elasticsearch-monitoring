@@ -2,7 +2,6 @@
 
 namespace ElasticsearchMonitoring\Models;
 
-use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
