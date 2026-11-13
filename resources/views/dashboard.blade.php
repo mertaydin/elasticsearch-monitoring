@@ -114,7 +114,6 @@
             </div>
         @endforeach
     </div>
-    <div class="row g-3 mb-4">
     <div class="row g-3">
         @foreach ([
             'status' => 'status',
@@ -147,7 +146,6 @@
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['documents_history'] }}</h2><p class="text-muted">{{ $uiText['documents_history'] }}</p><div id="documents-chart"></div></div></div>
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['cpu_history'] }}</h2><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['index_history'] }}</h2><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
-    </div>
     </div>
     <p class="small text-muted mt-3" id="updated"></p>
 </main>
