@@ -89,7 +89,7 @@ class NodeHistoryTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $this->assertCount(2, $payload['nodes']);
-        $this->assertSame('master-01', $payload['nodes'][0]['name']);
+        $this->assertSame('data-01', $payload['nodes'][0]['name']);
         $node = collect($payload['nodes'])->firstWhere('id', 'node-a');
 
         $this->assertNotNull($node);
