@@ -94,7 +94,7 @@ class IndexController
             $mapping = $this->client->request($encodedIndex.'/_mapping');
             $settings = $this->client->request($encodedIndex.'/_settings?include_defaults=true&flat_settings=true');
 
-            $indexSettings = (array) data_get($settings, $index.'.settings', []);
+            $indexSettings = (array) ($settings[$index]['settings'] ?? []);
             $lifecycleResponse = null;
             try {
                 $lifecycleResponse = $this->client->request('_ilm/explain/'.$encodedIndex);
@@ -104,7 +104,7 @@ class IndexController
 
             // Elasticsearch wraps explain responses in an "indices" object.
             $lifecycle = is_array($lifecycleResponse)
-                ? (array) data_get($lifecycleResponse, 'indices.'.$index, data_get($lifecycleResponse, $index, []))
+                ? (array) ($lifecycleResponse['indices'][$index] ?? $lifecycleResponse[$index] ?? [])
                 : [];
             $policy = data_get($indexSettings, 'index.lifecycle.name');
             $rolloverAlias = data_get($indexSettings, 'index.lifecycle.rollover_alias');
