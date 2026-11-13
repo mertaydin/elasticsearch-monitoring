@@ -33,6 +33,23 @@ Dashboard: `/monitoring/elasticsearch`
 
 The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
+### Dashboard authorization
+
+You can register an authorization callback in your application's `AppServiceProvider::boot()` method, just like Laravel LogViewer. The callback receives the current request and must return `true` to allow access:
+
+```php
+use ElasticsearchMonitoring\Facades\ElasticsearchMonitoring;
+
+public function boot(): void
+{
+    ElasticsearchMonitoring::auth(function ($request) {
+        return $request->user() && $request->user()->hasRole('SuperAdmin');
+    });
+}
+```
+
+If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, the existing middleware behavior is preserved (`web` and `auth` by default). Keep the `auth` middleware enabled unless your callback intentionally handles authentication itself.
+
 ## Metrics
 
 Cluster health, nodes, JVM heap, CPU, filesystem, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. Rates are available after at least two successful collections.

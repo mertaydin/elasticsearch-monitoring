@@ -3,6 +3,7 @@
 namespace ElasticsearchMonitoring;
 
 use ElasticsearchMonitoring\Console\CollectMetricsCommand;
+use ElasticsearchMonitoring\Services\DashboardAuthorizer;
 use ElasticsearchMonitoring\Services\ElasticsearchClient;
 use ElasticsearchMonitoring\Services\MetricsCollector;
 use Illuminate\Support\Facades\Schedule;
@@ -14,6 +15,7 @@ class ElasticsearchMonitoringServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/elasticsearch-monitoring.php', 'elasticsearch-monitoring');
 
+        $this->app->singleton(DashboardAuthorizer::class);
         $this->app->singleton(ElasticsearchClient::class);
         $this->app->singleton(MetricsCollector::class);
     }

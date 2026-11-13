@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9] - 2026-11-13
+
+- Add a LogViewer-style dashboard authorization callback through the ElasticsearchMonitoring facade.
+- Deny dashboard requests with HTTP 403 when the registered callback rejects access.
+- Document SuperAdmin authorization setup for Laravel applications.
+
+
 ## [0.1.8] - 2026-11-13
 
 - Fix missing lifecycle table labels in the Turkish locale and align empty/loading table column spans.
