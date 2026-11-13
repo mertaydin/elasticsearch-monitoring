@@ -16,6 +16,7 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/data', [DashboardController::class, 'data'])->name('data');
         Route::get('/indices', [IndexController::class, 'index'])->name('indices');
         Route::get('/indices/data', [IndexController::class, 'data'])->name('indices.data');
+        Route::get('/indices/{index}/indexing-stats', [IndexController::class, 'indexingStats'])->where('index', '[A-Za-z0-9_.-]+')->name('indices.indexing-stats');
         Route::get('/indices/{index}/details', [IndexController::class, 'details'])->where('index', '[A-Za-z0-9_.-]+')->name('indices.details');
         Route::get('/data-streams', [DataStreamController::class, 'index'])->name('data-streams');
         Route::get('/data-streams/data', [DataStreamController::class, 'data'])->name('data-streams.data');
