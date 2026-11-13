@@ -57,12 +57,12 @@
         .summary-value{font-size:1.85rem;line-height:1.25;font-weight:750;letter-spacing:-.055em;color:#29334d;margin-top:7px;white-space:nowrap}
         .summary-change{font-size:.72rem;font-weight:700;padding:4px 7px;border-radius:7px;background:#f1f4f9;color:#8b94a7;white-space:nowrap}
         .summary-change.positive{background:#e5f8ee;color:#1aaf68}.summary-change.negative{background:#fff0ed;color:#e05d4b}
-        .summary-chart{height:58px;margin:7px -5px -2px}
+        .summary-chart{height:58px;margin:7px -5px -2px}\n        #summary-cards>.col-xl-3{max-width:25%}\n        .dashboard-chart-grid>.col-xl-4{display:flex}\n        .dashboard-chart-grid .chart-card{width:100%;min-height:350px}\n        .dashboard-chart-grid .chart-card>div[id]{min-height:260px}\n        .dashboard-chart-grid .chart-card h2{min-height:2.5rem;margin-bottom:.35rem}\n        .dashboard-chart-grid .chart-card p{min-height:2.25rem;margin-bottom:.5rem}
 
         .metric-card{padding:18px 19px;transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(29,41,74,.08)}
         .metric-card small{font-weight:600;color:#778198}.metric-card strong{display:block;margin-top:12px;font-size:1.5rem;letter-spacing:-.04em}
         .chart-card{padding:20px}.chart-card h2{font-size:.95rem;font-weight:700}.chart-card .text-muted{font-size:.75rem}
-        @media(max-width:767px){.hero{padding:21px;border-radius:18px}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}}
+        @media(max-width:1199px){#summary-cards>.col-xl-3{max-width:50%}}\n        @media(max-width:767px){.hero{padding:21px;border-radius:18px}#summary-cards>.col-xl-3{max-width:100%}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}.dashboard-chart-grid .chart-card{min-height:320px}}
     </style>
 </head>
 <body class="bg-light">
@@ -92,7 +92,7 @@
     </div>
     <div id="alert" class="alert alert-warning d-none"></div>
     <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h6 fw-bold mb-0">{{ $uiText['overview'] }}</h2><small class="text-muted">● {{ $uiText['live'] }}</small></div>
-    <div class="row g-3 mb-4" id="summary-cards">
+    <div class="row g-3 mb-4 justify-content-center" id="summary-cards">
         @foreach ([
             ['id'=>'docs','label'=>$t('documents'),'unit'=>'','color'=>'#20b6a5'],
             ['id'=>'active-shards','label'=>$t('active_shards'),'unit'=>'','color'=>'#3978b8'],
@@ -114,6 +114,7 @@
             </div>
         @endforeach
     </div>
+    <div class="row g-3 mb-4">
     <div class="row g-3">
         @foreach ([
             'status' => 'status',
@@ -135,15 +136,18 @@
                 <div class="metric-card"><small class="text-muted">{{ $id === 'cpu' ? $uiText['cpu'] : $t($label) }}</small><strong id="{{ $id }}">—</strong></div>
             </div>
         @endforeach
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['search_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="search-chart"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['indexing_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="indexing-chart"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['disk_history'] }}</h2><p class="text-muted">{{ $uiText['disk_hint'] }}</p><div id="disk-chart"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['segments_history'] }}</h2><p class="text-muted">{{ $uiText['segments_history'] }}</p><div id="segments-chart"></div></div></div>
-        <div class="col-12"><div class="chart-card"><h2>{{ $uiText['documents_history'] }}</h2><p class="text-muted">{{ $uiText['documents_history'] }}</p><div id="documents-chart"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['cpu_history'] }}</h2><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
-        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['index_history'] }}</h2><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
+    </div>
+    <div class="row g-3 dashboard-chart-grid">
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['search_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="search-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['indexing_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="indexing-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['disk_history'] }}</h2><p class="text-muted">{{ $uiText['disk_hint'] }}</p><div id="disk-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['segments_history'] }}</h2><p class="text-muted">{{ $uiText['segments_history'] }}</p><div id="segments-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['documents_history'] }}</h2><p class="text-muted">{{ $uiText['documents_history'] }}</p><div id="documents-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['cpu_history'] }}</h2><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['index_history'] }}</h2><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
+    </div>
     </div>
     <p class="small text-muted mt-3" id="updated"></p>
 </main>

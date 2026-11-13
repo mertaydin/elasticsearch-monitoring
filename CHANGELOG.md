@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.8] - 2026-11-13
+
+- Fix missing lifecycle table labels in the Turkish locale and align empty/loading table column spans.
+- Reorganize dashboard charts into a consistent three-column desktop grid with equal chart heights and centered KPI cards.
+
+
 ## [0.1.7] - 2026-11-13
 
 - Add an index management page with health, status, shard, document, storage, and data stream information.
