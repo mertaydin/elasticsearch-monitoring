@@ -41,5 +41,18 @@
     }
   },
   "minimum-stability": "stable",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "homepage": "https://github.com/mertaydin/elasticsearch-monitoring",
+  "keywords": [
+    "elasticsearch",
+    "laravel",
+    "monitoring",
+    "metrics",
+    "dashboard",
+    "observability"
+  ],
+  "support": {
+    "issues": "https://github.com/mertaydin/elasticsearch-monitoring/issues",
+    "source": "https://github.com/mertaydin/elasticsearch-monitoring"
+  }
 }
