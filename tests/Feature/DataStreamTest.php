@@ -27,6 +27,7 @@ class DataStreamTest extends TestCase
                     '.ds-app-logs-2026.11.13-000003' => ['primaries' => ['docs' => ['count' => 200]], 'total' => ['store' => ['size_in_bytes' => 2048]]],
                 ]]);
             }
+
             return Http::response([], 404);
         });
 
