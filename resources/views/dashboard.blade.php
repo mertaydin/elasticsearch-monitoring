@@ -14,6 +14,20 @@
         'ar' => 'العربية',
     ];
     $t = fn (string $key): string => __("elasticsearch-monitoring::messages.{$key}", [], $locale);
+    $uiText = $locale === 'tr' ? [
+        'overview'=>'Küme genel görünümü','performance'=>'Performans','storage'=>'Depolama',
+        'cpu'=>'CPU kullanımı','cpu_history'=>'CPU kullanım grafiği','cpu_hint'=>'Node başına ortalama CPU kullanımı',
+        'index_history'=>'İndeks depolama grafiği','index_hint'=>'İndeks verilerinin toplam boyutunun zaman içindeki değişimi',
+        'filesystem_hint'=>'Kullanılan ve kullanılabilir disk alanı','heap_hint'=>'JVM heap bellek kullanımı',
+        'rates_hint'=>'Saniyedeki arama ve indeksleme işlem sayısı','live'=>'Otomatik yenileme · 30 sn',
+    ] : [
+        'overview'=>'Cluster overview','performance'=>'Performance','storage'=>'Storage','cpu'=>'CPU usage',
+        'cpu_history'=>'CPU utilization','cpu_hint'=>'Average CPU usage across nodes over time',
+        'index_history'=>'Index storage trend','index_hint'=>'Total Elasticsearch index data size over time',
+        'filesystem_hint'=>'Used and available disk capacity','heap_hint'=>'JVM heap memory utilization',
+        'rates_hint'=>'Search and indexing operations per second','live'=>'Auto refresh · 30 sec',
+    ];
+
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
@@ -27,10 +41,23 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     @endif
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        body{background:#f4f6fb!important;color:#182238;font-family:Inter,system-ui,-apple-system,sans-serif}
+        main.container{max-width:1500px}
+        .hero{padding:28px 30px;border-radius:22px;background:linear-gradient(115deg,#171d38,#303b70 60%,#625bdb);color:#fff;box-shadow:0 16px 38px rgba(39,48,104,.18)}
+        .hero h1{font-weight:800;letter-spacing:-.04em}.hero p{color:#d5d9f2}
+        .hero .form-select{min-width:125px;background-color:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
+        .hero .form-select option{color:#182238}.hero .btn{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.1)}
+        .metric-card,.chart-card{background:#fff;border:1px solid #e9edf4;border-radius:17px;box-shadow:0 5px 18px rgba(29,41,74,.035);height:100%}
+        .metric-card{padding:18px 19px;transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(29,41,74,.08)}
+        .metric-card small{font-weight:600;color:#778198}.metric-card strong{display:block;margin-top:12px;font-size:1.5rem;letter-spacing:-.04em}
+        .chart-card{padding:20px}.chart-card h2{font-size:.95rem;font-weight:700}.chart-card .text-muted{font-size:.75rem}
+        @media(max-width:767px){.hero{padding:21px;border-radius:18px}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}}
+    </style>
 </head>
 <body class="bg-light">
 <main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
+    <div class="hero d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
         <div><h1 class="h3 mb-1">{{ $t('title') }}</h1><p class="text-muted mb-0">{{ $t('subtitle') }}</p></div>
         <div class="d-flex align-items-center gap-2">
             <form method="GET" action="{{ route('elasticsearch-monitoring.index') }}" class="d-flex align-items-center gap-2">
@@ -71,12 +98,14 @@
             'cpu' => 'cpu',
         ] as $id => $label)
             <div class="col-md-4 col-lg-3">
-                <div class="card card-body h-100"><small class="text-muted">{{ $id === 'cpu' ? 'CPU' : $t($label) }}</small><strong id="{{ $id }}">—</strong></div>
+                <div class="metric-card"><small class="text-muted">{{ $id === 'cpu' ? 'CPU' : $t($label) }}</small><strong id="{{ $id }}">—</strong></div>
             </div>
         @endforeach
-        <div class="col-md-6"><div class="card card-body"><h2 class="h6">{{ $t('heap') }}</h2><div id="heap"></div></div></div>
-        <div class="col-md-6"><div class="card card-body"><h2 class="h6">{{ $t('filesystem') }}</h2><div id="filesystem"></div></div></div>
-        <div class="col-12"><div class="card card-body"><h2 class="h6">{{ $t('rates') }}</h2><div id="rates"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
+        <div class="col-12"><div class="chart-card"><h2>{{ $t('rates') }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="rates"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['cpu_history'] }}</h2><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
+        <div class="col-md-6"><div class="chart-card"><h2>{{ $uiText['index_history'] }}</h2><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
     </div>
     <p class="small text-muted mt-3" id="updated"></p>
 </main>
@@ -88,7 +117,7 @@ const labels = {
     loadError: @json($t('load_error')),
     heapUsed: @json($t('heap_used')),
     used: @json($t('used')),
-    available: @json($t('available'))
+    available: @json($t('available')), cpu: @json($uiText['cpu']), storage: @json($t('store_size'))
 };
 const charts = {};
 function renderChart(id, options) {
@@ -137,6 +166,24 @@ async function loadMetrics() {
             search: point.metrics.rates.search_per_second,
             indexing: point.metrics.rates.indexing_per_second
         }));
+        const history = (payload.history || []).filter(point => point.collected_at && point.metrics).map(point => ({
+            time: new Date(point.collected_at).getTime(), metrics: point.metrics
+        }));
+        const cpuPoints = history.map(point => [point.time, point.metrics.cpu?.percent_average]).filter(point => point[1] !== null && point[1] !== undefined);
+        const storagePoints = history.map(point => [point.time, Number(point.metrics.indices?.store_size_bytes || 0)]).filter(point => point[1] > 0);
+        const chartBase = {
+            chart:{type:'area',height:270,toolbar:{show:false},zoom:{enabled:false}},
+            dataLabels:{enabled:false},stroke:{curve:'smooth',width:2.5},
+            fill:{type:'gradient',gradient:{opacityFrom:.24,opacityTo:.02,stops:[0,90,100]}},
+            grid:{borderColor:'#edf0f5',strokeDashArray:4},markers:{size:0,hover:{size:5}},
+            xaxis:{type:'datetime',labels:{datetimeUTC:false}},noData:{text:'—'}
+        };
+        renderChart('#cpu-chart',{...chartBase,colors:['#635bff'],series:[{name:labels.cpu,data:cpuPoints}],
+            yaxis:{min:0,max:100,labels:{formatter:v=>v.toFixed(0)+'%'}},
+            tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>v.toFixed(1)+'%'}}});
+        const formatBytes = value => value >= 1073741824 ? (value/1073741824).toFixed(2)+' GB' : (value/1048576).toFixed(1)+' MB';
+        renderChart('#storage-chart',{...chartBase,colors:['#16a085'],series:[{name:labels.storage,data:storagePoints}],
+            yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
         renderChart('#rates', {chart:{type:'line',height:280,toolbar:{show:false}},series:[
             {name:'Search / sec',data:ratePoints.map(point => [point.time, point.search])},
             {name:'Indexing / sec',data:ratePoints.map(point => [point.time, point.indexing])}
