@@ -1,0 +1,23 @@
+<?php
+
+return [
+    'title' => 'Elasticsearch Monitoring',
+    'subtitle' => 'Cluster overview',
+    'refresh' => 'Refresh',
+    'status' => 'Cluster status',
+    'nodes' => 'Nodes',
+    'documents' => 'Documents',
+    'active_shards' => 'Active shards',
+    'search_rate' => 'Search / sec',
+    'index_rate' => 'Indexing / sec',
+    'unassigned_shards' => 'Unassigned shards',
+    'search_rejections' => 'Search rejections',
+    'heap' => 'JVM heap',
+    'filesystem' => 'Filesystem',
+    'no_metrics' => 'No metrics collected yet. Run php artisan elasticsearch:collect.',
+    'last_collected' => 'Last collected',
+    'load_error' => 'Unable to load monitoring data',
+    'heap_used' => 'Heap used %',
+    'used' => 'Used',
+    'available' => 'Available',
+];
