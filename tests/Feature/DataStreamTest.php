@@ -1,10 +1,10 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Tests\\Feature;
+namespace ElasticsearchMonitoring\Tests\Feature;
 
-use ElasticsearchMonitoring\\Http\\Controllers\\DataStreamController;
-use ElasticsearchMonitoring\\Tests\\TestCase;
-use Illuminate\\Support\\Facades\\Http;
+use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
+use ElasticsearchMonitoring\Tests\TestCase;
+use Illuminate\Support\Facades\Http;
 
 class DataStreamTest extends TestCase
 {
