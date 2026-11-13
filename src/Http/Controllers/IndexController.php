@@ -154,5 +154,4 @@ class IndexController
             ], 502);
         }
     }
-
 }
