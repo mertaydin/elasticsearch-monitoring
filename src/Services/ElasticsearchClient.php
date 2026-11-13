@@ -11,11 +11,11 @@ class ElasticsearchClient
     /** @var array<string, mixed>|null */
     private ?array $info = null;
 
+    /** @return array<string, mixed> */
     public function request(string $path): array
     {
         $response = $this->http()->get('/'.ltrim($path, '/'));
         $response->throw();
-
         $data = $response->json();
 
         if (! is_array($data)) {
@@ -38,11 +38,9 @@ class ElasticsearchClient
 
     public function majorVersion(): ?int
     {
-        if (preg_match('/^(\d+)/', $this->version(), $matches) !== 1) {
-            return null;
-        }
-
-        return (int) $matches[1];
+        return preg_match('/^(\d+)/', $this->version(), $matches) === 1
+            ? (int) $matches[1]
+            : null;
     }
 
     public function assertSupportedVersion(): void
@@ -63,7 +61,9 @@ class ElasticsearchClient
             ->acceptJson();
 
         if (! empty($connection['api_key'])) {
-            $request = $request->withToken((string) $connection['api_key']);
+            $request = $request->withHeaders([
+                'Authorization' => 'ApiKey '.(string) $connection['api_key'],
+            ]);
         } elseif (! empty($connection['username'])) {
             $request = $request->withBasicAuth(
                 (string) $connection['username'],
