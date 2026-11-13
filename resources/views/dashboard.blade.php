@@ -13,37 +13,58 @@
         <div><h1 class="h3 mb-1">Elasticsearch Monitoring</h1><p class="text-muted mb-0">Cluster overview</p></div>
         <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">Refresh</button>
     </div>
-    <div id="alert" class="alert alert-warning d-none">No metrics collected yet. Run <code>php artisan elasticsearch:collect</code>.</div>
-    <div class="row g-3" id="cards">
+    <div id="alert" class="alert alert-warning d-none"></div>
+    <div class="row g-3">
         <div class="col-md-3"><div class="card card-body"><small class="text-muted">Cluster status</small><strong id="status">—</strong></div></div>
         <div class="col-md-3"><div class="card card-body"><small class="text-muted">Nodes</small><strong id="nodes">—</strong></div></div>
         <div class="col-md-3"><div class="card card-body"><small class="text-muted">Documents</small><strong id="docs">—</strong></div></div>
         <div class="col-md-3"><div class="card card-body"><small class="text-muted">Active shards</small><strong id="shards">—</strong></div></div>
+        <div class="col-md-3"><div class="card card-body"><small class="text-muted">Search / sec</small><strong id="search-rate">—</strong></div></div>
+        <div class="col-md-3"><div class="card card-body"><small class="text-muted">Indexing / sec</small><strong id="index-rate">—</strong></div></div>
+        <div class="col-md-3"><div class="card card-body"><small class="text-muted">Unassigned shards</small><strong id="unassigned">—</strong></div></div>
+        <div class="col-md-3"><div class="card card-body"><small class="text-muted">Search rejections</small><strong id="rejected">—</strong></div></div>
         <div class="col-md-6"><div class="card card-body"><h2 class="h6">JVM heap</h2><div id="heap"></div></div></div>
-        <div class="col-md-6"><div class="card card-body"><h2 class="h6">Search and indexing counters</h2><div id="counters"></div></div></div>
+        <div class="col-md-6"><div class="card card-body"><h2 class="h6">Filesystem</h2><div id="filesystem"></div></div></div>
     </div>
     <p class="small text-muted mt-3" id="updated"></p>
 </main>
 <script>
 const endpoint = @json(route('elasticsearch-monitoring.data'));
+const charts = {};
+function renderChart(id, options) {
+    if (charts[id]) charts[id].destroy();
+    charts[id] = new ApexCharts(document.querySelector(id), options);
+    charts[id].render();
+}
 async function loadMetrics() {
     const alert = document.getElementById('alert');
     try {
         const response = await fetch(endpoint, {headers: {'Accept': 'application/json'}});
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const payload = await response.json();
-        if (!payload.latest) { alert.classList.remove('d-none'); return; }
+        if (!payload.latest) {
+            alert.textContent = 'No metrics collected yet. Run php artisan elasticsearch:collect.';
+            alert.classList.remove('d-none');
+            return;
+        }
         alert.classList.add('d-none');
         const m = payload.latest.metrics || {};
-        document.getElementById('status').textContent = (m.cluster?.status || 'unknown').toUpperCase();
-        document.getElementById('nodes').textContent = m.nodes ?? '—';
-        document.getElementById('docs').textContent = Number(m.indices?.documents || 0).toLocaleString();
-        document.getElementById('shards').textContent = m.cluster?.active_shards ?? '—';
-        document.getElementById('updated').textContent = 'Last collected: ' + payload.latest.collected_at;
+        const set = (id, value) => document.getElementById(id).textContent = value ?? '—';
+        set('status', (m.cluster?.status || 'unknown').toUpperCase());
+        set('nodes', m.nodes);
+        set('docs', Number(m.indices?.documents || 0).toLocaleString());
+        set('shards', m.cluster?.active_shards);
+        set('unassigned', m.cluster?.unassigned_shards);
+        set('rejected', m.thread_pool?.search_rejected);
+        set('search-rate', m.rates?.search_per_second);
+        set('index-rate', m.rates?.indexing_per_second);
+        set('updated', 'Last collected: ' + payload.latest.collected_at);
         const used = Number(m.jvm?.heap_used_bytes || 0) / 1048576;
         const max = Number(m.jvm?.heap_max_bytes || 0) / 1048576;
-        new ApexCharts(document.querySelector('#heap'), {chart:{type:'radialBar',height:230},series:[max ? Math.round(used/max*100) : 0],labels:['Heap used %']}).render();
-        new ApexCharts(document.querySelector('#counters'), {chart:{type:'bar',height:230},series:[{name:'Operations',data:[Number(m.counters?.search_total||0),Number(m.counters?.index_total||0)]}],xaxis:{categories:['Search','Indexing']}}).render();
+        const total = Number(m.filesystem?.total_bytes || 0);
+        const available = Number(m.filesystem?.available_bytes || 0);
+        renderChart('#heap', {chart:{type:'radialBar',height:230},series:[max ? Math.round(used/max*100) : 0],labels:['Heap used %']});
+        renderChart('#filesystem', {chart:{type:'donut',height:230},series:[Math.max(0,total-available),available],labels:['Used','Available'],legend:{position:'bottom'}});
     } catch (error) {
         alert.textContent = 'Unable to load monitoring data: ' + error.message;
         alert.classList.remove('d-none');
