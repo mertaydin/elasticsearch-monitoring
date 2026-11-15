@@ -31,6 +31,15 @@
         'ar' => ['overview'=>'نظرة عامة على المجموعة','performance'=>'الأداء','storage'=>'التخزين','cpu'=>'استخدام المعالج','cpu_history'=>'استخدام المعالج','cpu_hint'=>'متوسط استخدام المعالج عبر العقد بمرور الوقت','index_history'=>'اتجاه تخزين الفهارس','index_hint'=>'إجمالي حجم بيانات فهارس Elasticsearch بمرور الوقت','disk_history'=>'استخدام القرص','disk_hint'=>'مساحة نظام الملفات المستخدمة بمرور الوقت','search_history'=>'معدل البحث','indexing_history'=>'معدل الفهرسة','segments_history'=>'عدد المقاطع','documents_history'=>'عدد المستندات','filesystem_hint'=>'مساحة القرص المستخدمة والمتاحة','heap_hint'=>'استخدام ذاكرة JVM','rates_hint'=>'عمليات البحث والفهرسة في الثانية','live'=>'تحديث تلقائي كل 30 ثانية'],
     ][$locale] ?? [];
 
+    $dashboardWidgetNames = [
+        'tr' => ['summary'=>'Özet metrikler','favorites'=>'Favori indeksler','health'=>'Küme sağlığı ve uyarılar','metrics'=>'Detaylı metrikler','nodes'=>'Node karşılaştırması','charts'=>'Grafikler'],
+        'en' => ['summary'=>'Summary metrics','favorites'=>'Favorite indices','health'=>'Cluster health and alerts','metrics'=>'Detailed metrics','nodes'=>'Node comparison','charts'=>'Charts'],
+        'es' => ['summary'=>'Métricas resumidas','favorites'=>'Índices favoritos','health'=>'Salud del clúster y alertas','metrics'=>'Métricas detalladas','nodes'=>'Comparación de nodos','charts'=>'Gráficos'],
+        'zh_CN' => ['summary'=>'摘要指标','favorites'=>'收藏索引','health'=>'集群健康与警报','metrics'=>'详细指标','nodes'=>'节点比较','charts'=>'图表'],
+        'hi' => ['summary'=>'सारांश मेट्रिक्स','favorites'=>'पसंदीदा इंडेक्स','health'=>'क्लस्टर स्वास्थ्य और अलर्ट','metrics'=>'विस्तृत मेट्रिक्स','nodes'=>'नोड तुलना','charts'=>'चार्ट'],
+        'ar' => ['summary'=>'المقاييس الموجزة','favorites'=>'الفهارس المفضلة','health'=>'صحة المجموعة والتنبيهات','metrics'=>'المقاييس التفصيلية','nodes'=>'مقارنة العقد','charts'=>'الرسوم البيانية'],
+    ][$locale] ?? ['summary'=>'Summary metrics','favorites'=>'Favorite indices','health'=>'Cluster health and alerts','metrics'=>'Detailed metrics','nodes'=>'Node comparison','charts'=>'Charts'];
+
     $favoriteText = [
         'tr' => ['title'=>'Favori indeksler','empty'=>'Henüz favori indeks eklemediniz. İndeks yönetimi ekranında yıldız simgesini kullanarak ekleyebilirsiniz.','open'=>'İndeksi aç'],
         'en' => ['title'=>'Favorite indices','empty'=>'You have not added any favorite indices yet. Use the star in Index Management to add some.','open'=>'Open index'],
@@ -226,7 +235,7 @@ const favoriteLabels = @json($favoriteText);
 const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
 const dashboardLayoutKey = 'elasticsearch-monitoring:dashboard-layout';
 const defaultDashboardWidgetOrder = ['summary', 'favorites', 'health', 'metrics', 'nodes', 'charts'];
-const dashboardWidgetLabels = @json(['summary' => $locale === 'tr' ? 'Özet metrikler' : 'Summary metrics','favorites' => $locale === 'tr' ? 'Favori indeksler' : 'Favorite indices','health' => $locale === 'tr' ? 'Küme sağlığı ve uyarılar' : 'Cluster health and alerts','metrics' => $locale === 'tr' ? 'Detaylı metrikler' : 'Detailed metrics','nodes' => $locale === 'tr' ? 'Node karşılaştırması' : 'Node comparison','charts' => $locale === 'tr' ? 'Grafikler' : 'Charts']);
+const dashboardWidgetLabels = @json($dashboardWidgetNames);
 function readDashboardLayout() {
     try {
         const stored = JSON.parse(localStorage.getItem(dashboardLayoutKey) || '{}');
