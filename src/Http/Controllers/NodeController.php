@@ -79,7 +79,7 @@ class NodeController
                         'id' => $id,
                         'name' => (string) ($detail['name'] ?? $id),
                         'ip' => (string) ($detail['ip'] ?? ''),
-                        'roles => (array) ($detail['roles'] ?? []),
+                        'roles' => (array) ($detail['roles'] ?? []),
                         'latest' => $point,
                         'history' => [],
                     ];
@@ -87,6 +87,9 @@ class NodeController
 
                 $nodes[$id]['name'] = (string) ($detail['name'] ?? $nodes[$id]['name']);
                 $nodes[$id]['roles'] = (array) ($detail['roles'] ?? $nodes[$id]['roles']);
+                if (! empty($detail['ip'])) {
+                    $nodes[$id]['ip'] = (string) $detail['ip'];
+                }
                 $nodes[$id]['latest'] = $point;
                 $nodes[$id]['history'][] = $point;
 
