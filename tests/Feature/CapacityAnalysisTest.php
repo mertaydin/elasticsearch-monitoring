@@ -31,15 +31,15 @@ class CapacityAnalysisTest extends TestCase
             'collected_at' => now()->subDays(5), 'elasticsearch_version' => '8.19.14',
             'metrics' => ['indices' => ['documents' => 1000, 'primary_store_size_bytes' => 10000],
                 'filesystem' => ['used_bytes' => 500, 'total_bytes' => 1000],
-                'node_details' => [['id' => 'node-1','name' => 'data-01','roles' => ['data'],'filesystem_used_bytes' => 500,'filesystem_total_bytes' => 1000,'filesystem_available_bytes' => 500,'filesystem_used_percent' => 50]],
-                'index_details' => [['name' => 'logs-2026','documents' => 1000,'storage_bytes' => 10000]]],
+                'node_details' => [['id' => 'node-1', 'name' => 'data-01', 'roles' => ['data'], 'filesystem_used_bytes' => 500, 'filesystem_total_bytes' => 1000, 'filesystem_available_bytes' => 500, 'filesystem_used_percent' => 50]],
+                'index_details' => [['name' => 'logs-2026', 'documents' => 1000, 'storage_bytes' => 10000]]],
         ]);
         MetricSnapshot::query()->create([
             'collected_at' => now(), 'elasticsearch_version' => '8.19.14',
             'metrics' => ['indices' => ['documents' => 1500, 'primary_store_size_bytes' => 20000],
                 'filesystem' => ['used_bytes' => 700, 'total_bytes' => 1000],
-                'node_details' => [['id' => 'node-1','name' => 'data-01','roles' => ['data'],'filesystem_used_bytes' => 700,'filesystem_total_bytes' => 1000,'filesystem_available_bytes' => 300,'filesystem_used_percent' => 70]],
-                'index_details' => [['name' => 'logs-2026','documents' => 1500,'storage_bytes' => 20000]]],
+                'node_details' => [['id' => 'node-1', 'name' => 'data-01', 'roles' => ['data'], 'filesystem_used_bytes' => 700, 'filesystem_total_bytes' => 1000, 'filesystem_available_bytes' => 300, 'filesystem_used_percent' => 70]],
+                'index_details' => [['name' => 'logs-2026', 'documents' => 1500, 'storage_bytes' => 20000]]],
         ]);
         $payload = app(CapacityController::class)->data(request()->duplicate(['days' => 30]))->getData(true);
         $this->assertSame(30, $payload['period_days']);
