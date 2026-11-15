@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.8.1] - 2026-11-15
+
+- Clean up README line breaks and remove duplicated Shard Allocation documentation.
+
+
 ## [0.8.0] - 2026-11-15
 
 - Add a read-only Shard Allocation Explorer with per-shard state, primary/replica type, node placement, unassigned reasons, and node distribution.
