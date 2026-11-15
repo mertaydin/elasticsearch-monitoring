@@ -21,6 +21,9 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
 - Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard.
 - Export the currently visible index list (including search and favorites filters) as UTF-8 CSV or JSON directly in the browser.
+- Copy index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/name values with one click.
+- Copy the complete formatted mapping JSON or individual top-level mapping sections from Index Management.
+- Show localized clipboard feedback in all six supported languages.
 
 ## Requirements
 
@@ -92,6 +95,10 @@ Use **Export CSV** or **Export JSON** on the Index Management page to download t
 Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. The Thread Pool Analyzer provides per-node, per-pool queue, active, thread, completed, and rejected metrics with historical queue and rejection-rate charts. Snapshot Monitoring lists registered repositories, recent snapshots, shard outcomes, failures, and the latest successful backup. The dedicated Node Performance History page charts per-node CPU, JVM heap, filesystem utilization, search/indexing rates, and thread-pool queues from stored snapshots (up to the latest 1,440 collections). The Shard Allocation page displays primary/replica placement, shard states, unassigned reasons, and per-node shard distribution using the CAT Shards read API. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Email, Slack, and Microsoft Teams notifications can be enabled independently under `alerts.notifications.channels`; configure mail recipients or webhook URLs and set a cooldown period. Notification delivery attempts, failures, and cooldown suppressions are recorded at `/monitoring/elasticsearch/alerts/notifications`. Queue workers are recommended for non-blocking delivery; the default synchronous queue driver also works. Rates are available after at least two successful collections. Alert history records when an alert first appears, each subsequent observation, its latest value, and when it is resolved. Open `/monitoring/elasticsearch/alerts` to review active and resolved events. Existing installations should run `php artisan migrate` after updating.
 
 Snapshot Monitoring requires the Elasticsearch `monitor_snapshot` cluster privilege. It reads repository metadata and the latest 50 snapshots per repository, caches results for 60 seconds, and does not expose repository settings or perform backup operations.
+
+## Copying identifiers and mappings
+
+Copy buttons are available for index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/snapshot names. The Index Management details modal supports copying the complete formatted mapping JSON or an individual top-level mapping section. Clipboard feedback is localized across all six supported languages. Node IP addresses are taken from the node statistics response and stored with subsequent metric snapshots; historical snapshots are not backfilled.
 
 ## Compatibility
 

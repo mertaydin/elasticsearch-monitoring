@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0] - 2026-11-15
+
+- Add one-click copying for index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/name values.
+- Add full mapping JSON copy and individual top-level mapping section copy actions with localized clipboard feedback.
+- Store node IP addresses with newly collected node history without requiring a database migration.
+
+
 ## [0.16.0] - 2026-11-15
 
 - Add browser-side CSV and JSON exports for the currently filtered index list, including search and favorites-only filters.

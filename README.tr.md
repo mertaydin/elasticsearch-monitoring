@@ -21,6 +21,9 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
 - Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın.
 - Arama ve favori filtreleriyle görünen indeks listesini tarayıcıdan UTF-8 CSV veya JSON olarak indirin.
+- İndeks, node, shard ve snapshot bilgilerini tek tıkla kopyalayın.
+- Mapping içeriğinin tamamını biçimlendirilmiş JSON olarak veya üst seviye bölümlerini ayrı ayrı kopyalayın.
+- Kopyalama bildirimlerini altı dilde gösterin ve node geçmişinde IP adreslerini görüntüleyin.
 
 ## Kurulum
 
@@ -76,6 +79,10 @@ Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca me
 ## İndeks dışa aktarma
 
 İndeks Yönetimi ekranındaki **CSV indir** veya **JSON indir** düğmeleriyle mevcut filtrelenmiş listeyi indirebilirsiniz. Dışa aktarma arama metnini ve yalnızca favoriler filtresini dikkate alır. İndeks adı, sağlık, durum, belge sayısı, depolama baytı, primary/replica shard sayıları, Elasticsearch tarafından döndürülüyorsa oluşturulma tarihi, data stream ve lifecycle bilgilerini içerir. Dosya tarayıcıda oluşturulur; ek endpoint, veritabanı migration'ı veya Elasticsearch yazma isteği kullanılmaz.
+
+## Kopyalama
+
+İndeks Yönetimi, Node Geçmişi, Shard Dağılımı ve Snapshot ekranlarında indeks adlarını, node adı/IP adresini, shard indeks/node bilgilerini ve repository/snapshot adlarını tek tıkla kopyalayabilirsiniz. İndeks detaylarında mapping'in tamamını biçimlendirilmiş JSON olarak veya üst seviye mapping bölümlerini ayrı ayrı kopyalamak mümkündür. Kopyalama bildirimi altı dilde gösterilir. Node IP adresleri node istatistikleri yanıtından alınır ve sonraki ölçümlerde saklanır; geçmiş ölçümler geriye dönük güncellenmez.
 
 ## Güvenlik ve salt okunur çalışma
 
