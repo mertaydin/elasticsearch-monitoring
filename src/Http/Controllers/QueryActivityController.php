@@ -92,7 +92,7 @@ class QueryActivityController
         }
 
         foreach ($nodes as &$node) {
-            $node['latest'] = $node['history'] === [] ? [] : $node['history'][array_key_last($node['history'])];
+            $node['latest'] = $node['history'][array_key_last($node['history'])];
         }
         unset($node);
 

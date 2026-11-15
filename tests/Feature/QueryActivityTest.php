@@ -32,7 +32,7 @@ class QueryActivityTest extends TestCase
             'elasticsearch_version' => '8.19.14',
             'metrics' => ['node_details' => [[
                 'id' => 'node-1', 'name' => 'data-01', 'roles' => ['data'],
-                'search_activity' => ['query_total'=>100,'query_time_in_millis'=>500,'query_current'=>1,'fetch_total'=>50,'fetch_time_in_millis'=>200,'fetch_current'=>0,'scroll_total'=>5,'suggest_total'=>2],
+                'search_activity' => ['query_total' => 100, 'query_time_in_millis' => 500, 'query_current' => 1, 'fetch_total' => 50, 'fetch_time_in_millis' => 200, 'fetch_current' => 0, 'scroll_total' => 5, 'suggest_total' => 2],
                 'search_queue' => 1, 'search_rejected' => 10,
             ]]],
         ]);
@@ -43,7 +43,7 @@ class QueryActivityTest extends TestCase
             'elasticsearch_version' => '8.19.14',
             'metrics' => ['node_details' => [[
                 'id' => 'node-1', 'name' => 'data-01', 'roles' => ['data'],
-                'search_activity' => ['query_total'=>220,'query_time_in_millis'=>1100,'query_current'=>3,'fetch_total'=>110,'fetch_time_in_millis'=>500,'fetch_current'=>1,'scroll_total'=>11,'suggest_total'=>5],
+                'search_activity' => ['query_total' => 220, 'query_time_in_millis' => 1100, 'query_current' => 3, 'fetch_total' => 110, 'fetch_time_in_millis' => 500, 'fetch_current' => 1, 'scroll_total' => 11, 'suggest_total' => 5],
                 'search_queue' => 4, 'search_rejected' => 16,
             ]]],
         ]);
