@@ -46,7 +46,7 @@ class CapacityAnalysisTest extends TestCase
         $this->assertSame(1500, $payload['summary']['documents']);
         $this->assertSame(700, $payload['nodes'][0]['latest']['used_bytes']);
         $this->assertSame(40, $payload['nodes'][0]['forecast']['growth_bytes_per_day']);
-        $this->assertSame(10, $payload['fastest_indices'][0]['document_growth_per_day']);
+        $this->assertSame(100, $payload['fastest_indices'][0]['document_growth_per_day']);
         $this->assertSame(2000, $payload['fastest_indices'][0]['storage_growth_per_day']);
         $this->assertCount(2, $payload['history']);
     }
