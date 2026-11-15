@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.18.0] - 2026-11-15
+
+- Add browser-side sorting for index name, health, primary/replica shard counts, document count, and storage size.
+- Support ascending/descending toggling and preserve sorting alongside search and favorites filters without additional Elasticsearch requests.
+
 ## [0.17.0] - 2026-11-15
 
 - Add one-click copying for index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/name values.

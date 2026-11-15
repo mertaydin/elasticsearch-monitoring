@@ -24,6 +24,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Copy index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/name values with one click.
 - Copy the complete formatted mapping JSON or individual top-level mapping sections from Index Management.
 - Show localized clipboard feedback in all six supported languages.
+- Add sortable columns to Index Management for index name, health, primary/replica shard counts, document count, and storage size.
 
 ## Requirements
 
@@ -85,6 +86,10 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 ## Favorites
 
 Favorite indices are stored in the browser's local storage. They are specific to the current browser and browser profile, are not synchronized between users or devices, and do not require a database migration.
+
+## Index list sorting
+
+Click the **Name**, **Health**, **Primaries**, **Replicas**, **Documents count**, or **Storage size** column heading to sort the index list. The first click sorts ascending; clicking the same heading again reverses the order. Health is ordered Green, Yellow, then Red. Sorting runs in the browser, works together with search and favorites filters, and does not send additional Elasticsearch requests.
 
 ## Index exports
 

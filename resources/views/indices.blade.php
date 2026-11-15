@@ -24,7 +24,7 @@
     <style>
         body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,sans-serif}
         .page{max-width:1500px}.panel{background:#fff;border:1px solid #e7ebf2;border-radius:16px;box-shadow:0 5px 18px rgba(29,41,74,.035)}
-        .toolbar{padding:18px}.table thead th{font-size:.75rem;color:#667085;font-weight:650;white-space:nowrap}.table td{vertical-align:middle;font-size:.84rem}
+        .toolbar{padding:18px}.table thead th{font-size:.75rem;color:#667085;font-weight:650;white-space:nowrap}.table td{vertical-align:middle;font-size:.84rem}.sort-button{border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;padding:0;white-space:nowrap}.sort-button:hover,.sort-button:focus{color:#1759a6}.sort-button span{font-size:.72rem;margin-inline-start:3px;color:#98a2b3}.sort-button[aria-pressed=true] span{color:#1759a6}
         .index-name{font-weight:600;color:#1759a6;text-decoration:none;word-break:break-word}.health-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:7px;background:#98a2b3}.health-green{background:#16845b}.health-yellow{background:#d69e2e}.health-red{background:#dc4545}
         .json-view{background:#101828;color:#d7e1f0;border-radius:10px;padding:18px;max-height:65vh;overflow:auto;font-size:.78rem;white-space:pre-wrap;word-break:break-word}
         .nav-tabs .nav-link{font-weight:600;font-size:.88rem}.table-responsive{min-height:180px}.favorite-toggle{font-size:1.15rem;line-height:1;text-decoration:none;color:#d69e2e}.favorite-toggle:hover{color:#b7791f}
@@ -48,7 +48,7 @@
     </div>
     <div class="panel table-responsive">
         <table class="table table-hover align-middle mb-0">
-            <thead><tr><th class="ps-3">{{ $text['name'] }}</th><th>{{ $text['health'] }}</th><th>{{ $text['status'] }}</th><th>{{ $text['lifecycle_status'] }}</th><th>{{ $text['lifecycle_phase'] }}</th><th>{{ $text['policy'] }}</th><th>{{ $text['primaries'] }}</th><th>{{ $text['replicas'] }}</th><th class="text-end">{{ $text['docs'] }}</th><th class="text-end">{{ $text['storage'] }}</th><th>{{ $text['stream'] }}</th><th class="text-end pe-3">{{ $text['actions'] }}</th></tr></thead>
+            <thead><tr><th class="ps-3" aria-sort="none"><button type="button" class="sort-button" data-sort="name">{{ $text['name'] }} <span aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="sort-button" data-sort="health">{{ $text['health'] }} <span aria-hidden="true">↕</span></button></th><th>{{ $text['status'] }}</th><th>{{ $text['lifecycle_status'] }}</th><th>{{ $text['lifecycle_phase'] }}</th><th>{{ $text['policy'] }}</th><th aria-sort="none"><button type="button" class="sort-button" data-sort="primaries">{{ $text['primaries'] }} <span aria-hidden="true">↕</span></button></th><th aria-sort="none"><button type="button" class="sort-button" data-sort="replicas">{{ $text['replicas'] }} <span aria-hidden="true">↕</span></button></th><th class="text-end" aria-sort="none"><button type="button" class="sort-button" data-sort="documents_count">{{ $text['docs'] }} <span aria-hidden="true">↕</span></button></th><th class="text-end" aria-sort="none"><button type="button" class="sort-button" data-sort="storage_bytes">{{ $text['storage'] }} <span aria-hidden="true">↕</span></button></th><th>{{ $text['stream'] }}</th><th class="text-end pe-3">{{ $text['actions'] }}</th></tr></thead>
             <tbody id="indices"><tr><td colspan="12" class="text-center text-secondary py-5">{{ $text['loading'] }}</td></tr></tbody>
         </table>
     </div>
@@ -112,6 +112,34 @@ function getFilteredIndices(){
     const onlyFavorites=document.getElementById('favorites-only').checked;
     return allIndices.filter(x=>x.name.toLowerCase().includes(q)&&(!onlyFavorites||favorites.has(x.name)));
 }
+let sortKey=null;
+let sortDirection='asc';
+const healthOrder={green:0,yellow:1,red:2};
+function getSortedIndices(){
+    const indices=getFilteredIndices();
+    if(!sortKey)return indices;
+    return indices.sort((a,b)=>{
+        let comparison=0;
+        if(sortKey==='health'){
+            comparison=(healthOrder[String(a.health||'').toLowerCase()]??3)-(healthOrder[String(b.health||'').toLowerCase()]??3);
+        }else if(sortKey==='name'){
+            comparison=String(a.name||'').localeCompare(String(b.name||''),undefined,{numeric:true,sensitivity:'base'});
+        }else{
+            comparison=Number(a[sortKey]||0)-Number(b[sortKey]||0);
+        }
+        if(comparison===0)comparison=String(a.name||'').localeCompare(String(b.name||''),undefined,{numeric:true,sensitivity:'base'});
+        return sortDirection==='asc'?comparison:-comparison;
+    });
+}
+function updateSortIndicators(){
+    document.querySelectorAll('[data-sort]').forEach(button=>{
+        const active=button.dataset.sort===sortKey;
+        button.setAttribute('aria-pressed',active?'true':'false');
+        button.querySelector('span').textContent=active?(sortDirection==='asc'?'▲':'▼'):'↕';
+        const th=button.closest('th');
+        if(th)th.setAttribute('aria-sort',active?(sortDirection==='asc'?'ascending':'descending'):'none');
+    });
+}
 function downloadExport(content,mimeType,extension){
     const blob=new Blob([content],{type:mimeType});
     const url=URL.createObjectURL(blob);
@@ -124,7 +152,7 @@ function downloadExport(content,mimeType,extension){
     URL.revokeObjectURL(url);
 }
 function exportIndices(format){
-    const filtered=getFilteredIndices();
+    const filtered=getSortedIndices();
     if(!filtered.length){alert(labels.export_empty);return;}
     const fields=['name','health','status','documents_count','storage_bytes','primaries','replicas','creation_date','data_stream','lifecycle_status','lifecycle_phase','lifecycle_policy'];
     if(format==='json'){
@@ -137,7 +165,7 @@ function exportIndices(format){
     downloadExport(String.fromCharCode(0xFEFF)+csv,'text/csv;charset=utf-8','csv');
 }
 function render(){
-    const filtered=getFilteredIndices();
+    const filtered=getSortedIndices();
     document.getElementById('count').textContent=number(filtered.length)+' / '+number(allIndices.length)+' · '+favorites.size+' '+labels.favorite;
     if(!filtered.length){
         const emptyMessage=onlyFavorites&&favorites.size===0?labels.no_favorites:labels.empty;
@@ -211,6 +239,14 @@ rows.addEventListener('click',e=>{
 document.getElementById('reload').addEventListener('click',load);
 document.getElementById('export-csv').addEventListener('click',()=>exportIndices('csv'));
 document.getElementById('export-json').addEventListener('click',()=>exportIndices('json'));
+document.querySelector('thead').addEventListener('click',event=>{
+    const button=event.target.closest('[data-sort]');
+    if(!button)return;
+    if(sortKey===button.dataset.sort)sortDirection=sortDirection==='asc'?'desc':'asc';
+    else{sortKey=button.dataset.sort;sortDirection='asc';}
+    updateSortIndicators();
+    render();
+});
 document.getElementById('search').addEventListener('input',render);
 document.getElementById('hidden').addEventListener('change',load);
 document.getElementById('rollup').addEventListener('change',load);
@@ -222,6 +258,7 @@ document.getElementById('copy-mapping-all').addEventListener('click',()=>copyTex
 document.getElementById('refresh-indexing').addEventListener('click',()=>{if(selectedIndex)loadIndexingStats(selectedIndex);});
 document.getElementById('detailsModal').addEventListener('shown.bs.modal',()=>{clearInterval(indexingRefreshTimer);indexingRefreshTimer=setInterval(()=>{if(selectedIndex&&document.getElementById('indexing-tab').classList.contains('active'))loadIndexingStats(selectedIndex);},30000);});
 document.getElementById('detailsModal').addEventListener('hidden.bs.modal',()=>{selectedIndex=null;clearInterval(indexingRefreshTimer);});
+updateSortIndicators();
 load();
 </script>
 </body>

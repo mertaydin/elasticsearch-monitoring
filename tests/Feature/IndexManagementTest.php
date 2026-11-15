@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Http;
 
 class IndexManagementTest extends TestCase
 {
+    public function test_it_renders_sortable_index_management_columns(): void
+    {
+        $this->withoutMiddleware();
+
+        $response = $this->get('/monitoring/elasticsearch/indices');
+
+        $response->assertOk()
+            ->assertSee('data-sort="name"', false)
+            ->assertSee('data-sort="health"', false)
+            ->assertSee('data-sort="documents_count"', false)
+            ->assertSee('data-sort="storage_bytes"', false)
+            ->assertSee('data-sort="primaries"', false)
+            ->assertSee('data-sort="replicas"', false)
+            ->assertSee('getSortedIndices()', false)
+            ->assertSee('updateSortIndicators()', false);
+    }
+
     public function test_it_lists_indices_with_data_stream_information(): void
     {
         Http::fake(function ($request) {

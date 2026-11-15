@@ -24,6 +24,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - İndeks, node, shard ve snapshot bilgilerini tek tıkla kopyalayın.
 - Mapping içeriğinin tamamını biçimlendirilmiş JSON olarak veya üst seviye bölümlerini ayrı ayrı kopyalayın.
 - Kopyalama bildirimlerini altı dilde gösterin ve node geçmişinde IP adreslerini görüntüleyin.
+- İndeks Yönetimi ekranına indeks adı, sağlık, primary/replica shard sayısı, belge sayısı ve depolama boyutu için sütun sıralama eklendi.
 
 ## Kurulum
 
@@ -75,6 +76,10 @@ Yedekleme izleme ekranı Elasticsearch tarafında `monitor_snapshot` cluster yet
 ## Favoriler
 
 Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca mevcut tarayıcı ve tarayıcı profili için geçerlidir; kullanıcılar veya cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.
+
+## İndeks listesini sıralama
+
+İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez.
 
 ## İndeks dışa aktarma
 
