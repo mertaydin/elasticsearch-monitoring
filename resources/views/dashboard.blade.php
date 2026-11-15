@@ -150,7 +150,7 @@
         </div>
         <ol id="dashboard-widget-list" class="list-group list-group-flush"></ol>
     </section>
-    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h6 fw-bold mb-0">{{ $uiText['overview'] }}</h2><small class="text-muted">● {{ $uiText['live'] }}</small></div>
+    <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h6 fw-bold mb-0">{{ $uiText['overview'] }}</h2></div>
     <div class="row g-3 mb-4 justify-content-center" id="summary-cards" data-dashboard-widget="summary">
         @foreach ([
             ['id'=>'docs','label'=>$t('documents'),'unit'=>'','color'=>'#20b6a5'],
