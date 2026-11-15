@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.21.0] - 2026-11-15
+
+- Add a one-click Clear filters action to reset search, favorites-only, hidden-index, and rollup-index filters.
+- Restore the default index sorting and refresh the list using default visibility options.
+- Localize the action in all six supported dashboard languages.
+
 ## [0.20.0] - 2026-11-15
 
 - Remember the Index Management search query and favorites-only filter in browser local storage.
