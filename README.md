@@ -14,6 +14,8 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Features
 
+- Choose a dashboard auto-refresh interval (15 seconds, 30 seconds, 1 minute, or 5 minutes), pause/resume refresh, and suspend background-tab requests.
+
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
 - Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard.
 - Export the currently visible index list (including search and favorites filters) as UTF-8 CSV or JSON directly in the browser.
@@ -177,3 +179,7 @@ Set the Slack and Teams webhook environment variables in your application enviro
 ## Dashboard layout preferences
 
 Use **Customize dashboard** to hide or show the summary, favorites, health, metrics, node comparison, and chart sections. Drag sections in the list to change their order, or reset the layout to its default. Preferences are stored in browser local storage for the current browser profile; they are not synchronized across devices and do not require a database migration.
+
+## Dashboard automatic refresh
+
+Choose a dashboard refresh interval of **15 seconds, 30 seconds, 1 minute, or 5 minutes**. Pause and resume automatic refresh at any time. The selected interval is saved in the current browser profile and restored on your next visit. Automatic requests are suspended while the dashboard tab is in the background and resume when it becomes visible again. The dashboard also shows the time of the last refresh attempt. Manual refresh remains available while automatic refresh is paused.

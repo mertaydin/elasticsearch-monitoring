@@ -127,8 +127,20 @@
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarm Geçmişi' : 'Alert History' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'API İstek Geçmişi' : 'API Request History' }}</a>
             <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleDashboardCustomizer()">{{ $locale === 'tr' ? 'Paneli düzenle' : 'Customize dashboard' }}</button>
-            <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
+            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="refreshDashboardNow()">{{ $t('refresh') }}</button>
         </div>
+    </div>
+    <div id="dashboard-refresh-controls" class="d-flex align-items-center flex-wrap gap-2 mb-3">
+        <label for="dashboard-refresh-interval" class="small text-muted mb-0">{{ $t('refresh_interval') }}</label>
+        <select id="dashboard-refresh-interval" class="form-select form-select-sm" style="width:auto" onchange="changeDashboardRefreshInterval(this.value)">
+            <option value="15000">{{ $t('refresh_15_seconds') }}</option>
+            <option value="30000">{{ $t('refresh_30_seconds') }}</option>
+            <option value="60000">{{ $t('refresh_1_minute') }}</option>
+            <option value="300000">{{ $t('refresh_5_minutes') }}</option>
+        </select>
+        <button id="dashboard-refresh-toggle" class="btn btn-sm btn-outline-secondary" type="button" onclick="toggleDashboardAutoRefresh()">{{ $t('pause_refresh') }}</button>
+        <span id="dashboard-refresh-status" class="small text-muted" aria-live="polite">{{ $t('auto_refresh') }}</span>
+        <span id="dashboard-last-refresh" class="small text-muted ms-auto">{{ $t('last_refresh') }}: —</span>
     </div>
     <div id="alert" class="alert alert-warning d-none"></div>
     <section id="dashboard-customizer" class="insight-card mb-4 d-none">
@@ -308,7 +320,69 @@ function renderChart(id, options) {
     charts[id] = new ApexCharts(document.querySelector(id), options);
     charts[id].render();
 }
+const refreshPreferenceKey = 'elasticsearch-monitoring:dashboard-refresh-interval';
+const allowedRefreshIntervals = [15000, 30000, 60000, 300000];
+let refreshIntervalMs = 30000;
+let refreshPaused = false;
+let refreshTimer = null;
+let refreshInProgress = false;
+let lastRefreshAt = null;
+try {
+    const savedInterval = Number(localStorage.getItem(refreshPreferenceKey));
+    if (allowedRefreshIntervals.includes(savedInterval)) refreshIntervalMs = savedInterval;
+} catch (error) {}
+document.getElementById('dashboard-refresh-interval').value = String(refreshIntervalMs);
+function updateDashboardRefreshControls() {
+    document.getElementById('dashboard-refresh-toggle').textContent = refreshPaused ? @json($t('resume_refresh')) : @json($t('pause_refresh'));
+    document.getElementById('dashboard-refresh-status').textContent = refreshPaused ? @json($t('refresh_paused')) : @json($t('auto_refresh'));
+    document.getElementById('dashboard-last-refresh').textContent = @json($t('last_refresh')) + ': ' + (lastRefreshAt ? lastRefreshAt.toLocaleString() : '—');
+}
+function scheduleDashboardRefresh(delay = refreshIntervalMs) {
+    if (refreshTimer !== null) window.clearTimeout(refreshTimer);
+    refreshTimer = null;
+    if (refreshPaused || document.hidden) return;
+    refreshTimer = window.setTimeout(async () => {
+        refreshTimer = null;
+        await loadMetrics();
+        scheduleDashboardRefresh();
+    }, Math.max(0, delay));
+}
+async function refreshDashboardNow() {
+    if (refreshTimer !== null) window.clearTimeout(refreshTimer);
+    refreshTimer = null;
+    await loadMetrics();
+    scheduleDashboardRefresh();
+}
+function toggleDashboardAutoRefresh() {
+    refreshPaused = !refreshPaused;
+    if (refreshPaused && refreshTimer !== null) window.clearTimeout(refreshTimer);
+    refreshTimer = null;
+    updateDashboardRefreshControls();
+    if (!refreshPaused) scheduleDashboardRefresh(0);
+}
+function changeDashboardRefreshInterval(value) {
+    const interval = Number(value);
+    if (!allowedRefreshIntervals.includes(interval)) return;
+    refreshIntervalMs = interval;
+    try { localStorage.setItem(refreshPreferenceKey, String(interval)); } catch (error) {}
+    scheduleDashboardRefresh();
+}
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        if (refreshTimer !== null) window.clearTimeout(refreshTimer);
+        refreshTimer = null;
+    } else if (!refreshPaused) {
+        scheduleDashboardRefresh(0);
+    }
+});
+async function startDashboardRefresh() {
+    await loadMetrics();
+    scheduleDashboardRefresh();
+}
+updateDashboardRefreshControls();
 async function loadMetrics() {
+    if (refreshInProgress) return;
+    refreshInProgress = true;
     const alert = document.getElementById('alert');
     try {
         const response = await fetch(endpoint, {headers: {'Accept': 'application/json'}});
@@ -448,12 +522,15 @@ async function loadMetrics() {
     } catch (error) {
         alert.textContent = labels.loadError + ': ' + error.message;
         alert.classList.remove('d-none');
+    } finally {
+        refreshInProgress = false;
+        lastRefreshAt = new Date();
+        updateDashboardRefreshControls();
     }
 }
 renderFavoriteIndices();
 window.addEventListener('storage', event => { if (event.key === favoritesStorageKey) renderFavoriteIndices(); });
-loadMetrics();
-setInterval(loadMetrics, 30000);
+startDashboardRefresh();
 </script>
 </body>
 </html>

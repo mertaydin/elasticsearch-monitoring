@@ -14,6 +14,8 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Özellikler
 
+- Dashboard otomatik yenileme aralığını (15 saniye, 30 saniye, 1 dakika veya 5 dakika) seçin; yenilemeyi duraklatın/sürdürün ve arka planda gereksiz istekleri durdurun.
+
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
 - Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın.
 - Arama ve favori filtreleriyle görünen indeks listesini tarayıcıdan UTF-8 CSV veya JSON olarak indirin.
@@ -123,3 +125,7 @@ Bildirimler varsayılan olarak kapalıdır. Yayınladığınız paket yapıland�
 ## Dashboard düzeni tercihleri
 
 **Paneli düzenle** seçeneğiyle özet, favoriler, küme sağlığı, metrikler, node karşılaştırması ve grafik bölümlerini gizleyebilir veya gösterebilirsiniz. Listedeki bölümleri sürükleyerek sıralayabilir, varsayılan düzene dönebilirsiniz. Tercihler mevcut tarayıcı profilinin localStorage alanında tutulur; cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.
+
+## Dashboard otomatik yenileme
+
+Dashboard için **15 saniye, 30 saniye, 1 dakika veya 5 dakika** yenileme aralığını seçebilirsiniz. Otomatik yenilemeyi istediğiniz zaman duraklatıp sürdürebilirsiniz. Seçilen aralık mevcut tarayıcı profilinde saklanır ve sonraki ziyaretinizde geri yüklenir. Dashboard sekmesi arka plandayken otomatik istekler durdurulur, sekme yeniden görünür olduğunda yenileme devam eder. Son yenileme denemesinin zamanı da gösterilir. Otomatik yenileme duraklatılsa bile manuel yenileme kullanılabilir.

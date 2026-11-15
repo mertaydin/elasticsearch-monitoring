@@ -1,3 +1,10 @@
+## [0.25.0] - 2026-11-16
+
+- Add configurable dashboard auto-refresh intervals: 15 seconds, 30 seconds, 1 minute, and 5 minutes.
+- Allow users to pause and resume automatic refresh while keeping manual refresh available.
+- Persist the selected interval in browser local storage and suspend scheduled requests while the dashboard tab is hidden.
+- Show the last refresh attempt and localize all refresh controls in the six supported dashboard languages.
+
 ## [0.24.0] - 2026-11-16
 
 - Add dashboard layout customization: hide/show sections, drag-and-drop ordering, browser-local persistence, and reset to defaults.

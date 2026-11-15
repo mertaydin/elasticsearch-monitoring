@@ -47,6 +47,24 @@ class DashboardAuthorizationTest extends TestCase
         $this->assertFalse(Route::has('elasticsearch-monitoring.data-streams.data'));
     }
 
+
+    public function test_auto_refresh_labels_are_available_in_all_dashboard_locales(): void
+    {
+        foreach (['tr', 'en', 'es', 'hi', 'ar', 'zh_CN'] as $locale) {
+            foreach ([
+                'refresh_interval', 'auto_refresh', 'refresh_paused', 'pause_refresh',
+                'resume_refresh', 'last_refresh', 'refresh_15_seconds', 'refresh_30_seconds',
+                'refresh_1_minute', 'refresh_5_minutes',
+            ] as $key) {
+                $this->assertNotSame(
+                    $key,
+                    __('elasticsearch-monitoring::messages.' . $key, [], $locale),
+                    "Missing translation [{$key}] for locale [{$locale}]."
+                );
+            }
+        }
+    }
+
     public function test_dashboard_remains_compatible_when_no_callback_is_registered(): void
     {
         $authorizer = app(DashboardAuthorizer::class);
