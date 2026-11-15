@@ -27,6 +27,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - İndeks Yönetimi ekranına indeks adı, sağlık, primary/replica shard sayısı, belge sayısı ve depolama boyutu için sütun sıralama eklendi.
 - İndeks Yönetimi arama metnini ve yalnızca favoriler seçimini tarayıcının yerel depolama alanında hatırlayın.
 - Tek tıkla tüm indeks filtrelerini temizleyin ve sıralamayı varsayılana döndürün.
+- Elasticsearch API İstek Geçmişi ekranında endpoint, HTTP durum kodu, yanıt süresi, hata kayıtları ve en çok/en yavaş endpoint sıralamalarını inceleyin.
 - Node bazında query/fetch hızlarını, ortalama işlem sürelerini, aktif arama işlemlerini, search kuyruğunu ve reddedilme oranlarını geçmiş grafiklerle izleyin.
 
 ## Kurulum
@@ -79,6 +80,10 @@ Yedekleme izleme ekranı Elasticsearch tarafında `monitor_snapshot` cluster yet
 ## Sorgu Aktivitesi İzleme
 
 Sorgu Aktivitesi ekranı node bazında query ve fetch sayaçlarını, anlık query/fetch işlemlerini, scroll ve suggest hızlarını, ortalama query/fetch sürelerini, search thread pool kuyruğunu ve reddedilme hızını gösterir. Hızlar ve ortalama süreler başarılı ölçümler arasındaki sayaç farklarından hesaplanır; değerlerin oluşması için en az iki ölçüm gerekir. Ekran son 1.440 metrik kaydını kullanır, görünümü 30 saniyede bir yeniler ve Elasticsearch'e ek istek göndermez. Güncellemeden sonra `php artisan elasticsearch:collect` çalıştırılmalıdır; özellik öncesinde alınan geçmiş ölçümlerde sorgu aktivitesi alanları bulunmaz.
+
+## Elasticsearch API İstek Geçmişi
+
+`/monitoring/elasticsearch/api-requests` ekranı, izleme panelinin Elasticsearch'e gönderdiği GET isteklerini kaydeder. Endpoint, HTTP durum kodu, yanıt süresi, başarılı/başarısız sonucu ve hata mesajı görüntülenir; en çok çağrılan ve ortalama yanıt süresi en yüksek endpoint'ler ayrıca sıralanır. Son 500 istek listelenir. URL sorgu parametreleri kaydedilmez; kimlik bilgileri ve istek gövdeleri loglanmaz. Özellik `elasticsearch_api_request_logs` tablosunu oluşturur; güncelleme sonrası `php artisan migrate` çalıştırın.
 
 ## Favoriler
 

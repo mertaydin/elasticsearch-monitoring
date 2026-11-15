@@ -91,6 +91,10 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 
 The dedicated Query Activity page shows per-node query and fetch counters, current query/fetch operations, scroll and suggest rates, average query/fetch time per operation, search thread-pool queue depth, and rejection rate. Rates and average times are calculated from counter deltas between successful metric collections, so a second collection is required before rate values appear. The page reads stored metric snapshots (up to the latest 1,440 collections), refreshes its display every 30 seconds, and does not issue additional Elasticsearch requests. Existing installations should run `php artisan elasticsearch:collect` after updating; historical samples collected before this feature do not contain query activity details.
 
+## Elasticsearch API Request History
+
+The `/monitoring/elasticsearch/api-requests` page records GET requests made by the monitoring panel to Elasticsearch. It shows endpoint, HTTP status, response time, success/failure, and error details, plus rankings for the most-called and slowest endpoints. The latest 500 requests are listed. URL query parameters are stripped; credentials and request bodies are never logged. The feature creates the `elasticsearch_api_request_logs` table; run `php artisan migrate` after updating.
+
 ## Favorites
 
 Favorite indices are stored in the browser's local storage. They are specific to the current browser and browser profile, are not synchronized between users or devices, and do not require a database migration.

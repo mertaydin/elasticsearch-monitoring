@@ -1,6 +1,7 @@
 <?php
 
 use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
+use ElasticsearchMonitoring\Http\Controllers\ApiRequestHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\CapacityController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
@@ -31,6 +32,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/shards/allocation-explain', [ShardController::class, 'allocationExplain'])->name('shards.allocation-explain');
         Route::get('/capacity', [CapacityController::class, 'index'])->name('capacity');
         Route::get('/capacity/data', [CapacityController::class, 'data'])->name('capacity.data');
+        Route::get('/api-requests', [ApiRequestHistoryController::class, 'index'])->name('api-requests');
+        Route::get('/api-requests/data', [ApiRequestHistoryController::class, 'data'])->name('api-requests.data');
         Route::get('/query-activity', [QueryActivityController::class, 'index'])->name('query-activity');
         Route::get('/query-activity/data', [QueryActivityController::class, 'data'])->name('query-activity.data');
         Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');

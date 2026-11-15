@@ -5,6 +5,13 @@
 - Add historical charts, node-level comparison, automatic refresh, and localized UI in all six supported languages.
 - Reuse existing metric snapshots; no database migration or additional Elasticsearch API request is required.
 
+## [0.23.0] - 2026-11-16
+
+- Add API Request History for Elasticsearch GET calls made by the monitoring panel.
+- Record endpoint, HTTP status, duration, success/failure, and error details; show top-called and slowest endpoints.
+- Strip URL query parameters and never record credentials or request bodies.
+- Add a localized history page and feature tests.
+
 # Changelog
 
 ## [0.21.0] - 2026-11-15
