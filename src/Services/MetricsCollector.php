@@ -91,6 +91,9 @@ class MetricsCollector
                 'cpu_percent' => data_get($node, 'process.cpu.percent'),
                 'heap_percent' => $nodeHeapMax > 0 ? round(($nodeHeapUsed / $nodeHeapMax) * 100, 2) : null,
                 'filesystem_used_percent' => $nodeFsTotal > 0 ? round((($nodeFsTotal - $nodeFsAvailable) / $nodeFsTotal) * 100, 2) : null,
+                'filesystem_total_bytes' => $nodeFsTotal,
+                'filesystem_available_bytes' => $nodeFsAvailable,
+                'filesystem_used_bytes' => max(0, $nodeFsTotal - $nodeFsAvailable),
                 'documents' => (int) data_get($node, 'indices.docs.count', 0),
                 'shards' => (int) data_get($node, 'indices.shard_stats.total_count', 0),
                 'search_total' => (int) data_get($node, 'indices.search.query_total', 0),
@@ -102,7 +105,21 @@ class MetricsCollector
             ];
         }
 
+        $indexDetails = [];
+        foreach ((array) data_get($responses, 'indices_stats.indices', []) as $indexName => $indexStats) {
+            $primaryDocs = data_get($indexStats, 'primaries.docs.count');
+            $totalDocs = data_get($indexStats, 'total.docs.count');
+            $indexDetails[] = [
+                'name' => (string) $indexName,
+                'documents' => is_numeric($primaryDocs) ? (int) $primaryDocs : (is_numeric($totalDocs) ? (int) $totalDocs : 0),
+                'storage_bytes' => (int) data_get($indexStats, 'primaries.store.size_in_bytes', 0),
+                'total_storage_bytes' => (int) data_get($indexStats, 'total.store.size_in_bytes', 0),
+            ];
+        }
+        usort($indexDetails, static fn (array $left, array $right): int => strcmp($left['name'], $right['name']));
+
         return [
+            'index_details' => $indexDetails,
             'cluster' => [
                 'name' => data_get($responses, 'health.cluster_name'),
                 'status' => data_get($responses, 'health.status'),

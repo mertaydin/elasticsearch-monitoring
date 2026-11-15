@@ -44,6 +44,7 @@ Index management: `/monitoring/elasticsearch/indices`
 Data Streams: `/monitoring/elasticsearch/data-streams`  
 Node performance history: `/monitoring/elasticsearch/nodes`  
 Shard allocation: `/monitoring/elasticsearch/shards`  
+Capacity analysis: `/monitoring/elasticsearch/capacity`  
 Alert history: `/monitoring/elasticsearch/alerts`
 
 The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.

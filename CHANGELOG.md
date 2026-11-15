@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0] - 2026-11-15
+
+- Add Cluster Capacity & Growth analysis with historical filesystem, document, and primary index storage trends.
+- Add per-node disk growth projections and fastest-growing index rankings.
+- Extend metric snapshots with per-node filesystem byte counters and per-index document/storage statistics.
+- Increase default metric snapshot retention to 90 days to support longer trend analysis.
+
+
 ## [0.8.1] - 2026-11-15
 
 - Clean up README line breaks and remove duplicated Shard Allocation documentation.

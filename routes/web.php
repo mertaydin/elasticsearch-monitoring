@@ -1,6 +1,7 @@
 <?php
 
 use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
+use ElasticsearchMonitoring\Http\Controllers\CapacityController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
@@ -24,6 +25,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/data-streams/{name}/details', [DataStreamController::class, 'details'])->where('name', '[A-Za-z0-9_.-]+')->name('data-streams.details');
         Route::get('/shards', [ShardController::class, 'index'])->name('shards');
         Route::get('/shards/data', [ShardController::class, 'data'])->name('shards.data');
+        Route::get('/capacity', [CapacityController::class, 'index'])->name('capacity');
+        Route::get('/capacity/data', [CapacityController::class, 'data'])->name('capacity.data');
         Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');
         Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');
         Route::get('/alerts', [AlertHistoryController::class, 'index'])->name('alerts');

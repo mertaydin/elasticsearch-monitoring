@@ -10,7 +10,7 @@ return [
         'verify' => (bool) env('ELASTICSEARCH_MONITORING_VERIFY', true),
     ],
     'collection' => [
-        'retention_days' => 30,
+        'retention_days' => 90,
     ],
     'dashboard' => [
         'path' => 'monitoring/elasticsearch',

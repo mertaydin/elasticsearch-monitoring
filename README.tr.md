@@ -32,7 +32,7 @@ ELASTICSEARCH_MONITORING_TIMEOUT=10
 ELASTICSEARCH_MONITORING_VERIFY=true
 ```
 
-Panel: `/monitoring/elasticsearch`. İndeks yönetimi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
+Panel: `/monitoring/elasticsearch`. İndeks yönetimi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
 
 ### Panel yetkilendirmesi
 
