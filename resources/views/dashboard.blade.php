@@ -238,7 +238,8 @@ function saveDashboardLayout(layout) { try { localStorage.setItem(dashboardLayou
 function applyDashboardLayout(layout) {
     const main = document.querySelector('main.container');
     const widgets = new Map([...document.querySelectorAll('[data-dashboard-widget]')].map(widget => [widget.dataset.dashboardWidget, widget]));
-    layout.order.forEach(id => { const widget = widgets.get(id); if (widget) { main.appendChild(widget); widget.hidden = layout.hidden.includes(id); } });
+    const anchor = document.getElementById('updated');
+    layout.order.forEach(id => { const widget = widgets.get(id); if (widget) { main.insertBefore(widget, anchor); widget.hidden = layout.hidden.includes(id); } });
 }
 function renderDashboardWidgetList(layout) {
     const list = document.getElementById('dashboard-widget-list'); list.replaceChildren();

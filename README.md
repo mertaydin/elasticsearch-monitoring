@@ -131,7 +131,7 @@ Turkish (`tr`), English (`en`), Simplified Chinese (`zh_CN`), Hindi (`hi`), Span
 
 ## Security
 
-Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features. Index details display ILM policy, phase, action, step, index age, rollover alias, and any failed-step information in read-only form. A separate Data Streams page displays stream metadata, backing indices, generation, template, ILM policy, document counts, and storage usage. Clusters using only classic indices can continue using the package without any Data Streams configuration.
+Keep the dashboard behind authentication and authorization. Store credentials in environment variables and keep TLS verification enabled in production. The package is strictly read-only against Elasticsearch; it has no index, mapping, settings, shard, or ILM modification features. Index details display ILM policy, phase, action, step, index age, rollover alias, and any failed-step information in read-only form.
 
 ## Development
 
