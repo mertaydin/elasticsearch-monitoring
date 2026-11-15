@@ -55,7 +55,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="col-12 col-lg-8"><section class="panel p-3 h-100">
 <div class="row g-2 mb-3"><div class="col-md-7"><input id="search" type="search" class="form-control" placeholder="{{ $text['search'] }}"></div><div class="col-md-3"><select id="state-filter" class="form-select"><option value="">{{ $text['all'] }}</option><option>STARTED</option><option>INITIALIZING</option><option>RELOCATING</option><option>UNASSIGNED</option></select></div><div class="col-md-2"><select id="node-filter" class="form-select"><option value="">{{ $text['all_nodes'] }}</option></select></div></div>
 <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="h6 fw-bold mb-0">{{ $text['table'] }}</h2><span class="small text-secondary" id="updated"></span></div>
-<div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>{{ $text['index'] }}</th><th>{{ $text['shard'] }}</th><th>{{ $text['type'] }}</th><th>{{ $text['state'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['storage'] }}</th><th>{{ $text['node'] }}</th><th>{{ $text['reason'] }}</th></tr></thead><tbody id="shards"><tr><td colspan="8" class="text-center py-5 text-secondary">{{ $text['loading'] }}</td></tr></tbody></table></div>
+<div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>{{ $text['index'] }}</th><th>{{ $text['shard'] }}</th><th>{{ $text['type'] }}</th><th>{{ $text['state'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['storage'] }}</th><th>{{ $text['node'] }}</th><th>{{ $text['reason'] }}</th><th></th></tr></thead><tbody id="shards"><tr><td colspan="9" class="text-center py-5 text-secondary">{{ $text['loading'] }}</td></tr></tbody></table></div>
 </section></div></div>
 </main>
 <div class="explain-overlay" id="explain-overlay" role="dialog" aria-modal="true" aria-labelledby="explain-heading">
@@ -70,6 +70,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 const endpoint=@json(route('elasticsearch-monitoring.shards.data',['locale'=>$locale]));
 const labels=@json($text);
 const explainLabels=@json($explainText);
+const explainEndpoint=@json(route('elasticsearch-monitoring.shards.allocation-explain',['locale'=>$locale]));
 let allShards=[];
 const safe=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const number=value=>value===null||value===undefined?'—':Number(value).toLocaleString(document.documentElement.lang);
