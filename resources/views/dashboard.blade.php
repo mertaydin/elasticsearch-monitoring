@@ -63,73 +63,111 @@
     @endif
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <style>
-        body{background:#f4f6fb!important;color:#182238;font-family:Inter,system-ui,-apple-system,sans-serif}
-        main.container{max-width:1500px}
-        .hero{padding:28px 30px;border-radius:22px;background:linear-gradient(115deg,#171d38,#303b70 60%,#625bdb);color:#fff;box-shadow:0 16px 38px rgba(39,48,104,.18)}
-        .hero h1{font-weight:800;letter-spacing:-.04em}.hero p{color:#d5d9f2}
-        .hero .form-select{min-width:125px;background-color:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.25)}
-        .hero .form-select option{color:#182238}.hero .btn{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.1)}
-         .metric-card,.chart-card,.summary-card{background:#fff;border:1px solid #e9edf4;border-radius:17px;box-shadow:0 5px 18px rgba(29,41,74,.035);height:100%}
-        .summary-card{padding:17px 19px 9px;overflow:hidden;position:relative;min-height:164px}
-        .summary-label{font-size:.82rem;font-weight:600;color:#8992a6}
-        .summary-value{font-size:1.85rem;line-height:1.25;font-weight:750;letter-spacing:-.055em;color:#29334d;margin-top:7px;white-space:nowrap}
-        .summary-change{font-size:.72rem;font-weight:700;padding:4px 7px;border-radius:7px;background:#f1f4f9;color:#8b94a7;white-space:nowrap}
-        .summary-change.positive{background:#e5f8ee;color:#1aaf68}.summary-change.negative{background:#fff0ed;color:#e05d4b}
-        .summary-chart{height:58px;margin:7px -5px -2px}
-        #summary-cards>.col-xl-3{max-width:25%}
+        :root{--em-ink:#182238;--em-muted:#77839a;--em-line:#e7ebf3;--em-surface:#fff;--em-bg:#f3f5fa;--em-primary:#4f5bd5}
+        body{background:var(--em-bg)!important;color:var(--em-ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.01em}
+        main.container{max-width:1580px;padding-top:28px!important}
+        .dashboard-header{border:1px solid rgba(220,226,239,.85);border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 12px 35px rgba(31,45,82,.055)}
+        .dashboard-hero{position:relative;isolation:isolate;overflow:hidden;padding:28px 30px;background:linear-gradient(112deg,#141d38 0%,#253765 58%,#5158bd 100%);color:#fff}
+        .dashboard-hero:after{content:"";position:absolute;z-index:-1;width:340px;height:340px;right:9%;top:-245px;border:1px solid rgba(255,255,255,.14);border-radius:50%;box-shadow:0 0 0 35px rgba(255,255,255,.035),0 0 0 75px rgba(255,255,255,.025)}
+        .dashboard-eyebrow{font-size:.66rem;font-weight:800;letter-spacing:.17em;color:#b7c5ff;margin-bottom:9px}
+        .dashboard-hero h1{font-size:1.55rem;font-weight:800;letter-spacing:-.045em}
+        .dashboard-hero p{font-size:.86rem;color:#d1daf1}
+        .dashboard-header-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+        .dashboard-language-select{min-width:126px;background-color:rgba(255,255,255,.12)!important;color:#fff!important;border:1px solid rgba(255,255,255,.24)!important}
+        .dashboard-language-select option{color:#182238}
+        .dashboard-primary-action{background:#fff!important;color:#26386d!important;border:0!important;font-weight:700!important;padding:.55rem .9rem!important;box-shadow:0 5px 14px rgba(0,0,0,.12)}
+        .dashboard-nav{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 16px;background:#fff}
+        .dashboard-nav-links{display:flex;align-items:center;gap:5px;min-width:0;overflow-x:auto;scrollbar-width:thin}
+        .dashboard-nav-link{display:inline-flex;align-items:center;white-space:nowrap;text-decoration:none;color:#66728a;font-size:.77rem;font-weight:650;padding:9px 11px;border-radius:9px;transition:background .18s,color .18s}
+        .dashboard-nav-link:hover,.dashboard-nav-link.active{background:#eef1ff;color:#414fbd}
+        .dashboard-nav-tools{display:flex;gap:7px;flex:none}
+        .dashboard-nav-tools .btn{font-size:.75rem;font-weight:650;border-radius:9px;padding:.48rem .7rem}
+        #dashboard-refresh-controls,#dashboard-history-controls{border:1px solid var(--em-line);border-radius:15px;background:#fff;padding:13px 16px;box-shadow:0 4px 15px rgba(31,45,82,.025)}
+        #dashboard-refresh-controls{min-height:58px}
+        #dashboard-refresh-controls .form-select,#dashboard-history-controls .form-select,#dashboard-history-controls input{border-color:#e2e7f0;border-radius:9px;color:#33415e}
+        #dashboard-refresh-controls .btn,#dashboard-history-controls .btn{border-radius:9px;font-weight:650}
+        #dashboard-history-controls{padding:16px 18px}
+        #dashboard-history-controls .form-label{font-weight:700;color:#66728a!important}
+        #dashboard-history-summary{font-weight:600}
+        .insight-card,.metric-card,.chart-card,.summary-card{background:var(--em-surface);border:1px solid var(--em-line);border-radius:16px;box-shadow:0 5px 20px rgba(31,45,82,.035);height:100%}
+        .insight-card{padding:21px}
+        .section-title{font-size:.96rem;font-weight:800;color:#26334e;letter-spacing:-.025em}
+        #summary-cards{row-gap:13px}
+        .summary-card{position:relative;overflow:hidden;padding:17px 18px 10px;min-height:158px;transition:transform .2s,box-shadow .2s}
+        .summary-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--spark-color,#5364d8)}
+        .summary-card:hover,.metric-card:hover,.chart-card:hover{transform:translateY(-2px);box-shadow:0 12px 27px rgba(31,45,82,.075)}
+        .summary-label{font-size:.76rem;font-weight:700;color:#78849a}
+        .summary-value{font-size:1.85rem;line-height:1.2;font-weight:800;letter-spacing:-.06em;color:#202d49;margin-top:8px;white-space:nowrap}
+        .summary-change{font-size:.68rem;font-weight:750;padding:4px 7px;border-radius:7px;background:#f1f3f8;color:#8490a5;white-space:nowrap}
+        .summary-change.positive{background:#e6f7ef;color:#15945d}.summary-change.negative{background:#fff0ed;color:#d95748}
+        .summary-chart{height:54px;margin:7px -5px -2px}
+        .metric-card{padding:18px;transition:transform .2s,box-shadow .2s}
+        .metric-card small{font-size:.75rem;font-weight:700;color:#7a879c}
+        .metric-card strong{display:block;margin-top:11px;font-size:1.42rem;font-weight:800;letter-spacing:-.045em;color:#26334e}
+        .chart-card{width:100%;min-height:340px;padding:19px;transition:transform .2s,box-shadow .2s}
+        .chart-card h2{font-size:.91rem;font-weight:800;letter-spacing:-.02em;color:#293650}
+        .chart-card .text-muted{font-size:.73rem;color:#8792a6!important;line-height:1.5}
         .dashboard-chart-grid>.col-xl-4{display:flex}
-        .dashboard-chart-grid .chart-card{width:100%;min-height:350px}
-        .dashboard-chart-grid .chart-card>div[id]{min-height:260px}
-        .dashboard-chart-grid .chart-card h2{min-height:2.5rem;margin-bottom:.35rem}
-        .dashboard-chart-grid .chart-card p{min-height:2.25rem;margin-bottom:.5rem}
-
-        .metric-card{padding:18px 19px;transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(29,41,74,.08)}
-        .metric-card small{font-weight:600;color:#778198}.metric-card strong{display:block;margin-top:12px;font-size:1.5rem;letter-spacing:-.04em}
-        .chart-card{padding:20px}.chart-card h2{font-size:.95rem;font-weight:700}.chart-card .text-muted{font-size:.75rem}
-        .insight-card{background:#fff;border:1px solid #e9edf4;border-radius:17px;padding:22px;box-shadow:0 5px 18px rgba(29,41,74,.035)}
-        .section-title{font-size:1rem;font-weight:750;color:#29334d}.health-score{font-size:3rem;line-height:1;font-weight:800;letter-spacing:-.06em;color:#29334d}
-        .health-score.healthy{color:#16a36a}.health-score.warning{color:#d58a20}.health-score.critical{color:#dc5147}
-        .alert-list{display:grid;gap:9px}.alert-item{display:flex;gap:12px;align-items:flex-start;border:1px solid #edf0f5;border-radius:12px;padding:11px 13px}
+        .dashboard-chart-grid .chart-card>div[id]{min-height:250px}
+        .dashboard-chart-grid .chart-card h2{min-height:1.4rem;margin-bottom:.45rem}
+        .dashboard-chart-grid .chart-card p{min-height:2.2rem;margin-bottom:.45rem}
+        .health-score{font-size:3rem;line-height:1;font-weight:850;letter-spacing:-.065em;color:#293650}
+        .health-score.healthy{color:#159b68}.health-score.warning{color:#d28a25}.health-score.critical{color:#d95149}
+        .alert-list{display:grid;gap:9px}.alert-item{display:flex;gap:12px;align-items:flex-start;border:1px solid #edf0f5;border-radius:11px;padding:11px 13px;background:#fcfdff}
         .alert-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex:none}.alert-dot.warning{background:#e6a23c}.alert-dot.critical{background:#dc5147}
-        .alert-item strong{font-size:.85rem}.alert-item p{font-size:.77rem;color:#7d879a;margin:3px 0 0}
-        .table thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:#8791a5;white-space:nowrap}.table tbody td{font-size:.82rem;white-space:nowrap}
+        .alert-item strong{font-size:.83rem}.alert-item p{font-size:.76rem;color:#7d879a;margin:3px 0 0}
+        .table{--bs-table-bg:transparent}
+        .table thead th{font-size:.68rem;text-transform:uppercase;letter-spacing:.055em;color:#8791a5;white-space:nowrap;border-bottom-color:#e8ecf3}
+        .table tbody td{font-size:.8rem;white-space:nowrap;border-bottom-color:#f0f2f7}
+        .table-hover>tbody>tr:hover>*{--bs-table-bg:#f7f8ff}
+        .badge.text-bg-light{background:#f0f3fa!important;color:#5d6a84!important;border:1px solid #e6eaf2}
+        .progress{background:#edf0f6;border-radius:20px}.progress-bar{border-radius:20px}
+        #dashboard-customizer{border-color:#dfe4f1}
+        #updated{color:#8a95a8!important}
         @media(max-width:1199px){#summary-cards>.col-xl-3{max-width:50%}}
-        @media(max-width:767px){.hero{padding:21px;border-radius:18px}#summary-cards>.col-xl-3{max-width:100%}.metric-card{padding:15px}.metric-card strong{font-size:1.25rem}.chart-card{padding:16px}.dashboard-chart-grid .chart-card{min-height:320px}}
+        @media(max-width:991px){.dashboard-nav{align-items:stretch;flex-direction:column}.dashboard-nav-tools{justify-content:flex-end}.dashboard-nav-links{padding-bottom:2px}}
+        @media(max-width:767px){main.container{padding-top:14px!important}.dashboard-header{border-radius:16px}.dashboard-hero{padding:21px}.dashboard-hero h1{font-size:1.3rem}.dashboard-header-actions{width:100%;justify-content:space-between}.dashboard-nav{padding:9px}.dashboard-nav-link{padding:8px 9px;font-size:.73rem}.dashboard-nav-tools{justify-content:stretch}.dashboard-nav-tools .btn{flex:1}.insight-card{padding:16px}#summary-cards>.col-xl-3{max-width:100%}.summary-card{min-height:148px}.metric-card{padding:15px}.metric-card strong{font-size:1.22rem}.chart-card{padding:16px;min-height:320px}.dashboard-chart-grid .chart-card>div[id]{min-height:230px}#dashboard-refresh-controls{gap:8px!important}#dashboard-last-refresh{width:100%;margin-left:0!important}}
     </style>
 </head>
 <body class="bg-light">
 <main class="container py-4">
-    <div class="hero d-flex justify-content-between align-items-center mb-4 gap-3 flex-wrap">
-        <div><h1 class="h3 mb-1">{{ $t('title') }}</h1><p class="text-muted mb-0">{{ $t('subtitle') }}</p></div>
-        <div class="d-flex align-items-center gap-2">
-            <form method="GET" action="{{ route('elasticsearch-monitoring.index') }}" class="d-flex align-items-center gap-2">
-                <label for="dashboard-locale" class="visually-hidden">Dashboard language</label>
-                <select
-                    id="dashboard-locale"
-                    name="locale"
-                    class="form-select form-select-sm"
-                    aria-label="Dashboard language"
-                    onchange="document.cookie = 'elasticsearch_monitoring_locale=' + encodeURIComponent(this.value) + '; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); this.form.submit()"
-                >
-                    @foreach ($availableLocales as $availableLocale)
-                        <option value="{{ $availableLocale }}" @selected($locale === $availableLocale)>
-                            {{ $languageNames[$availableLocale] ?? strtoupper($availableLocale) }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.shards', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Shard Dağılımı' : 'Shard Allocation' }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.capacity', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Kapasite Analizi' : 'Capacity Analysis' }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.nodes', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.thread-pools', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Thread Pool Analizi' : 'Thread Pool Analyzer' }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.snapshots', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Yedekleme İzleme' : 'Snapshot Monitoring' }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarm Geçmişi' : 'Alert History' }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'API İstek Geçmişi' : 'API Request History' }}</a>
-            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleDashboardCustomizer()">{{ $locale === 'tr' ? 'Paneli düzenle' : 'Customize dashboard' }}</button>
-            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="refreshDashboardNow()">{{ $t('refresh') }}</button>
+    <header class="dashboard-header mb-4">
+        <div class="dashboard-hero d-flex justify-content-between align-items-center gap-3 flex-wrap">
+            <div>
+                <div class="dashboard-eyebrow">ELASTICSEARCH · OBSERVABILITY</div>
+                <h1 class="h3 mb-1">{{ $t('title') }}</h1>
+                <p class="mb-0">{{ $t('subtitle') }}</p>
+            </div>
+            <div class="dashboard-header-actions">
+                <form method="GET" action="{{ route('elasticsearch-monitoring.index') }}" class="d-flex align-items-center gap-2">
+                    <label for="dashboard-locale" class="visually-hidden">Dashboard language</label>
+                    <select id="dashboard-locale" name="locale" class="form-select form-select-sm dashboard-language-select" aria-label="Dashboard language"
+                        onchange="document.cookie = 'elasticsearch_monitoring_locale=' + encodeURIComponent(this.value) + '; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); this.form.submit()">
+                        @foreach ($availableLocales as $availableLocale)
+                            <option value="{{ $availableLocale }}" @selected($locale === $availableLocale)>{{ $languageNames[$availableLocale] ?? strtoupper($availableLocale) }}</option>
+                        @endforeach
+                    </select>
+                </form>
+                <button class="btn dashboard-primary-action btn-sm" type="button" onclick="refreshDashboardNow()">{{ $t('refresh') }}</button>
+            </div>
         </div>
-    </div>
+        <nav class="dashboard-nav" aria-label="{{ $locale === 'tr' ? 'Ana gezinme' : 'Main navigation' }}">
+            <div class="dashboard-nav-links">
+                <a class="dashboard-nav-link active" href="{{ route('elasticsearch-monitoring.index', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Genel Bakış' : 'Overview' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.shards', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Shard Dağılımı' : 'Shard Allocation' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.capacity', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Kapasite' : 'Capacity' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.nodes', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.thread-pools', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Thread Pool' : 'Thread Pools' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.snapshots', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Yedekleme' : 'Snapshots' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarmlar' : 'Alerts' }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">API {{ $locale === 'tr' ? 'İstekleri' : 'Requests' }}</a>
+            </div>
+            <div class="dashboard-nav-tools">
+                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleDashboardCustomizer()">{{ $locale === 'tr' ? 'Paneli düzenle' : 'Customize' }}</button>
+            </div>
+        </nav>
+    </header>
     <div id="dashboard-refresh-controls" class="d-flex align-items-center flex-wrap gap-2 mb-3">
         <label for="dashboard-refresh-interval" class="small text-muted mb-0">{{ $t('refresh_interval') }}</label>
         <select id="dashboard-refresh-interval" class="form-select form-select-sm" style="width:auto" onchange="changeDashboardRefreshInterval(this.value)">

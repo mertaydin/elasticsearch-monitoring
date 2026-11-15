@@ -66,9 +66,9 @@ class DashboardHistoryRangeTest extends TestCase
 
         $this->assertSame('hourly', $payload['range']['aggregation']);
         $this->assertCount(2, $payload['history']);
-        $this->assertSame(30.0, $payload['history'][0]['metrics']['cpu']['percent_average']);
-        $this->assertSame(300.0, $payload['history'][0]['metrics']['indices']['documents']);
-        $this->assertSame(3.0, $payload['history'][0]['metrics']['rates']['search_per_second']);
+        $this->assertEquals(30.0, $payload['history'][0]['metrics']['cpu']['percent_average']);
+        $this->assertEquals(300.0, $payload['history'][0]['metrics']['indices']['documents']);
+        $this->assertEquals(3.0, $payload['history'][0]['metrics']['rates']['search_per_second']);
     }
 
     public function test_dashboard_history_uses_daily_averages_for_ranges_longer_than_seven_days(): void
@@ -88,8 +88,8 @@ class DashboardHistoryRangeTest extends TestCase
 
         $this->assertSame('daily', $payload['range']['aggregation']);
         $this->assertCount(2, $payload['history']);
-        $this->assertSame(30.0, $payload['history'][0]['metrics']['cpu']['percent_average']);
-        $this->assertSame(60.0, $payload['history'][1]['metrics']['cpu']['percent_average']);
+        $this->assertEquals(30.0, $payload['history'][0]['metrics']['cpu']['percent_average']);
+        $this->assertEquals(60.0, $payload['history'][1]['metrics']['cpu']['percent_average']);
     }
 
     public function test_dashboard_history_defaults_to_the_last_hour(): void

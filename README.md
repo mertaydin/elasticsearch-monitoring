@@ -14,6 +14,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Features
 
+- Refreshed dashboard layout with a compact navigation bar, clearer visual hierarchy, responsive controls, and consistent cards for KPIs, health, and charts.
 - Automatically aggregate long dashboard chart ranges into hourly averages (over 24 hours) or daily averages (over 7 days); shorter ranges retain raw observations.
 
 - Filter dashboard history charts by the last 1, 6, or 24 hours, the last 7 days, or a custom date range; retain the selection locally and cap large responses at 2,000 sampled points.

@@ -1,5 +1,7 @@
 ## [0.27.0] - 2026-11-16
 
+- Refresh the dashboard visual design with a clearer header, compact navigation, responsive controls, and consistent metric/chart cards.
+- Correct numeric type assertions in hourly/daily aggregation tests across supported Laravel/PHP matrix jobs.
 - Aggregate dashboard chart history into hourly averages for ranges longer than 24 hours and daily averages for ranges longer than 7 days.
 - Keep raw observations for ranges up to 24 hours and preserve the latest live KPI values independently of chart aggregation.
 - Show the active aggregation interval in the dashboard and localize it in all six supported languages.
