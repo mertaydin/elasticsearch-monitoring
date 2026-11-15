@@ -5,6 +5,7 @@ namespace ElasticsearchMonitoring\Tests\Feature;
 use ElasticsearchMonitoring\Http\Controllers\ShardController;
 use ElasticsearchMonitoring\Tests\TestCase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 
 class ShardAllocationTest extends TestCase
 {
@@ -77,9 +78,8 @@ class ShardAllocationTest extends TestCase
     public function test_allocation_explanation_validates_required_shard_identity(): void
     {
         $request = request()->create('/', 'GET', ['index' => 'app-logs', 'primary' => true]);
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
 
         app(ShardController::class)->allocationExplain($request);
     }
-
 }
