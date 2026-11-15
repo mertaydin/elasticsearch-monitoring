@@ -52,12 +52,12 @@ class QueryActivityTest extends TestCase
         $payload = $response->getData(true);
         $this->assertSame(200, $response->getStatusCode());
         $latest = $payload['nodes'][0]['latest'];
-        $this->assertSame(2.0, $latest['query_per_second']);
-        $this->assertSame(1.0, $latest['fetch_per_second']);
-        $this->assertSame(5.0, $latest['query_avg_time_ms']);
-        $this->assertSame(5.0, $latest['fetch_avg_time_ms']);
+        $this->assertEquals(2.0, $latest['query_per_second']);
+        $this->assertEquals(1.0, $latest['fetch_per_second']);
+        $this->assertEquals(5.0, $latest['query_avg_time_ms']);
+        $this->assertEquals(5.0, $latest['fetch_avg_time_ms']);
         $this->assertSame(4, $payload['summary']['search_queue']);
-        $this->assertSame(0.1, $payload['summary']['rejected_per_second']);
+        $this->assertEquals(0.1, $payload['summary']['rejected_per_second']);
         $this->assertSame(3, $payload['summary']['active_queries']);
     }
 
@@ -65,7 +65,7 @@ class QueryActivityTest extends TestCase
     {
         $payload = app(QueryActivityController::class)->data()->getData(true);
         $this->assertSame([], $payload['nodes']);
-        $this->assertSame(0.0, $payload['summary']['query_per_second']);
+        $this->assertEquals(0.0, $payload['summary']['query_per_second']);
     }
 
     protected function tearDown(): void
