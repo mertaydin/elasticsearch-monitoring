@@ -1,3 +1,10 @@
+## [0.22.0] - 2026-11-15
+
+- Add a dedicated Query Activity Monitor with per-node query/fetch counters, current operations, scroll/suggest rates, and search thread-pool pressure.
+- Calculate query/fetch throughput, average operation time, and rejection rates from metric snapshot counter deltas.
+- Add historical charts, node-level comparison, automatic refresh, and localized UI in all six supported languages.
+- Reuse existing metric snapshots; no database migration or additional Elasticsearch API request is required.
+
 # Changelog
 
 ## [0.21.0] - 2026-11-15

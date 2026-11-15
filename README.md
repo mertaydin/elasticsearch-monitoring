@@ -27,6 +27,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Add sortable columns to Index Management for index name, health, primary/replica shard counts, document count, and storage size.
 - Remember the Index Management search query and favorites-only filter in browser local storage.
 - Reset all Index Management filters and sorting with one click.
+- Monitor per-node query/fetch rates, average operation latency, active search/fetch operations, search queues, and rejection rates with historical trends.
 
 ## Requirements
 
@@ -64,7 +65,8 @@ Snapshot & backup monitoring: `/monitoring/elasticsearch/snapshots`
 Shard allocation: `/monitoring/elasticsearch/shards`  
 Capacity analysis: `/monitoring/elasticsearch/capacity`  
 Alert history: `/monitoring/elasticsearch/alerts`  
-Notification delivery history: `/monitoring/elasticsearch/alerts/notifications`
+Notification delivery history: `/monitoring/elasticsearch/alerts/notifications`  
+Query Activity: `/monitoring/elasticsearch/query-activity`
 
 The index details modal includes a read-only performance analyzer for indexing, search, merge, refresh, flush, query/request cache, segments, and translog statistics. It compares primary-shard values with totals across primary and replica shards and refreshes only the selected index. The Elasticsearch `monitor` index privilege is required. The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
@@ -84,6 +86,10 @@ public function boot(): void
 ```
 
 If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, the existing middleware behavior is preserved (`web` and `auth` by default). Keep the `auth` middleware enabled unless your callback intentionally handles authentication itself.
+
+## Query Activity Monitor
+
+The dedicated Query Activity page shows per-node query and fetch counters, current query/fetch operations, scroll and suggest rates, average query/fetch time per operation, search thread-pool queue depth, and rejection rate. Rates and average times are calculated from counter deltas between successful metric collections, so a second collection is required before rate values appear. The page reads stored metric snapshots (up to the latest 1,440 collections), refreshes its display every 30 seconds, and does not issue additional Elasticsearch requests. Existing installations should run `php artisan elasticsearch:collect` after updating; historical samples collected before this feature do not contain query activity details.
 
 ## Favorites
 

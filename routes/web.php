@@ -6,6 +6,7 @@ use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Controllers\NodeController;
+use ElasticsearchMonitoring\Http\Controllers\QueryActivityController;
 use ElasticsearchMonitoring\Http\Controllers\ShardController;
 use ElasticsearchMonitoring\Http\Controllers\SnapshotController;
 use ElasticsearchMonitoring\Http\Controllers\ThreadPoolController;
@@ -30,6 +31,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/shards/allocation-explain', [ShardController::class, 'allocationExplain'])->name('shards.allocation-explain');
         Route::get('/capacity', [CapacityController::class, 'index'])->name('capacity');
         Route::get('/capacity/data', [CapacityController::class, 'data'])->name('capacity.data');
+        Route::get('/query-activity', [QueryActivityController::class, 'index'])->name('query-activity');
+        Route::get('/query-activity/data', [QueryActivityController::class, 'data'])->name('query-activity.data');
         Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');
         Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');
         Route::get('/thread-pools', [ThreadPoolController::class, 'index'])->name('thread-pools');

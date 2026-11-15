@@ -27,6 +27,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - İndeks Yönetimi ekranına indeks adı, sağlık, primary/replica shard sayısı, belge sayısı ve depolama boyutu için sütun sıralama eklendi.
 - İndeks Yönetimi arama metnini ve yalnızca favoriler seçimini tarayıcının yerel depolama alanında hatırlayın.
 - Tek tıkla tüm indeks filtrelerini temizleyin ve sıralamayı varsayılana döndürün.
+- Node bazında query/fetch hızlarını, ortalama işlem sürelerini, aktif arama işlemlerini, search kuyruğunu ve reddedilme oranlarını geçmiş grafiklerle izleyin.
 
 ## Kurulum
 
@@ -48,7 +49,7 @@ ELASTICSEARCH_MONITORING_TIMEOUT=10
 ELASTICSEARCH_MONITORING_VERIFY=true
 ```
 
-Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Bildirim gönderim geçmişi: `/monitoring/elasticsearch/alerts/notifications`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
+Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Bildirim gönderim geçmişi: `/monitoring/elasticsearch/alerts/notifications`. Sorgu Aktivitesi: `/monitoring/elasticsearch/query-activity`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
 
 ### Panel yetkilendirmesi
 
@@ -74,6 +75,10 @@ Shard dağılımı ekranında primary/replica yerleşimi, shard durumları, atan
 Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
 
 Yedekleme izleme ekranı Elasticsearch tarafında `monitor_snapshot` cluster yetkisi gerektirir. Her repository için en son 50 snapshot kaydını okur, sonuçları 60 saniye önbelleğe alır; repository ayarlarını göstermez ve yedekleme işlemi başlatmaz.
+
+## Sorgu Aktivitesi İzleme
+
+Sorgu Aktivitesi ekranı node bazında query ve fetch sayaçlarını, anlık query/fetch işlemlerini, scroll ve suggest hızlarını, ortalama query/fetch sürelerini, search thread pool kuyruğunu ve reddedilme hızını gösterir. Hızlar ve ortalama süreler başarılı ölçümler arasındaki sayaç farklarından hesaplanır; değerlerin oluşması için en az iki ölçüm gerekir. Ekran son 1.440 metrik kaydını kullanır, görünümü 30 saniyede bir yeniler ve Elasticsearch'e ek istek göndermez. Güncellemeden sonra `php artisan elasticsearch:collect` çalıştırılmalıdır; özellik öncesinde alınan geçmiş ölçümlerde sorgu aktivitesi alanları bulunmaz.
 
 ## Favoriler
 
