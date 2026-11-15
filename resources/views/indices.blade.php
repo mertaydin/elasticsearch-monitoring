@@ -112,8 +112,24 @@ function getFilteredIndices(){
     const onlyFavorites=document.getElementById('favorites-only').checked;
     return allIndices.filter(x=>x.name.toLowerCase().includes(q)&&(!onlyFavorites||favorites.has(x.name)));
 }
-let sortKey=null;
-let sortDirection='asc';
+const sortStorageKey='elasticsearch-monitoring:index-sort';
+const sortableKeys=new Set(['name','health','primaries','replicas','documents_count','storage_bytes']);
+function readSortPreference(){
+    try{
+        const preference=JSON.parse(localStorage.getItem(sortStorageKey)||'null');
+        if(preference&&sortableKeys.has(preference.key)&&['asc','desc'].includes(preference.direction)){
+            return {key:preference.key,direction:preference.direction};
+        }
+    }catch(error){console.warn('Unable to read index sorting preference in this browser.',error);}
+    return {key:null,direction:'asc'};
+}
+function saveSortPreference(){
+    try{localStorage.setItem(sortStorageKey,JSON.stringify({key:sortKey,direction:sortDirection}));}
+    catch(error){console.warn('Unable to save index sorting preference in this browser.',error);}
+}
+const savedSortPreference=readSortPreference();
+let sortKey=savedSortPreference.key;
+let sortDirection=savedSortPreference.direction;
 const healthOrder={green:0,yellow:1,red:2};
 function getSortedIndices(){
     const indices=getFilteredIndices();
@@ -242,8 +258,10 @@ document.getElementById('export-json').addEventListener('click',()=>exportIndice
 document.querySelector('thead').addEventListener('click',event=>{
     const button=event.target.closest('[data-sort]');
     if(!button)return;
+    if(!sortableKeys.has(button.dataset.sort))return;
     if(sortKey===button.dataset.sort)sortDirection=sortDirection==='asc'?'desc':'asc';
     else{sortKey=button.dataset.sort;sortDirection='asc';}
+    saveSortPreference();
     updateSortIndicators();
     render();
 });

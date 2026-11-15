@@ -79,7 +79,7 @@ Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca me
 
 ## İndeks listesini sıralama
 
-İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez.
+İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez. Seçtiğiniz sütun ve sıralama yönü tarayıcının yerel depolama alanına kaydedilir ve sayfaya tekrar geldiğinizde geri yüklenir.
 
 ## İndeks dışa aktarma
 

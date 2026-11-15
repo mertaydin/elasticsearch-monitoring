@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.19.0] - 2026-11-15
+
+- Remember the selected Index Management sort column and direction in browser local storage and restore them on return.
+- Validate stored sort preferences and gracefully fall back to the default order when unavailable or invalid.
+
 ## [0.18.0] - 2026-11-15
 
 - Add browser-side sorting for index name, health, primary/replica shard counts, document count, and storage size.

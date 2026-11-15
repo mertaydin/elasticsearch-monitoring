@@ -23,7 +23,11 @@ class IndexManagementTest extends TestCase
             ->assertSee('data-sort="primaries"', false)
             ->assertSee('data-sort="replicas"', false)
             ->assertSee('getSortedIndices()', false)
-            ->assertSee('updateSortIndicators()', false);
+            ->assertSee('updateSortIndicators()', false)
+            ->assertSee('elasticsearch-monitoring:index-sort', false)
+            ->assertSee('readSortPreference()', false)
+            ->assertSee('saveSortPreference()', false)
+            ->assertSee('sortableKeys', false);
     }
 
     public function test_it_lists_indices_with_data_stream_information(): void

@@ -89,7 +89,7 @@ Favorite indices are stored in the browser's local storage. They are specific to
 
 ## Index list sorting
 
-Click the **Name**, **Health**, **Primaries**, **Replicas**, **Documents count**, or **Storage size** column heading to sort the index list. The first click sorts ascending; clicking the same heading again reverses the order. Health is ordered Green, Yellow, then Red. Sorting runs in the browser, works together with search and favorites filters, and does not send additional Elasticsearch requests.
+Click the **Name**, **Health**, **Primaries**, **Replicas**, **Documents count**, or **Storage size** column heading to sort the index list. The first click sorts ascending; clicking the same heading again reverses the order. Health is ordered Green, Yellow, then Red. Sorting runs in the browser, works together with search and favorites filters, and does not send additional Elasticsearch requests. The selected column and sort direction are saved in this browser's local storage and restored when you return.
 
 ## Index exports
 
