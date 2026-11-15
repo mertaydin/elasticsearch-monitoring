@@ -19,6 +19,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 ## Features
 
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
+- Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard.
 
 ## Requirements
 
@@ -76,6 +77,10 @@ public function boot(): void
 ```
 
 If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, the existing middleware behavior is preserved (`web` and `auth` by default). Keep the `auth` middleware enabled unless your callback intentionally handles authentication itself.
+
+## Favorites
+
+Favorite indices are stored in the browser's local storage. They are specific to the current browser and browser profile, are not synchronized between users or devices, and do not require a database migration.
 
 ## Metrics
 

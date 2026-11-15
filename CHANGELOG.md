@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.15.0] - 2026-11-15
+
+- Add browser-local favorite indices with one-click toggling and a favorites-only filter on the Index Management page.
+- Add a dashboard quick-access section for favorite indices; favorites are stored in localStorage and require no database migration or Elasticsearch write operations.
+
 ## [0.14.0] - 2026-11-15
 
 - Add configurable email, Slack, and Microsoft Teams notifications for newly opened alert events.

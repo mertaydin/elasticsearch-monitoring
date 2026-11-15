@@ -19,6 +19,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 ## Özellikler
 
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
+- Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın.
 
 ## Kurulum
 
@@ -66,6 +67,10 @@ Shard dağılımı ekranında primary/replica yerleşimi, shard durumları, atan
 Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
 
 Yedekleme izleme ekranı Elasticsearch tarafında `monitor_snapshot` cluster yetkisi gerektirir. Her repository için en son 50 snapshot kaydını okur, sonuçları 60 saniye önbelleğe alır; repository ayarlarını göstermez ve yedekleme işlemi başlatmaz.
+
+## Favoriler
+
+Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca mevcut tarayıcı ve tarayıcı profili için geçerlidir; kullanıcılar veya cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.
 
 ## Güvenlik ve salt okunur çalışma
 

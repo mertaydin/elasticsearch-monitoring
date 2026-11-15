@@ -31,6 +31,15 @@
         'ar' => ['overview'=>'نظرة عامة على المجموعة','performance'=>'الأداء','storage'=>'التخزين','cpu'=>'استخدام المعالج','cpu_history'=>'استخدام المعالج','cpu_hint'=>'متوسط استخدام المعالج عبر العقد بمرور الوقت','index_history'=>'اتجاه تخزين الفهارس','index_hint'=>'إجمالي حجم بيانات فهارس Elasticsearch بمرور الوقت','disk_history'=>'استخدام القرص','disk_hint'=>'مساحة نظام الملفات المستخدمة بمرور الوقت','search_history'=>'معدل البحث','indexing_history'=>'معدل الفهرسة','segments_history'=>'عدد المقاطع','documents_history'=>'عدد المستندات','filesystem_hint'=>'مساحة القرص المستخدمة والمتاحة','heap_hint'=>'استخدام ذاكرة JVM','rates_hint'=>'عمليات البحث والفهرسة في الثانية','live'=>'تحديث تلقائي كل 30 ثانية'],
     ][$locale] ?? [];
 
+    $favoriteText = [
+        'tr' => ['title'=>'Favori indeksler','empty'=>'Henüz favori indeks eklemediniz. İndeks yönetimi ekranında yıldız simgesini kullanarak ekleyebilirsiniz.','open'=>'İndeksi aç'],
+        'en' => ['title'=>'Favorite indices','empty'=>'You have not added any favorite indices yet. Use the star in Index Management to add some.','open'=>'Open index'],
+        'es' => ['title'=>'Índices favoritos','empty'=>'Aún no has añadido índices favoritos. Usa la estrella en Gestión de índices para añadirlos.','open'=>'Abrir índice'],
+        'zh_CN' => ['title'=>'收藏的索引','empty'=>'尚未添加收藏索引。请在索引管理页面点击星标添加。','open'=>'打开索引'],
+        'hi' => ['title'=>'पसंदीदा इंडेक्स','empty'=>'अभी कोई पसंदीदा इंडेक्स नहीं जोड़ा गया है। जोड़ने के लिए इंडेक्स प्रबंधन में स्टार चुनें।','open'=>'इंडेक्स खोलें'],
+        'ar' => ['title'=>'الفهارس المفضلة','empty'=>'لم تضف أي فهارس مفضلة بعد. استخدم النجمة في إدارة الفهارس لإضافتها.','open'=>'فتح الفهرس'],
+    ][$locale] ?? ['title'=>'Favorite indices','empty'=>'No favorite indices yet.','open'=>'Open index'];
+
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
@@ -136,6 +145,14 @@
         @endforeach
     </div>
 
+    <section class="insight-card mb-4" id="favorite-indices-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <h2 class="section-title mb-0">{{ $favoriteText['title'] }}</h2>
+            <span class="small text-muted" id="favorite-indices-count">0</span>
+        </div>
+        <div id="favorite-indices-list" class="d-flex flex-wrap gap-2"></div>
+        <p class="small text-muted mb-0 mt-2" id="favorite-indices-empty">{{ $favoriteText['empty'] }}</p>
+    </section>
     <div class="row g-3 mb-4">
         <div class="col-12 col-xl-4"><section class="insight-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="section-title mb-0">{{ $t('health_score') }}</h2><span class="badge text-bg-light" id="health-status">—</span></div>
@@ -196,6 +213,34 @@
 </main>
 <script>
 const endpoint = @json(route('elasticsearch-monitoring.data'));
+const favoritesStorageKey = 'elasticsearch-monitoring:favorites';
+const favoriteLabels = @json($favoriteText);
+const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
+function renderFavoriteIndices() {
+    const container = document.getElementById('favorite-indices-list');
+    const empty = document.getElementById('favorite-indices-empty');
+    const count = document.getElementById('favorite-indices-count');
+    let favorites = [];
+    try {
+        const stored = JSON.parse(localStorage.getItem(favoritesStorageKey) || '[]');
+        favorites = Array.isArray(stored) ? [...new Set(stored.filter(name => typeof name === 'string'))].sort() : [];
+    } catch (error) {
+        favorites = [];
+    }
+    count.textContent = String(favorites.length);
+    container.replaceChildren();
+    empty.classList.toggle('d-none', favorites.length > 0);
+    favorites.forEach(name => {
+        const link = document.createElement('a');
+        const target = new URL(indicesUrl, window.location.href);
+        target.searchParams.set('search', name);
+        link.href = target.toString();
+        link.className = 'btn btn-sm btn-outline-primary';
+        link.textContent = '★ ' + name;
+        link.title = favoriteLabels.open;
+        container.appendChild(link);
+    });
+}
 const labels = {
     noMetrics: @json($t('no_metrics')),
     lastCollected: @json($t('last_collected')),
@@ -353,6 +398,8 @@ async function loadMetrics() {
         alert.classList.remove('d-none');
     }
 }
+renderFavoriteIndices();
+window.addEventListener('storage', event => { if (event.key === favoritesStorageKey) renderFavoriteIndices(); });
 loadMetrics();
 setInterval(loadMetrics, 30000);
 </script>
