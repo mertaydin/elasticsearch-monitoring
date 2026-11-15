@@ -125,5 +125,4 @@ class IndexManagementTest extends TestCase
         $this->assertSame(28, $payload['total']['segments']['count']);
         $this->assertSame(150, $payload['total']['translog']['operations']);
     }
-
 }
