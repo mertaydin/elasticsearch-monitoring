@@ -27,7 +27,11 @@ class IndexManagementTest extends TestCase
             ->assertSee('elasticsearch-monitoring:index-sort', false)
             ->assertSee('readSortPreference()', false)
             ->assertSee('saveSortPreference()', false)
-            ->assertSee('sortableKeys', false);
+            ->assertSee('sortableKeys', false)
+            ->assertSee('elasticsearch-monitoring:index-view', false)
+            ->assertSee('readViewPreference()', false)
+            ->assertSee('saveViewPreference()', false)
+            ->assertSee('initialSearchParams.has', false);
     }
 
     public function test_it_lists_indices_with_data_stream_information(): void

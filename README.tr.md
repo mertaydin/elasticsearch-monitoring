@@ -25,6 +25,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - Mapping içeriğinin tamamını biçimlendirilmiş JSON olarak veya üst seviye bölümlerini ayrı ayrı kopyalayın.
 - Kopyalama bildirimlerini altı dilde gösterin ve node geçmişinde IP adreslerini görüntüleyin.
 - İndeks Yönetimi ekranına indeks adı, sağlık, primary/replica shard sayısı, belge sayısı ve depolama boyutu için sütun sıralama eklendi.
+- İndeks Yönetimi arama metnini ve yalnızca favoriler seçimini tarayıcının yerel depolama alanında hatırlayın.
 
 ## Kurulum
 
@@ -80,6 +81,10 @@ Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca me
 ## İndeks listesini sıralama
 
 İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez. Seçtiğiniz sütun ve sıralama yönü tarayıcının yerel depolama alanına kaydedilir ve sayfaya tekrar geldiğinizde geri yüklenir.
+
+## İndeks listesi tercihlerini hatırlama
+
+İndeks Yönetimi ekranı mevcut arama metnini ve yalnızca favoriler seçimini tarayıcının yerel depolama alanına kaydeder; sayfaya tekrar geldiğinizde bu tercihler geri yüklenir. Sayfa URL'sinde `search` parametresi varsa kayıtlı arama metni yerine URL'deki değer kullanılır. Tercihler yalnızca mevcut tarayıcı profiline aittir, kullanıcılar veya cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez. Tarayıcı depolaması kullanılamıyorsa ekran varsayılan görünümle çalışmaya devam eder.
 
 ## İndeks dışa aktarma
 

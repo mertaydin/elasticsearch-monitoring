@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.20.0] - 2026-11-15
+
+- Remember the Index Management search query and favorites-only filter in browser local storage.
+- Restore saved list preferences on return while allowing an explicit `search` URL parameter to take precedence.
+- Gracefully fall back to the default view when browser storage is unavailable.
+
 ## [0.19.0] - 2026-11-15
 
 - Remember the selected Index Management sort column and direction in browser local storage and restore them on return.

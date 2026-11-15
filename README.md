@@ -25,6 +25,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Copy the complete formatted mapping JSON or individual top-level mapping sections from Index Management.
 - Show localized clipboard feedback in all six supported languages.
 - Add sortable columns to Index Management for index name, health, primary/replica shard counts, document count, and storage size.
+- Remember the Index Management search query and favorites-only filter in browser local storage.
 
 ## Requirements
 
@@ -90,6 +91,10 @@ Favorite indices are stored in the browser's local storage. They are specific to
 ## Index list sorting
 
 Click the **Name**, **Health**, **Primaries**, **Replicas**, **Documents count**, or **Storage size** column heading to sort the index list. The first click sorts ascending; clicking the same heading again reverses the order. Health is ordered Green, Yellow, then Red. Sorting runs in the browser, works together with search and favorites filters, and does not send additional Elasticsearch requests. The selected column and sort direction are saved in this browser's local storage and restored when you return.
+
+## Remembering the index list view
+
+The Index Management page saves the current search query and favorites-only selection in this browser's local storage and restores them when you return. A `search` query parameter in the page URL takes precedence over the saved search text. These preferences are local to the current browser profile, are not synchronized between users or devices, and do not require a database migration. If browser storage is unavailable, the page continues with its default view.
 
 ## Index exports
 

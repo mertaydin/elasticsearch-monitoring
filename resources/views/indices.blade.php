@@ -265,12 +265,35 @@ document.querySelector('thead').addEventListener('click',event=>{
     updateSortIndicators();
     render();
 });
-document.getElementById('search').addEventListener('input',render);
+document.getElementById('search').addEventListener('input',()=>{saveViewPreference();render();});
 document.getElementById('hidden').addEventListener('change',load);
 document.getElementById('rollup').addEventListener('change',load);
-document.getElementById('favorites-only').addEventListener('change',render);
-const initialSearch=new URLSearchParams(window.location.search).get('search');
-if(initialSearch)document.getElementById('search').value=initialSearch;
+document.getElementById('favorites-only').addEventListener('change',()=>{saveViewPreference();render();});
+const viewStorageKey='elasticsearch-monitoring:index-view';
+function readViewPreference(){
+    try{
+        const preference=JSON.parse(localStorage.getItem(viewStorageKey)||'null');
+        if(preference&&typeof preference==='object'&&!Array.isArray(preference)){
+            return {
+                search:typeof preference.search==='string'?preference.search:'',
+                favoritesOnly:typeof preference.favoritesOnly==='boolean'?preference.favoritesOnly:false
+            };
+        }
+    }catch(error){console.warn('Unable to read index list view preference in this browser.',error);}
+    return {search:'',favoritesOnly:false};
+}
+function saveViewPreference(){
+    try{
+        localStorage.setItem(viewStorageKey,JSON.stringify({
+            search:document.getElementById('search').value,
+            favoritesOnly:document.getElementById('favorites-only').checked
+        }));
+    }catch(error){console.warn('Unable to save index list view preference in this browser.',error);}
+}
+const savedViewPreference=readViewPreference();
+const initialSearchParams=new URLSearchParams(window.location.search);
+document.getElementById('search').value=initialSearchParams.has('search')?initialSearchParams.get('search'):savedViewPreference.search;
+document.getElementById('favorites-only').checked=savedViewPreference.favoritesOnly;
 document.getElementById('copy-mapping-all').textContent=copyLabels.all;
 document.getElementById('copy-mapping-all').addEventListener('click',()=>copyText(document.getElementById('mapping-json').textContent));
 document.getElementById('refresh-indexing').addEventListener('click',()=>{if(selectedIndex)loadIndexingStats(selectedIndex);});
