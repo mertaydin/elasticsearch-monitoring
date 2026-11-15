@@ -1,7 +1,10 @@
 <?php
 namespace ElasticsearchMonitoring\Models;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 /**
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
  * @property int $id
  * @property string $method
  * @property string $endpoint
