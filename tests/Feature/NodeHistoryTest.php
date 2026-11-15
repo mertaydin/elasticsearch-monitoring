@@ -36,7 +36,7 @@ class NodeHistoryTest extends TestCase
                 'id' => 'node-a',
                 'name' => 'data-01',
                 'ip' => '10.0.0.11',
-                'roles => ['data', 'ingest'],
+                'roles' => ['data', 'ingest'],
                 'cpu_percent' => 20,
                 'heap_percent' => 50,
                 'filesystem_used_percent' => 60,
