@@ -1,13 +1,13 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Tests\\Feature;
+namespace ElasticsearchMonitoring\Tests\Feature;
 
-use ElasticsearchMonitoring\\Http\\Controllers\\ThreadPoolController;
-use ElasticsearchMonitoring\\Models\\MetricSnapshot;
-use ElasticsearchMonitoring\\Tests\\TestCase;
-use Illuminate\\Database\\Schema\\Blueprint;
-use Illuminate\\Support\\Carbon;
-use Illuminate\\Support\\Facades\\Schema;
+use ElasticsearchMonitoring\Http\Controllers\ThreadPoolController;
+use ElasticsearchMonitoring\Models\MetricSnapshot;
+use ElasticsearchMonitoring\Tests\TestCase;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class ThreadPoolAnalyzerTest extends TestCase
 {
