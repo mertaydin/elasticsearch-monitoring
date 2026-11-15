@@ -4,8 +4,8 @@ namespace ElasticsearchMonitoring\Tests\Feature;
 
 use ElasticsearchMonitoring\Models\AlertEvent;
 use ElasticsearchMonitoring\Models\AlertNotificationDelivery;
-use ElasticsearchMonitoring\Services\AlertNotificationDispatcher;
 use ElasticsearchMonitoring\Services\AlertHistoryRecorder;
+use ElasticsearchMonitoring\Services\AlertNotificationDispatcher;
 use ElasticsearchMonitoring\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Http;
