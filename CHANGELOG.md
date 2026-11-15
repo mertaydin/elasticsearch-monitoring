@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.14.0] - 2026-11-15
+
+- Add configurable email, Slack, and Microsoft Teams notifications for newly opened alert events.
+- Add per-alert/channel deduplication, configurable cooldown suppression, and retryable queued delivery.
+- Add notification delivery history with sent, failed, suppressed, and pending states.
+- Keep all notification channels disabled by default; Elasticsearch interactions remain strictly read-only.
+
+
 ## [0.13.0] - 2026-11-15
 
 - Add per-shard allocation explanations with node-level decider decisions, unassigned reasons, and optional disk information.

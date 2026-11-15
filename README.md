@@ -55,7 +55,8 @@ Thread pool analysis: `/monitoring/elasticsearch/thread-pools`
 Snapshot & backup monitoring: `/monitoring/elasticsearch/snapshots`  
 Shard allocation: `/monitoring/elasticsearch/shards`  
 Capacity analysis: `/monitoring/elasticsearch/capacity`  
-Alert history: `/monitoring/elasticsearch/alerts`
+Alert history: `/monitoring/elasticsearch/alerts`  
+Notification delivery history: `/monitoring/elasticsearch/alerts/notifications`
 
 The index details modal includes a read-only performance analyzer for indexing, search, merge, refresh, flush, query/request cache, segments, and translog statistics. It compares primary-shard values with totals across primary and replica shards and refreshes only the selected index. The Elasticsearch `monitor` index privilege is required. The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
@@ -78,7 +79,7 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 
 ## Metrics
 
-Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. The Thread Pool Analyzer provides per-node, per-pool queue, active, thread, completed, and rejected metrics with historical queue and rejection-rate charts. Snapshot Monitoring lists registered repositories, recent snapshots, shard outcomes, failures, and the latest successful backup. The dedicated Node Performance History page charts per-node CPU, JVM heap, filesystem utilization, search/indexing rates, and thread-pool queues from stored snapshots (up to the latest 1,440 collections). The Shard Allocation page displays primary/replica placement, shard states, unassigned reasons, and per-node shard distribution using the CAT Shards read API. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Rates are available after at least two successful collections. Alert history records when an alert first appears, each subsequent observation, its latest value, and when it is resolved. Open `/monitoring/elasticsearch/alerts` to review active and resolved events. Existing installations should run `php artisan migrate` after updating.
+Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. The Thread Pool Analyzer provides per-node, per-pool queue, active, thread, completed, and rejected metrics with historical queue and rejection-rate charts. Snapshot Monitoring lists registered repositories, recent snapshots, shard outcomes, failures, and the latest successful backup. The dedicated Node Performance History page charts per-node CPU, JVM heap, filesystem utilization, search/indexing rates, and thread-pool queues from stored snapshots (up to the latest 1,440 collections). The Shard Allocation page displays primary/replica placement, shard states, unassigned reasons, and per-node shard distribution using the CAT Shards read API. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Email, Slack, and Microsoft Teams notifications can be enabled independently under `alerts.notifications.channels`; configure mail recipients or webhook URLs and set a cooldown period. Notification delivery attempts, failures, and cooldown suppressions are recorded at `/monitoring/elasticsearch/alerts/notifications`. Queue workers are recommended for non-blocking delivery; the default synchronous queue driver also works. Rates are available after at least two successful collections. Alert history records when an alert first appears, each subsequent observation, its latest value, and when it is resolved. Open `/monitoring/elasticsearch/alerts` to review active and resolved events. Existing installations should run `php artisan migrate` after updating.
 
 Snapshot Monitoring requires the Elasticsearch `monitor_snapshot` cluster privilege. It reads repository metadata and the latest 50 snapshots per repository, caches results for 60 seconds, and does not expose repository settings or perform backup operations.
 
@@ -113,3 +114,23 @@ composer pint-test
 ## License
 
 MIT
+
+
+### Alert notifications
+
+Notifications are disabled by default. Enable only the channels you use in the published package configuration:
+
+```php
+'alerts' => [
+    'notifications' => [
+        'cooldown_minutes' => 30,
+        'channels' => [
+            'mail' => ['enabled' => true, 'recipients' => ['ops@example.com']],
+            'slack' => ['enabled' => true, 'webhook_url' => env('ELASTICSEARCH_MONITORING_SLACK_WEBHOOK')],
+            'teams' => ['enabled' => true, 'webhook_url' => env('ELASTICSEARCH_MONITORING_TEAMS_WEBHOOK')],
+        ],
+    ],
+],
+```
+
+Set the Slack and Teams webhook environment variables in your application environment. New alert events are delivered once per channel; recurring observations of an active event do not resend notifications. If an alert resolves and reappears during the configured cooldown, delivery is suppressed and recorded. Failed queued deliveries are retried up to three times with backoff. Run a Laravel queue worker when using an asynchronous queue connection.

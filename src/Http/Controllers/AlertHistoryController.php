@@ -3,6 +3,7 @@
 namespace ElasticsearchMonitoring\Http\Controllers;
 
 use ElasticsearchMonitoring\Models\AlertEvent;
+use ElasticsearchMonitoring\Models\AlertNotificationDelivery;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -13,6 +14,14 @@ class AlertHistoryController
     {
         /** @var view-string $viewName */
         $viewName = 'elasticsearch-monitoring::alerts';
+
+        return view($viewName);
+    }
+
+    public function notifications(): View
+    {
+        /** @var view-string $viewName */
+        $viewName = 'elasticsearch-monitoring::alert-notifications';
 
         return view($viewName);
     }
@@ -49,6 +58,37 @@ class AlertHistoryController
                 'active' => AlertEvent::query()->whereNull('resolved_at')->count(),
                 'resolved' => AlertEvent::query()->whereNotNull('resolved_at')->count(),
                 'total' => AlertEvent::query()->count(),
+            ],
+        ]);
+    }
+
+    public function notificationData(): JsonResponse
+    {
+        $deliveries = AlertNotificationDelivery::query()
+            ->with('alertEvent')
+            ->latest()
+            ->limit(500)
+            ->get()
+            ->map(static fn (AlertNotificationDelivery $delivery): array => [
+                'id' => $delivery->id,
+                'alert_code' => $delivery->alert_code,
+                'title' => $delivery->alertEvent?->title ?? $delivery->alert_code,
+                'severity' => $delivery->alertEvent?->severity,
+                'channel' => $delivery->channel,
+                'status' => $delivery->status,
+                'attempts' => $delivery->attempts,
+                'sent_at' => $delivery->sent_at?->toIso8601String(),
+                'error' => $delivery->error,
+                'created_at' => $delivery->created_at?->toIso8601String(),
+            ]);
+
+        return response()->json([
+            'deliveries' => $deliveries,
+            'summary' => [
+                'sent' => AlertNotificationDelivery::query()->where('status', 'sent')->count(),
+                'failed' => AlertNotificationDelivery::query()->where('status', 'failed')->count(),
+                'suppressed' => AlertNotificationDelivery::query()->where('status', 'suppressed')->count(),
+                'pending' => AlertNotificationDelivery::query()->where('status', 'pending')->count(),
             ],
         ]);
     }

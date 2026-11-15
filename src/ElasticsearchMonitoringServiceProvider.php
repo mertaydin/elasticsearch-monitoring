@@ -21,6 +21,7 @@ class ElasticsearchMonitoringServiceProvider extends ServiceProvider
         $this->app->singleton(ElasticsearchClient::class);
         $this->app->singleton(HealthAnalyzer::class);
         $this->app->singleton(AlertHistoryRecorder::class);
+        $this->app->singleton(AlertNotificationDispatcher::class);
         $this->app->singleton(MetricsCollector::class);
     }
 

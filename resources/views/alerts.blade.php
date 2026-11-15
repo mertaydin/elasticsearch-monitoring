@@ -28,7 +28,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,sans-serif}.pa
 <a href="{{ route('elasticsearch-monitoring.data-streams',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">
 <a href="{{ route('elasticsearch-monitoring.nodes',['locale'=>$locale]) }}" class="btn btn-sm btn-outline-secondary">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>{{ $text['streams'] }}</a>
 </div><h1 class="h3 fw-bold mb-1">{{ $text['title'] }}</h1><p class="text-secondary mb-0">{{ $text['description'] }}</p></div>
-<button class="btn btn-success" id="refresh">↻ {{ $text['refresh'] }}</button>
+<div class="d-flex gap-2"><a class="btn btn-outline-primary" href="{{ route('elasticsearch-monitoring.alerts.notifications',['locale'=>$locale]) }}">{{ $locale === 'tr' ? 'Bildirim Geçmişi' : 'Notification History' }}</a><button class="btn btn-success" id="refresh">↻ {{ $text['refresh'] }}</button></div>
 </div>
 <div class="row g-3 mb-3">
 <div class="col-sm-4"><div class="panel p-3"><div class="small muted">{{ $text['active'] }}</div><div class="summary text-danger" id="active-count">—</div></div></div>

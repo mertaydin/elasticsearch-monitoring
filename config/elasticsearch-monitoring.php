@@ -29,6 +29,23 @@ return [
             'unassigned_shards_warning' => 1,
             'unassigned_shards_critical' => 5,
         ],
+        'notifications' => [
+            'cooldown_minutes' => 30,
+            'channels' => [
+                'mail' => [
+                    'enabled' => false,
+                    'recipients' => [],
+                ],
+                'slack' => [
+                    'enabled' => false,
+                    'webhook_url' => env('ELASTICSEARCH_MONITORING_SLACK_WEBHOOK'),
+                ],
+                'teams' => [
+                    'enabled' => false,
+                    'webhook_url' => env('ELASTICSEARCH_MONITORING_TEAMS_WEBHOOK'),
+                ],
+            ],
+        ],
     ],
     'register_schedule' => false,
 ];

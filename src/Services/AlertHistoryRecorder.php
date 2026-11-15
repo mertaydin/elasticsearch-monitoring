@@ -2,18 +2,21 @@
 
 namespace ElasticsearchMonitoring\Services;
 
+use ElasticsearchMonitoring\Jobs\DeliverAlertNotifications;
 use ElasticsearchMonitoring\Models\AlertEvent;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class AlertHistoryRecorder
 {
     /** @param array<int, array<string, mixed>> $alerts */
     public function record(array $alerts): void
     {
-        DB::transaction(function () use ($alerts): void {
+        $newEventIds = DB::transaction(function () use ($alerts): array {
             $now = now();
             $active = AlertEvent::query()->whereNull('resolved_at')->lockForUpdate()->get()->keyBy('code');
             $seen = [];
+            $newIds = [];
 
             foreach ($alerts as $alert) {
                 $code = (string) ($alert['code'] ?? '');
@@ -37,11 +40,12 @@ class AlertHistoryRecorder
                     $event->occurrences++;
                     $event->save();
                 } else {
-                    AlertEvent::query()->create($values + [
+                    $event = AlertEvent::query()->create($values + [
                         'code' => $code,
                         'first_seen_at' => $now,
                         'occurrences' => 1,
                     ]);
+                    $newIds[] = $event->id;
                 }
             }
 
@@ -51,6 +55,16 @@ class AlertHistoryRecorder
                     $event->save();
                 }
             }
+
+            return $newIds;
         });
+
+        foreach ($newEventIds as $eventId) {
+            try {
+                DeliverAlertNotifications::dispatch($eventId);
+            } catch (Throwable $exception) {
+                report($exception);
+            }
+        }
     }
 }

@@ -40,7 +40,7 @@ ELASTICSEARCH_MONITORING_TIMEOUT=10
 ELASTICSEARCH_MONITORING_VERIFY=true
 ```
 
-Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
+Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Bildirim gönderim geçmişi: `/monitoring/elasticsearch/alerts/notifications`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
 
 ### Panel yetkilendirmesi
 
@@ -74,3 +74,8 @@ Paket Elasticsearch üzerinde hiçbir veri veya yapılandırma değişikliği ya
 ## Lisans
 
 MIT
+
+
+### Alarm bildirimleri
+
+Bildirimler varsayılan olarak kapalıdır. Yayınladığınız paket yapılandırmasında `alerts.notifications.channels` altında e-posta, Slack ve Microsoft Teams kanallarını ayrı ayrı etkinleştirebilirsiniz. E-posta alıcılarını, webhook adreslerini ve `cooldown_minutes` bekleme süresini belirleyin. Yeni alarm olayları kanal başına bir kez gönderilir; aktif alarmın sonraki ölçümleri tekrar bildirim oluşturmaz. Çözülüp bekleme süresi içinde yeniden oluşan alarmlar bastırılır ve geçmişe kaydedilir. Başarısız kuyruk işleri en fazla üç kez yeniden denenir. Asenkron kuyruk kullanıyorsanız Laravel queue worker çalıştırın. Gönderim, hata ve beklemeye alınan kayıtları `/monitoring/elasticsearch/alerts/notifications` adresinden inceleyebilirsiniz.

@@ -38,4 +38,6 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/snapshots/data', [SnapshotController::class, 'data'])->name('snapshots.data');
         Route::get('/alerts', [AlertHistoryController::class, 'index'])->name('alerts');
         Route::get('/alerts/data', [AlertHistoryController::class, 'data'])->name('alerts.data');
+        Route::get('/alerts/notifications', [AlertHistoryController::class, 'notifications'])->name('alerts.notifications');
+        Route::get('/alerts/notifications/data', [AlertHistoryController::class, 'notificationData'])->name('alerts.notifications.data');
     });
