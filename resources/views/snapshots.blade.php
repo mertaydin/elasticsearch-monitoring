@@ -1,0 +1,81 @@
+@php
+    $availableLocales = config('elasticsearch-monitoring.dashboard.available_locales', ['tr', 'en']);
+    $requestedLocale = request()->query('locale', request()->cookie('elasticsearch_monitoring_locale', config('elasticsearch-monitoring.dashboard.locale', 'en')));
+    $locale = in_array($requestedLocale, $availableLocales, true) ? $requestedLocale : 'en';
+    $texts = [
+        'tr' => ['title'=>'Snapshot ve Yedekleme İzleme','description'=>'Repository durumlarını, yedekleme geçmişini ve son başarılı yedeklemeyi takip edin.','back'=>'İzleme paneli','loading'=>'Yedekleme bilgileri yükleniyor...','refresh'=>'Yenile','repositories'=>'Repository','snapshots'=>'Snapshot','successful'=>'Başarılı','partial'=>'Kısmi','failed'=>'Başarısız','running'=>'Devam ediyor','latest'=>'Son başarılı yedekleme','never'=>'Başarılı yedekleme bulunamadı','history'=>'Son snapshot kayıtları','repository'=>'Repository','type'=>'Tür','name'=>'Snapshot adı','state'=>'Durum','started'=>'Başlangıç','duration'=>'Süre','indices'=>'İndeks','streams'=>'Data stream','shards'=>'Başarılı / toplam shard','failures'=>'Hata','error'=>'Snapshot verileri alınamadı.','permission'=>'Snapshot izleme kullanılamıyor. Elasticsearch kullanıcısında monitor_snapshot cluster yetkisini kontrol edin.','repo_error'=>'Bu repository geçmişi okunamadı.','no_repositories'=>'Kayıtlı snapshot repository bulunamadı.','no_snapshots'=>'Henüz snapshot kaydı bulunamadı.','updated'=>'Son kontrol','seconds'=>'sn','minutes'=>'dk','hours'=>'sa','days'=>'gün','total'=>'Toplam kayıt','showing'=>'Gösterilen','failed_shards'=>'başarısız shard'],
+        'en' => ['title'=>'Snapshot & Backup Monitoring','description'=>'Track repositories, backup history, shard outcomes, and the latest successful backup.','back'=>'Monitoring','loading'=>'Loading backup information...','refresh'=>'Refresh','repositories'=>'Repositories','snapshots'=>'Snapshots','successful'=>'Successful','partial'=>'Partial','failed'=>'Failed','running'=>'In progress','latest'=>'Latest successful backup','never'=>'No successful backup found','history'=>'Recent snapshot history','repository'=>'Repository','type'=>'Type','name'=>'Snapshot name','state'=>'State','started'=>'Started','duration'=>'Duration','indices'=>'Indices','streams'=>'Data streams','shards'=>'Successful / total shards','failures'=>'Failures','error'=>'Unable to retrieve snapshot data.','permission'=>'Snapshot monitoring is unavailable. Check the monitor_snapshot cluster privilege.','repo_error'=>'Unable to read snapshot history for this repository.','no_repositories'=>'No snapshot repositories are registered.','no_snapshots'=>'No snapshot records found yet.','updated'=>'Last checked','seconds'=>'sec','minutes'=>'min','hours'=>'hr','days'=>'days','total'=>'Total records','showing'=>'Showing','failed_shards'=>'failed shards'],
+        'es' => ['title'=>'Supervisión de copias de seguridad','description'=>'Consulte repositorios, historial, resultados de shards y la última copia correcta.','back'=>'Panel','loading'=>'Cargando copias...','refresh'=>'Actualizar','repositories'=>'Repositorios','snapshots'=>'Instantáneas','successful'=>'Correctas','partial'=>'Parciales','failed'=>'Fallidas','running'=>'En curso','latest'=>'Última copia correcta','never'=>'No hay copias correctas','history'=>'Historial reciente','repository'=>'Repositorio','type'=>'Tipo','name'=>'Nombre','state'=>'Estado','started'=>'Inicio','duration'=>'Duración','indices'=>'Índices','streams'=>'Flujos','shards'=>'Shards correctos / total','failures'=>'Errores','error'=>'No se pudieron obtener los datos.','permission'=>'Revise el privilegio monitor_snapshot.','repo_error'=>'No se pudo leer este repositorio.','no_repositories'=>'No hay repositorios registrados.','no_snapshots'=>'No hay instantáneas.','updated'=>'Última consulta','seconds'=>'s','minutes'=>'min','hours'=>'h','days'=>'días','total'=>'Registros totales','showing'=>'Mostrando','failed_shards'=>'shards fallidos'],
+        'zh_CN' => ['title'=>'快照与备份监控','description'=>'查看仓库、备份历史、分片结果和最近一次成功备份。','back'=>'监控','loading'=>'正在加载备份信息...','refresh'=>'刷新','repositories'=>'仓库','snapshots'=>'快照','successful'=>'成功','partial'=>'部分成功','failed'=>'失败','running'=>'进行中','latest'=>'最近成功备份','never'=>'未找到成功备份','history'=>'最近快照历史','repository'=>'仓库','type'=>'类型','name'=>'快照名称','state'=>'状态','started'=>'开始时间','duration'=>'持续时间','indices'=>'索引','streams'=>'数据流','shards'=>'成功 / 总分片','failures'=>'失败','error'=>'无法获取快照数据。','permission'=>'请检查 monitor_snapshot 集群权限。','repo_error'=>'无法读取此仓库历史。','no_repositories'=>'没有注册快照仓库。','no_snapshots'=>'暂无快照记录。','updated'=>'上次检查','seconds'=>'秒','minutes'=>'分','hours'=>'小时','days'=>'天','total'=>'记录总数','showing'=>'显示','failed_shards'=>'个分片失败'],
+        'hi' => ['title'=>'स्नैपशॉट और बैकअप निगरानी','description'=>'रिपॉज़िटरी, बैकअप इतिहास, शार्ड परिणाम और अंतिम सफल बैकअप देखें।','back'=>'मॉनिटरिंग','loading'=>'बैकअप जानकारी लोड हो रही है...','refresh'=>'रीफ़्रेश','repositories'=>'रिपॉज़िटरी','snapshots'=>'स्नैपशॉट','successful'=>'सफल','partial'=>'आंशिक','failed'=>'विफल','running'=>'जारी','latest'=>'अंतिम सफल बैकअप','never'=>'कोई सफल बैकअप नहीं','history'=>'हाल के स्नैपशॉट','repository'=>'रिपॉज़िटरी','type'=>'प्रकार','name'=>'नाम','state'=>'स्थिति','started'=>'शुरू','duration'=>'अवधि','indices'=>'इंडेक्स','streams'=>'डेटा स्ट्रीम','shards'=>'सफल / कुल शार्ड','failures'=>'त्रुटियाँ','error'=>'डेटा प्राप्त नहीं हुआ।','permission'=>'monitor_snapshot अनुमति जाँचें।','repo_error'=>'इतिहास नहीं पढ़ा जा सका।','no_repositories'=>'कोई रिपॉज़िटरी नहीं।','no_snapshots'=>'कोई स्नैपशॉट नहीं मिला।','updated'=>'अंतिम जाँच','seconds'=>'सेकंड','minutes'=>'मिनट','hours'=>'घंटे','days'=>'दिन','total'=>'कुल रिकॉर्ड','showing'=>'दिखा रहे हैं','failed_shards'=>'विफल शार्ड'],
+        'ar' => ['title'=>'مراقبة اللقطات والنسخ الاحتياطية','description'=>'تابع المستودعات وسجل النسخ ونتائج الأجزاء وآخر نسخة ناجحة.','back'=>'المراقبة','loading'=>'جار تحميل معلومات النسخ...','refresh'=>'تحديث','repositories'=>'المستودعات','snapshots'=>'اللقطات','successful'=>'ناجحة','partial'=>'جزئية','failed'=>'فاشلة','running'=>'قيد التنفيذ','latest'=>'آخر نسخة ناجحة','never'=>'لا توجد نسخة ناجحة','history'=>'سجل اللقطات الأخيرة','repository'=>'المستودع','type'=>'النوع','name'=>'اسم اللقطة','state'=>'الحالة','started'=>'وقت البدء','duration'=>'المدة','indices'=>'الفهارس','streams'=>'تدفقات البيانات','shards'=>'الأجزاء الناجحة / الإجمالي','failures'=>'الإخفاقات','error'=>'تعذر جلب بيانات اللقطات.','permission'=>'تحقق من صلاحية monitor_snapshot.','repo_error'=>'تعذرت قراءة سجل هذا المستودع.','no_repositories'=>'لا توجد مستودعات مسجلة.','no_snapshots'=>'لا توجد سجلات لقطات.','updated'=>'آخر فحص','seconds'=>'ث','minutes'=>'د','hours'=>'س','days'=>'أيام','total'=>'إجمالي السجلات','showing'=>'عرض','failed_shards'=>'أجزاء فاشلة'],
+    ][$locale];
+@endphp
+<!doctype html>
+<html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $locale === 'ar' ? 'rtl' : 'ltr' }}">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ $texts['title'] }}</title>
+@if ($locale === 'ar')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+@else
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+@endif
+<style>
+body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,sans-serif}.page{max-width:1550px}.hero{background:linear-gradient(115deg,#171d38,#303b70 62%,#625bdb);color:#fff;border-radius:20px;padding:24px 28px}.hero p{color:#d5d9f2}.panel{background:#fff;border:1px solid #e8ecf3;border-radius:16px;box-shadow:0 5px 22px rgba(26,39,71,.045)}.metric{padding:18px;height:100%}.metric small,.muted{color:#7b8496}.metric strong{display:block;font-size:1.7rem;margin-top:5px}.repo{padding:18px}.repo h3{font-size:1rem;font-weight:700}.status{font-size:.75rem;padding:.35rem .6rem;border-radius:20px;font-weight:700;white-space:nowrap}.status-success{background:#e8f7ef;color:#18794e}.status-partial{background:#fff4df;color:#986400}.status-failed,.status-incompatible{background:#fde8e8;color:#b42318}.status-in-progress{background:#eaf1ff;color:#2458a6}.status-unknown{background:#eef0f4;color:#596579}.backup-card{padding:18px;border-left:4px solid #29976b}.table thead th{font-size:.76rem;color:#68748a;white-space:nowrap}.table tbody td{font-size:.84rem;white-space:nowrap}
+</style>
+</head>
+<body>
+<main class="container-fluid page py-4 px-3 px-lg-4">
+<div class="hero mb-4"><div class="d-flex justify-content-between align-items-start flex-wrap gap-3"><div><div class="mb-3"><a href="{{ route('elasticsearch-monitoring.index',['locale'=>$locale]) }}" class="btn btn-sm btn-light">← {{ $texts['back'] }}</a></div><h1 class="h3 fw-bold mb-1">{{ $texts['title'] }}</h1><p class="mb-0">{{ $texts['description'] }}</p></div><button id="refresh" class="btn btn-light">↻ {{ $texts['refresh'] }}</button></div></div>
+<div id="notice" class="alert alert-info d-none"></div>
+<div class="row g-3 mb-4">
+<div class="col-6 col-xl-3"><div class="panel metric"><small>{{ $texts['repositories'] }}</small><strong id="repo-count">—</strong></div></div>
+<div class="col-6 col-xl-3"><div class="panel metric"><small>{{ $texts['snapshots'] }}</small><strong id="snapshot-count">—</strong><div class="small muted" id="snapshot-total"></div></div></div>
+<div class="col-6 col-xl-2"><div class="panel metric"><small>{{ $texts['successful'] }}</small><strong id="successful-count">—</strong></div></div>
+<div class="col-6 col-xl-2"><div class="panel metric"><small>{{ $texts['partial'] }}</small><strong id="partial-count">—</strong></div></div>
+<div class="col-6 col-xl-2"><div class="panel metric"><small>{{ $texts['failed'] }}</small><strong id="failed-count">—</strong></div></div>
+</div>
+<div class="panel backup-card mb-4"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2"><div><div class="small muted">{{ $texts['latest'] }}</div><div id="latest-success" class="fw-bold fs-5">{{ $texts['loading'] }}</div><div id="latest-success-meta" class="small muted mt-1"></div></div><span id="running-count" class="badge text-bg-light">—</span></div></div>
+<section class="mb-4"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 fw-bold mb-0">{{ $texts['repositories'] }}</h2><span class="small muted" id="updated"></span></div><div class="row g-3" id="repository-list"><div class="col-12"><div class="panel repo muted">{{ $texts['loading'] }}</div></div></div></section>
+<section class="panel p-3"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h5 fw-bold mb-0">{{ $texts['history'] }}</h2><span class="small muted" id="history-count"></span></div><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>{{ $texts['repository'] }}</th><th>{{ $texts['name'] }}</th><th>{{ $texts['state'] }}</th><th>{{ $texts['started'] }}</th><th>{{ $texts['duration'] }}</th><th>{{ $texts['indices'] }}</th><th>{{ $texts['streams'] }}</th><th>{{ $texts['shards'] }}</th><th>{{ $texts['failures'] }}</th></tr></thead><tbody id="snapshot-table"><tr><td colspan="9" class="text-center py-4 muted">{{ $texts['loading'] }}</td></tr></tbody></table></div></section>
+</main>
+<script>
+const endpoint=@json(route('elasticsearch-monitoring.snapshots.data',['locale'=>$locale]));
+const labels=@json($texts);
+const fmt=value=>Number(value||0).toLocaleString(document.documentElement.lang);
+const esc=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const states={SUCCESS:labels.successful,PARTIAL:labels.partial,FAILED:labels.failed,IN_PROGRESS:labels.running,INCOMPATIBLE:'INCOMPATIBLE'};
+function date(value){if(!value)return '—';const parsed=new Date(value);return Number.isNaN(parsed.getTime())?'—':parsed.toLocaleString(document.documentElement.lang)}
+function duration(ms){if(ms===null||ms===undefined||ms<0)return '—';const seconds=Math.floor(ms/1000);if(seconds<60)return seconds+' '+labels.seconds;const minutes=Math.floor(seconds/60);if(minutes<60)return minutes+' '+labels.minutes;const hours=Math.floor(minutes/60);if(hours<24)return hours+' '+labels.hours;return Math.floor(hours/24)+' '+labels.days}
+function badge(state){const key=String(state||'UNKNOWN').toLowerCase().replace('_','-');return '<span class="status status-'+esc(key)+'">'+esc(states[state]||state)+'</span>'}
+function render(payload){
+ const summary=payload.summary||{},repos=payload.repositories||[],snapshots=payload.snapshots||[];
+ document.getElementById('repo-count').textContent=fmt(summary.repositories);
+ document.getElementById('snapshot-count').textContent=fmt(snapshots.length);
+ document.getElementById('snapshot-total').textContent=labels.showing+' '+fmt(snapshots.length)+' / '+labels.total+' '+fmt(summary.snapshots);
+ document.getElementById('successful-count').textContent=fmt(summary.successful);
+ document.getElementById('partial-count').textContent=fmt(summary.partial);
+ document.getElementById('failed-count').textContent=fmt(summary.failed);
+ document.getElementById('running-count').textContent=fmt(summary.in_progress)+' '+labels.running;
+ const latest=payload.meta?.latest_successful;
+ document.getElementById('latest-success').textContent=latest?latest.name:labels.never;
+ document.getElementById('latest-success-meta').textContent=latest?latest.repository+' · '+date(latest.start_time)+' · '+duration(latest.duration_in_millis):'';
+ document.getElementById('repository-list').innerHTML=repos.length?repos.map(repo=>'<div class="col-12 col-md-6 col-xl-4"><div class="panel repo h-100"><div class="d-flex justify-content-between gap-2"><h3>'+esc(repo.name)+'</h3><span class="badge text-bg-light">'+esc(repo.type)+'</span></div><div class="small muted mb-2">'+labels.total+': '+fmt(repo.total_snapshots)+'</div>'+(repo.error?'<div class="small text-danger">'+labels.repo_error+'</div>':(repo.latest_successful?'<div class="small muted">'+labels.latest+':</div><div class="fw-semibold">'+date(repo.latest_successful.start_time)+'</div>':'<div class="small muted">'+labels.never+'</div>'))+'</div></div>').join(''):'<div class="col-12"><div class="panel repo muted">'+labels.no_repositories+'</div></div>';
+ document.getElementById('snapshot-table').innerHTML=snapshots.length?snapshots.map(s=>'<tr><td>'+esc(s.repository)+'</td><td><span class="fw-semibold">'+esc(s.name)+'</span>'+(s.failure_reasons?.length?'<div class="small text-danger">'+esc(s.failure_reasons.join('; '))+'</div>':'')+'</td><td>'+badge(s.state)+'</td><td>'+date(s.start_time)+'</td><td>'+duration(s.duration_in_millis)+'</td><td>'+fmt(s.indices_count)+'</td><td>'+fmt(s.data_streams_count)+'</td><td>'+fmt(s.shards_successful)+' / '+fmt(s.shards_total)+(s.shards_failed?' <span class="text-danger">('+fmt(s.shards_failed)+' '+labels.failed_shards+')</span>':'')+'</td><td>'+fmt(s.failure_count)+'</td></tr>').join(''):'<tr><td colspan="9" class="text-center py-4 muted">'+labels.no_snapshots+'</td></tr>';
+ document.getElementById('history-count').textContent=fmt(snapshots.length);
+ document.getElementById('updated').textContent=labels.updated+': '+new Date().toLocaleTimeString(document.documentElement.lang);
+}
+async function load(){
+ const notice=document.getElementById('notice');
+ try{
+  const response=await fetch(endpoint,{headers:{Accept:'application/json'}});if(!response.ok)throw new Error('HTTP '+response.status);
+  const payload=await response.json();
+  if(!payload.available){notice.textContent=labels.permission;notice.classList.remove('d-none');render(payload);return}
+  notice.classList.add('d-none');render(payload);
+ }catch(error){notice.textContent=labels.error+' '+error.message;notice.classList.remove('d-none')}
+}
+document.getElementById('refresh').addEventListener('click',load);
+load();setInterval(load,60000);
+</script>
+</body>
+</html>
