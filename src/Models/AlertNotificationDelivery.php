@@ -14,6 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $status
  * @property int $attempts
  * @property CarbonImmutable|null $sent_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
+ * @property-read AlertEvent $alertEvent
  * @property string|null $error
  * @property mixed $response
  */
@@ -40,6 +43,7 @@ class AlertNotificationDelivery extends Model
         ];
     }
 
+    /** @return BelongsTo<AlertEvent, $this> */
     public function alertEvent(): BelongsTo
     {
         return $this->belongsTo(AlertEvent::class, 'alert_event_id');

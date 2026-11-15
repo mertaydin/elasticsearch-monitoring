@@ -72,8 +72,8 @@ class AlertHistoryController
             ->map(static fn (AlertNotificationDelivery $delivery): array => [
                 'id' => $delivery->id,
                 'alert_code' => $delivery->alert_code,
-                'title' => $delivery->alertEvent?->title ?? $delivery->alert_code,
-                'severity' => $delivery->alertEvent?->severity,
+                'title' => $delivery->alertEvent->title,
+                'severity' => $delivery->alertEvent->severity,
                 'channel' => $delivery->channel,
                 'status' => $delivery->status,
                 'attempts' => $delivery->attempts,
