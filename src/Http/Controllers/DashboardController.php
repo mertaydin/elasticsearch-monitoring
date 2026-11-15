@@ -12,6 +12,22 @@ class DashboardController
 {
     private const MAX_HISTORY_POINTS = 2000;
 
+    private const AGGREGATED_METRIC_PATHS = [
+        'cpu.percent_average',
+        'filesystem.total_bytes',
+        'filesystem.available_bytes',
+        'filesystem.used_bytes',
+        'indices.documents',
+        'indices.store_size_bytes',
+        'indices.primary_store_size_bytes',
+        'indices.segments_total',
+        'indices.segments_primaries',
+        'cluster.active_shards',
+        'cluster.unassigned_shards',
+        'rates.search_per_second',
+        'rates.indexing_per_second',
+    ];
+
     public function index(): View
     {
         /** @var view-string $viewName */
@@ -37,24 +53,89 @@ class DashboardController
         $latest = MetricSnapshot::query()->latest('collected_at')->first();
         $query = MetricSnapshot::query()->whereBetween('collected_at', [$from, $to])->orderBy('collected_at');
         $total = (clone $query)->count();
-        $step = max(1, (int) ceil($total / self::MAX_HISTORY_POINTS));
-        $history = [];
-        $position = 0;
+        $durationSeconds = max(0, $to->getTimestamp() - $from->getTimestamp());
+        $aggregation = $durationSeconds > 7 * 86400 ? 'daily' : ($durationSeconds > 86400 ? 'hourly' : 'raw');
 
-        foreach ($query->cursor() as $snapshot) {
-            if ($position % $step === 0 || $position === $total - 1) {
-                $history[] = [
-                    'collected_at' => $snapshot->collected_at?->toIso8601String(),
-                    'metrics' => $snapshot->metrics,
-                ];
+        if ($aggregation === 'raw') {
+            $step = max(1, (int) ceil($total / self::MAX_HISTORY_POINTS));
+            $history = [];
+            $position = 0;
+
+            foreach ($query->cursor() as $snapshot) {
+                if ($position % $step === 0 || $position === $total - 1) {
+                    $history[] = [
+                        'collected_at' => $snapshot->collected_at?->toIso8601String(),
+                        'metrics' => $snapshot->metrics,
+                    ];
+                }
+                $position++;
             }
-            $position++;
+        } else {
+            $history = $this->aggregateHistory($query, $aggregation);
         }
 
         return response()->json([
             'latest' => $latest,
             'history' => $history,
-            'range' => ['from' => $from->toIso8601String(), 'to' => $to->toIso8601String(), 'total' => $total, 'returned' => count($history)],
+            'range' => [
+                'from' => $from->toIso8601String(),
+                'to' => $to->toIso8601String(),
+                'total' => $total,
+                'returned' => count($history),
+                'aggregation' => $aggregation,
+            ],
         ]);
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<MetricSnapshot>  $query
+     * @return array<int, array{collected_at: string, metrics: array<string, mixed>}>
+     */
+    private function aggregateHistory($query, string $aggregation): array
+    {
+        $buckets = [];
+
+        foreach ($query->cursor() as $snapshot) {
+            $collectedAt = $snapshot->collected_at;
+            if ($collectedAt === null) {
+                continue;
+            }
+
+            $bucketTime = $aggregation === 'daily'
+                ? $collectedAt->copy()->startOfDay()
+                : $collectedAt->copy()->startOfHour();
+            $bucketKey = $bucketTime->toDateTimeString();
+
+            if (! isset($buckets[$bucketKey])) {
+                $buckets[$bucketKey] = [
+                    'collected_at' => $bucketTime->toIso8601String(),
+                    'sums' => [],
+                    'counts' => [],
+                ];
+            }
+
+            $metrics = (array) $snapshot->metrics;
+            foreach (self::AGGREGATED_METRIC_PATHS as $path) {
+                $value = data_get($metrics, $path);
+                if (! is_numeric($value)) {
+                    continue;
+                }
+
+                $buckets[$bucketKey]['sums'][$path] = ($buckets[$bucketKey]['sums'][$path] ?? 0) + (float) $value;
+                $buckets[$bucketKey]['counts'][$path] = ($buckets[$bucketKey]['counts'][$path] ?? 0) + 1;
+            }
+        }
+
+        $history = [];
+        foreach ($buckets as $bucket) {
+            $metrics = [];
+            foreach ($bucket['sums'] as $path => $sum) {
+                data_set($metrics, $path, round($sum / $bucket['counts'][$path], 2));
+            }
+
+            $history[] = ['collected_at' => $bucket['collected_at'], 'metrics' => $metrics];
+        }
+
+        return $history;
     }
 }

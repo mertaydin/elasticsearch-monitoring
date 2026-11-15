@@ -16,6 +16,8 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Özellikler
 
+- Uzun dashboard grafiklerinde 24 saati aşan aralıklar saatlik, 7 günü aşan aralıklar günlük ortalamalarla gösterilir. Daha kısa aralıklarda ham ölçümler korunur.
+
 - Dashboard otomatik yenileme aralığını (15 saniye, 30 saniye, 1 dakika veya 5 dakika) seçin; yenilemeyi duraklatın/sürdürün ve arka planda gereksiz istekleri durdurun.
 
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.

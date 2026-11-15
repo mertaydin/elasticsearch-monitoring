@@ -45,6 +45,53 @@ class DashboardHistoryRangeTest extends TestCase
         $this->assertSame(3, $payload['latest']['id']);
     }
 
+    public function test_dashboard_history_uses_hourly_averages_for_ranges_longer_than_one_day(): void
+    {
+        foreach ([['2026-11-15 10:05:00', 20], ['2026-11-15 10:35:00', 40], ['2026-11-15 11:10:00', 60]] as [$date, $cpu]) {
+            DB::table('elasticsearch_metric_snapshots')->insert([
+                'collected_at' => $date, 'elasticsearch_version' => '8.19.14',
+                'metrics' => json_encode([
+                    'cpu' => ['percent_average' => $cpu],
+                    'indices' => ['documents' => $cpu * 10],
+                    'rates' => ['search_per_second' => $cpu / 10],
+                ]),
+                'created_at' => $date, 'updated_at' => $date,
+            ]);
+        }
+
+        $response = app(DashboardController::class)->data(Request::create('/monitoring/elasticsearch/data', 'GET', [
+            'from' => '2026-11-14T00:00:00+00:00', 'to' => '2026-11-15T12:00:00+00:00',
+        ]));
+        $payload = $response->getData(true);
+
+        $this->assertSame('hourly', $payload['range']['aggregation']);
+        $this->assertCount(2, $payload['history']);
+        $this->assertSame(30.0, $payload['history'][0]['metrics']['cpu']['percent_average']);
+        $this->assertSame(300.0, $payload['history'][0]['metrics']['indices']['documents']);
+        $this->assertSame(3.0, $payload['history'][0]['metrics']['rates']['search_per_second']);
+    }
+
+    public function test_dashboard_history_uses_daily_averages_for_ranges_longer_than_seven_days(): void
+    {
+        foreach ([['2026-11-01 08:00:00', 20], ['2026-11-01 16:00:00', 40], ['2026-11-02 08:00:00', 60]] as [$date, $cpu]) {
+            DB::table('elasticsearch_metric_snapshots')->insert([
+                'collected_at' => $date, 'elasticsearch_version' => '8.19.14',
+                'metrics' => json_encode(['cpu' => ['percent_average' => $cpu]]),
+                'created_at' => $date, 'updated_at' => $date,
+            ]);
+        }
+
+        $response = app(DashboardController::class)->data(Request::create('/monitoring/elasticsearch/data', 'GET', [
+            'from' => '2026-10-25T00:00:00+00:00', 'to' => '2026-11-02T23:59:59+00:00',
+        ]));
+        $payload = $response->getData(true);
+
+        $this->assertSame('daily', $payload['range']['aggregation']);
+        $this->assertCount(2, $payload['history']);
+        $this->assertSame(30.0, $payload['history'][0]['metrics']['cpu']['percent_average']);
+        $this->assertSame(60.0, $payload['history'][1]['metrics']['cpu']['percent_average']);
+    }
+
     public function test_dashboard_history_defaults_to_the_last_hour(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-11-15 12:00:00'));

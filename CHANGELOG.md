@@ -1,3 +1,9 @@
+## [0.27.0] - 2026-11-16
+
+- Aggregate dashboard chart history into hourly averages for ranges longer than 24 hours and daily averages for ranges longer than 7 days.
+- Keep raw observations for ranges up to 24 hours and preserve the latest live KPI values independently of chart aggregation.
+- Show the active aggregation interval in the dashboard and localize it in all six supported languages.
+
 ## [0.26.0] - 2026-11-16
 
 - Add shared dashboard chart date filters for the last 1 hour, 6 hours, 24 hours, 7 days, and custom start/end dates.

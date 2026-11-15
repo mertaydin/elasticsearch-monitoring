@@ -322,7 +322,7 @@ function renderFavoriteIndices() {
 }
 const labels = {
     noMetrics: @json($t('no_metrics')),
-    rangeSummary: @json($t('range_summary')), rangeNoData: @json($t('range_no_data')), invalidRange: @json($t('invalid_range')),
+    rangeSummary: @json($t('range_summary')), rangeNoData: @json($t('range_no_data')), invalidRange: @json($t('invalid_range')), hourlyAverage: @json($t('aggregation_hourly')), dailyAverage: @json($t('aggregation_daily')),
     lastCollected: @json($t('last_collected')),
     loadError: @json($t('load_error')),
     heapUsed: @json($t('heap_used')),
@@ -448,8 +448,9 @@ async function loadMetrics() {
             return;
         }
         alert.classList.add('d-none');
+        const aggregationLabel = payload.range?.aggregation === 'hourly' ? labels.hourlyAverage : (payload.range?.aggregation === 'daily' ? labels.dailyAverage : '');
         document.getElementById('dashboard-history-summary').textContent = payload.range?.total
-            ? labels.rangeSummary.replace(':count', Number(payload.range.total).toLocaleString()).replace(':returned', Number(payload.range.returned).toLocaleString())
+            ? labels.rangeSummary.replace(':count', Number(payload.range.total).toLocaleString()).replace(':returned', Number(payload.range.returned).toLocaleString()) + (aggregationLabel ? ' · ' + aggregationLabel : '')
             : labels.rangeNoData;
         const m = payload.latest.metrics || {};
         const health = m.health || {};

@@ -39,4 +39,5 @@ return [
     'refresh_1_minute' => 'دقيقة واحدة',
     'refresh_5_minutes' => '5 دقائق',
     'history_range' => 'النطاق الزمني للمخططات', 'range_1_hour' => 'آخر ساعة', 'range_6_hours' => 'آخر 6 ساعات', 'range_24_hours' => 'آخر 24 ساعة', 'range_7_days' => 'آخر 7 أيام', 'range_custom' => 'نطاق زمني مخصص', 'start_date' => 'البداية', 'end_date' => 'النهاية', 'apply_range' => 'تطبيق', 'range_summary' => 'تم العثور على :count سجل · يتم عرض :returned نقطة', 'range_no_data' => 'لا توجد سجلات ضمن هذا النطاق الزمني.', 'invalid_range' => 'يرجى اختيار تاريخي بداية ونهاية صالحين.',
+    'aggregation_hourly' => 'متوسطات كل ساعة', 'aggregation_daily' => 'متوسطات يومية',
 ];
