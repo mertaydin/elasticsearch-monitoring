@@ -58,7 +58,7 @@ class ThreadPoolAnalyzerTest extends TestCase
         $search = collect($node['pools'])->firstWhere('name', 'search');
         $this->assertSame(3, $search['latest']['queue']);
         $this->assertSame(0.1, $search['latest']['rejected_per_second']);
-        $this->assertSame(2.0, $search['latest']['completed_per_second']);
+        $this->assertSame(2, $search['latest']['completed_per_second']);
         $this->assertSame('saturated', $search['status']);
         $write = collect($node['pools'])->firstWhere('name', 'write');
         $this->assertSame('healthy', $write['status']);
