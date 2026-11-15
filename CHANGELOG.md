@@ -1,3 +1,10 @@
+## [0.26.0] - 2026-11-16
+
+- Add shared dashboard chart date filters for the last 1 hour, 6 hours, 24 hours, 7 days, and custom start/end dates.
+- Query persisted metric snapshots within the selected range and retain the selected range in browser local storage.
+- Sample large result sets to a maximum of 2,000 chart points while preserving the final observation.
+- Keep current KPI values based on the latest snapshot and localize date-range controls in all six supported languages.
+
 ## [0.25.0] - 2026-11-16
 
 - Add configurable dashboard auto-refresh intervals: 15 seconds, 30 seconds, 1 minute, and 5 minutes.

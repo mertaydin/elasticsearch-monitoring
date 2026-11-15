@@ -142,6 +142,21 @@
         <span id="dashboard-refresh-status" class="small text-muted" aria-live="polite">{{ $t('auto_refresh') }}</span>
         <span id="dashboard-last-refresh" class="small text-muted ms-auto">{{ $t('last_refresh') }}: —</span>
     </div>
+    <div id="dashboard-history-controls" class="insight-card mb-3">
+        <div class="d-flex align-items-end flex-wrap gap-2">
+            <div><label for="dashboard-history-range" class="form-label small text-muted mb-1">{{ $t('history_range') }}</label>
+                <select id="dashboard-history-range" class="form-select form-select-sm" style="min-width:150px" onchange="changeDashboardHistoryRange(this.value)">
+                    <option value="1h">{{ $t('range_1_hour') }}</option><option value="6h">{{ $t('range_6_hours') }}</option><option value="24h">{{ $t('range_24_hours') }}</option><option value="7d">{{ $t('range_7_days') }}</option><option value="custom">{{ $t('range_custom') }}</option>
+                </select>
+            </div>
+            <div id="dashboard-custom-range" class="d-flex align-items-end flex-wrap gap-2 d-none">
+                <div><label for="dashboard-history-from" class="form-label small text-muted mb-1">{{ $t('start_date') }}</label><input type="date" id="dashboard-history-from" class="form-control form-control-sm"></div>
+                <div><label for="dashboard-history-to" class="form-label small text-muted mb-1">{{ $t('end_date') }}</label><input type="date" id="dashboard-history-to" class="form-control form-control-sm"></div>
+                <button type="button" class="btn btn-sm btn-primary" onclick="applyCustomDashboardHistoryRange()">{{ $t('apply_range') }}</button>
+            </div>
+            <span id="dashboard-history-summary" class="small text-muted ms-auto"></span>
+        </div>
+    </div>
     <div id="alert" class="alert alert-warning d-none"></div>
     <section id="dashboard-customizer" class="insight-card mb-4 d-none">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
@@ -307,6 +322,7 @@ function renderFavoriteIndices() {
 }
 const labels = {
     noMetrics: @json($t('no_metrics')),
+    rangeSummary: @json($t('range_summary')), rangeNoData: @json($t('range_no_data')), invalidRange: @json($t('invalid_range')),
     lastCollected: @json($t('last_collected')),
     loadError: @json($t('load_error')),
     heapUsed: @json($t('heap_used')),
@@ -332,6 +348,40 @@ try {
     if (allowedRefreshIntervals.includes(savedInterval)) refreshIntervalMs = savedInterval;
 } catch (error) {}
 document.getElementById('dashboard-refresh-interval').value = String(refreshIntervalMs);
+const historyPreferenceKey = 'elasticsearch-monitoring:dashboard-history-range';
+let dashboardHistoryRange = '1h', customHistoryFrom = '', customHistoryTo = '';
+try {
+    const saved = JSON.parse(localStorage.getItem(historyPreferenceKey) || 'null');
+    if (saved && ['1h','6h','24h','7d','custom'].includes(saved.range)) { dashboardHistoryRange = saved.range; customHistoryFrom = saved.from || ''; customHistoryTo = saved.to || ''; }
+} catch (error) {}
+document.getElementById('dashboard-history-range').value = dashboardHistoryRange;
+document.getElementById('dashboard-custom-range').classList.toggle('d-none', dashboardHistoryRange !== 'custom');
+function localDateInput(date) { return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0'); }
+const today = new Date();
+document.getElementById('dashboard-history-from').value = customHistoryFrom || localDateInput(new Date(today.getTime()-86400000));
+document.getElementById('dashboard-history-to').value = customHistoryTo || localDateInput(today);
+function getDashboardHistoryRange() {
+    const now = new Date();
+    if (dashboardHistoryRange === 'custom') {
+        return {from:new Date(document.getElementById('dashboard-history-from').value+'T00:00:00').toISOString(),to:new Date(document.getElementById('dashboard-history-to').value+'T23:59:59.999').toISOString()};
+    }
+    const durations = {'1h':3600000,'6h':21600000,'24h':86400000,'7d':604800000};
+    return {from:new Date(now.getTime()-durations[dashboardHistoryRange]).toISOString(),to:now.toISOString()};
+}
+function changeDashboardHistoryRange(value) {
+    if (!['1h','6h','24h','7d','custom'].includes(value)) return;
+    dashboardHistoryRange=value;
+    document.getElementById('dashboard-custom-range').classList.toggle('d-none',value!=='custom');
+    try { localStorage.setItem(historyPreferenceKey,JSON.stringify({range:dashboardHistoryRange,from:customHistoryFrom,to:customHistoryTo})); } catch(error) {}
+    if(value!=='custom') refreshDashboardNow();
+}
+function applyCustomDashboardHistoryRange() {
+    const from=document.getElementById('dashboard-history-from').value,to=document.getElementById('dashboard-history-to').value;
+    if(!from||!to||from>to){const alert=document.getElementById('alert');alert.textContent=labels.invalidRange;alert.classList.remove('d-none');return;}
+    customHistoryFrom=from;customHistoryTo=to;dashboardHistoryRange='custom';
+    try { localStorage.setItem(historyPreferenceKey,JSON.stringify({range:dashboardHistoryRange,from,to})); } catch(error) {}
+    refreshDashboardNow();
+}
 function updateDashboardRefreshControls() {
     document.getElementById('dashboard-refresh-toggle').textContent = refreshPaused ? @json($t('resume_refresh')) : @json($t('pause_refresh'));
     document.getElementById('dashboard-refresh-status').textContent = refreshPaused ? @json($t('refresh_paused')) : @json($t('auto_refresh'));
@@ -385,7 +435,11 @@ async function loadMetrics() {
     refreshInProgress = true;
     const alert = document.getElementById('alert');
     try {
-        const response = await fetch(endpoint, {headers: {'Accept': 'application/json'}});
+        const requestUrl = new URL(endpoint, window.location.href);
+        const selectedRange = getDashboardHistoryRange();
+        requestUrl.searchParams.set('from', selectedRange.from);
+        requestUrl.searchParams.set('to', selectedRange.to);
+        const response = await fetch(requestUrl.toString(), {headers: {'Accept': 'application/json'}});
         if (!response.ok) throw new Error('HTTP ' + response.status);
         const payload = await response.json();
         if (!payload.latest) {
@@ -394,6 +448,9 @@ async function loadMetrics() {
             return;
         }
         alert.classList.add('d-none');
+        document.getElementById('dashboard-history-summary').textContent = payload.range?.total
+            ? labels.rangeSummary.replace(':count', Number(payload.range.total).toLocaleString()).replace(':returned', Number(payload.range.returned).toLocaleString())
+            : labels.rangeNoData;
         const m = payload.latest.metrics || {};
         const health = m.health || {};
         const healthScore = Number(health.score ?? 0);

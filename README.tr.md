@@ -1,5 +1,7 @@
 # Elasticsearch Monitoring
 
+- Dashboard geçmiş grafiklerini son 1, 6, 24 saat, son 7 gün veya özel başlangıç/bitiş tarihine göre filtreleyin. Seçim tarayıcıda saklanır ve büyük tarih aralıklarında yanıt en fazla 2.000 örneklenmiş noktayla sınırlandırılır.
+
 ![CI](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml/badge.svg?branch=main)
 [![Latest Version](https://img.shields.io/packagist/v/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
 [![Total Downloads](https://img.shields.io/packagist/dt/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)

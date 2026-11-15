@@ -38,4 +38,5 @@ return [
     'refresh_30_seconds' => '30 सेकंड',
     'refresh_1_minute' => '1 मिनट',
     'refresh_5_minutes' => '5 मिनट',
+    'history_range' => 'चार्ट की तारीख सीमा', 'range_1_hour' => 'पिछला 1 घंटा', 'range_6_hours' => 'पिछले 6 घंटे', 'range_24_hours' => 'पिछले 24 घंटे', 'range_7_days' => 'पिछले 7 दिन', 'range_custom' => 'कस्टम तारीख सीमा', 'start_date' => 'शुरुआत', 'end_date' => 'समाप्ति', 'apply_range' => 'लागू करें', 'range_summary' => ':count रिकॉर्ड मिले · :returned बिंदु दिखाए जा रहे हैं', 'range_no_data' => 'इस तारीख सीमा में कोई रिकॉर्ड नहीं मिला।', 'invalid_range' => 'कृपया मान्य शुरुआत और समाप्ति तारीख चुनें।',
 ];

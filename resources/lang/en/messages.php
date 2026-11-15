@@ -51,4 +51,5 @@ return [
     'refresh_30_seconds' => '30 seconds',
     'refresh_1_minute' => '1 minute',
     'refresh_5_minutes' => '5 minutes',
+    'history_range' => 'Chart date range', 'range_1_hour' => 'Last 1 hour', 'range_6_hours' => 'Last 6 hours', 'range_24_hours' => 'Last 24 hours', 'range_7_days' => 'Last 7 days', 'range_custom' => 'Custom date range', 'start_date' => 'Start', 'end_date' => 'End', 'apply_range' => 'Apply', 'range_summary' => ':count records found · showing :returned points', 'range_no_data' => 'No records found for this date range.', 'invalid_range' => 'Please select a valid start and end date.',
 ];

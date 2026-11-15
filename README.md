@@ -14,6 +14,8 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Features
 
+- Filter dashboard history charts by the last 1, 6, or 24 hours, the last 7 days, or a custom date range; retain the selection locally and cap large responses at 2,000 sampled points.
+
 - Choose a dashboard auto-refresh interval (15 seconds, 30 seconds, 1 minute, or 5 minutes), pause/resume refresh, and suspend background-tab requests.
 
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
