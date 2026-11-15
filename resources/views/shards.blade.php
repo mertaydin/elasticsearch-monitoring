@@ -119,7 +119,7 @@ async function explainShard(shard){
  const overlay=document.getElementById('explain-overlay'),content=document.getElementById('explain-content');
  overlay.classList.add('show');content.textContent=explainLabels.explainLoading;
  try{
-  const params=new URLSearchParams({index:shard.index,shard:shard.shard,primary:shard.primary});
+  const params=new URLSearchParams({index:shard.index,shard:shard.shard,primary:shard.primary==='true'?'1':'0'});
   if(shard.node)params.set('current_node',shard.node);
   const response=await fetch(explainEndpoint+'&'+params.toString(),{headers:{Accept:'application/json'}});
   const data=await response.json();
