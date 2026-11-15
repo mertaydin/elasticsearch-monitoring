@@ -29,6 +29,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/capacity/data', [CapacityController::class, 'data'])->name('capacity.data');
         Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');
         Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');
+        Route::get('/thread-pools', [ThreadPoolController::class, 'index'])->name('thread-pools');
+        Route::get('/thread-pools/data', [ThreadPoolController::class, 'data'])->name('thread-pools.data');
         Route::get('/alerts', [AlertHistoryController::class, 'index'])->name('alerts');
         Route::get('/alerts/data', [AlertHistoryController::class, 'data'])->name('alerts.data');
     });

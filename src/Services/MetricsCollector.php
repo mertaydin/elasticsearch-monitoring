@@ -102,6 +102,15 @@ class MetricsCollector
                 'search_rejected' => (int) data_get($node, 'thread_pool.search.rejected', 0),
                 'write_queue' => (int) data_get($node, 'thread_pool.write.queue', data_get($node, 'thread_pool.bulk.queue', 0)),
                 'write_rejected' => (int) data_get($node, 'thread_pool.write.rejected', data_get($node, 'thread_pool.bulk.rejected', 0)),
+                'thread_pools' => collect((array) data_get($node, 'thread_pool', []))->map(static fn ($pool, $name): array => [
+                    'name' => (string) $name,
+                    'threads' => (int) data_get($pool, 'threads', 0),
+                    'queue' => (int) data_get($pool, 'queue', 0),
+                    'active' => (int) data_get($pool, 'active', 0),
+                    'rejected' => (int) data_get($pool, 'rejected', 0),
+                    'largest' => (int) data_get($pool, 'largest', 0),
+                    'completed' => (int) data_get($pool, 'completed', 0),
+                ])->values()->all(),
             ];
         }
 

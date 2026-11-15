@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0] - 2026-11-15
+
+- Add a read-only Thread Pool Analyzer with per-node and per-pool thread, active, queue, completed, and rejected metrics.
+- Add historical queue depth and rejection/completion rate trends with saturation status indicators.
+- Preserve compatibility with Elasticsearch nodes that expose different thread pool names.
+
+
 ## [0.9.0] - 2026-11-15
 
 - Add Cluster Capacity & Growth analysis with historical filesystem, document, and primary index storage trends.
