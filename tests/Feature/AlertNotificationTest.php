@@ -2,7 +2,6 @@
 
 namespace ElasticsearchMonitoring\Tests\Feature;
 
-use ElasticsearchMonitoring\Jobs\DeliverAlertNotifications;
 use ElasticsearchMonitoring\Models\AlertEvent;
 use ElasticsearchMonitoring\Models\AlertNotificationDelivery;
 use ElasticsearchMonitoring\Services\AlertNotificationDispatcher;
@@ -10,7 +9,6 @@ use ElasticsearchMonitoring\Services\AlertHistoryRecorder;
 use ElasticsearchMonitoring\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 
 class AlertNotificationTest extends TestCase

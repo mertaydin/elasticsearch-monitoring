@@ -4,6 +4,7 @@ namespace ElasticsearchMonitoring;
 
 use ElasticsearchMonitoring\Console\CollectMetricsCommand;
 use ElasticsearchMonitoring\Services\AlertHistoryRecorder;
+use ElasticsearchMonitoring\Services\AlertNotificationDispatcher;
 use ElasticsearchMonitoring\Services\DashboardAuthorizer;
 use ElasticsearchMonitoring\Services\ElasticsearchClient;
 use ElasticsearchMonitoring\Services\HealthAnalyzer;
