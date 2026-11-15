@@ -53,4 +53,6 @@ return [
     'refresh_5_minutes' => '5 dakika',
     'history_range' => 'Grafik tarih aralığı', 'range_1_hour' => 'Son 1 saat', 'range_6_hours' => 'Son 6 saat', 'range_24_hours' => 'Son 24 saat', 'range_7_days' => 'Son 7 gün', 'range_custom' => 'Özel tarih aralığı', 'start_date' => 'Başlangıç', 'end_date' => 'Bitiş', 'apply_range' => 'Uygula', 'range_summary' => ':count kayıt bulundu · :returned nokta gösteriliyor', 'range_no_data' => 'Bu tarih aralığında kayıt bulunamadı.', 'invalid_range' => 'Lütfen geçerli bir başlangıç ve bitiş tarihi seçin.',
     'aggregation_hourly' => 'Saatlik ortalama', 'aggregation_daily' => 'Günlük ortalama',
+    'compare_period' => 'Önceki dönemle karşılaştır',
+    'previous_period' => 'Önceki dönem',
 ];

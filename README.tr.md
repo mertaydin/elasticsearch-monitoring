@@ -16,6 +16,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Özellikler
 
+- Dashboard geçmiş grafiklerini aynı uzunluktaki bir önceki dönemle karşılaştırın. Önceki dönem çizgileri seçili zaman aralığına hizalanır ve karşılaştırma tercihi tarayıcıda saklanır.
 - Daha düzenli gezinme çubuğu, belirgin görsel hiyerarşi, mobil uyumlu kontroller ve tutarlı KPI/sağlık/grafik kartlarıyla yenilenmiş dashboard tasarımı.
 - Uzun dashboard grafiklerinde 24 saati aşan aralıklar saatlik, 7 günü aşan aralıklar günlük ortalamalarla gösterilir. Daha kısa aralıklarda ham ölçümler korunur.
 

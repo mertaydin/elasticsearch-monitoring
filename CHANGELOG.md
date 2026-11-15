@@ -1,5 +1,9 @@
 ## [0.27.0] - 2026-11-16
 
+- Add an optional comparison overlay for the immediately preceding period of equal duration across dashboard history charts.
+- Align previous-period timestamps to the selected range so both periods can be compared on the same chart timeline.
+- Persist the comparison toggle in browser local storage and keep it disabled by default.
+- Add comparison API coverage and localized labels in all six supported languages.
 - Refresh the dashboard visual design with a clearer header, compact navigation, responsive controls, and consistent metric/chart cards.
 - Correct numeric type assertions in hourly/daily aggregation tests across supported Laravel/PHP matrix jobs.
 - Aggregate dashboard chart history into hourly averages for ranges longer than 24 hours and daily averages for ranges longer than 7 days.

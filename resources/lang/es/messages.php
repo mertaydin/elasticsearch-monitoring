@@ -40,4 +40,6 @@ return [
     'refresh_5_minutes' => '5 minutos',
     'history_range' => 'Rango de fechas del gráfico', 'range_1_hour' => 'Última hora', 'range_6_hours' => 'Últimas 6 horas', 'range_24_hours' => 'Últimas 24 horas', 'range_7_days' => 'Últimos 7 días', 'range_custom' => 'Rango personalizado', 'start_date' => 'Inicio', 'end_date' => 'Fin', 'apply_range' => 'Aplicar', 'range_summary' => ':count registros encontrados · se muestran :returned puntos', 'range_no_data' => 'No hay registros en este rango.', 'invalid_range' => 'Selecciona una fecha de inicio y fin válidas.',
     'aggregation_hourly' => 'Promedios por hora', 'aggregation_daily' => 'Promedios diarios',
+    'compare_period' => 'Comparar con el período anterior',
+    'previous_period' => 'Período anterior',
 ];

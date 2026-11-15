@@ -92,6 +92,38 @@ class DashboardHistoryRangeTest extends TestCase
         $this->assertEquals(60.0, $payload['history'][1]['metrics']['cpu']['percent_average']);
     }
 
+
+    public function test_dashboard_history_can_compare_the_previous_equal_length_period(): void
+    {
+        foreach ([
+            ['2026-11-15 08:00:00', 10],
+            ['2026-11-15 09:00:00', 20],
+            ['2026-11-15 10:00:00', 30],
+            ['2026-11-15 11:00:00', 40],
+        ] as [$date, $cpu]) {
+            DB::table('elasticsearch_metric_snapshots')->insert([
+                'collected_at' => $date, 'elasticsearch_version' => '8.19.14',
+                'metrics' => json_encode(['cpu' => ['percent_average' => $cpu]]),
+                'created_at' => $date, 'updated_at' => $date,
+            ]);
+        }
+
+        $response = app(DashboardController::class)->data(Request::create('/monitoring/elasticsearch/data', 'GET', [
+            'from' => '2026-11-15T10:00:00+00:00',
+            'to' => '2026-11-15T12:00:00+00:00',
+            'compare' => '1',
+        ]));
+        $payload = $response->getData(true);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertCount(2, $payload['history']);
+        $this->assertCount(2, $payload['comparison']['history']);
+        $this->assertEquals(10, $payload['comparison']['history'][0]['metrics']['cpu']['percent_average']);
+        $this->assertEquals(20, $payload['comparison']['history'][1]['metrics']['cpu']['percent_average']);
+        $this->assertEquals('2026-11-15 10:00:00', Carbon::parse($payload['comparison']['history'][0]['collected_at'])->toDateTimeString());
+        $this->assertEquals('2026-11-15 11:00:00', Carbon::parse($payload['comparison']['history'][1]['collected_at'])->toDateTimeString());
+    }
+
     public function test_dashboard_history_defaults_to_the_last_hour(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-11-15 12:00:00'));

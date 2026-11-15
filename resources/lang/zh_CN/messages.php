@@ -40,4 +40,6 @@ return [
     'refresh_5_minutes' => '5 分钟',
     'history_range' => '图表日期范围', 'range_1_hour' => '最近 1 小时', 'range_6_hours' => '最近 6 小时', 'range_24_hours' => '最近 24 小时', 'range_7_days' => '最近 7 天', 'range_custom' => '自定义日期范围', 'start_date' => '开始日期', 'end_date' => '结束日期', 'apply_range' => '应用', 'range_summary' => '找到 :count 条记录 · 显示 :returned 个数据点', 'range_no_data' => '此日期范围内没有记录。', 'invalid_range' => '请选择有效的开始和结束日期。',
     'aggregation_hourly' => '每小时平均值', 'aggregation_daily' => '每日平均值',
+    'compare_period' => '与上一周期比较',
+    'previous_period' => '上一周期',
 ];

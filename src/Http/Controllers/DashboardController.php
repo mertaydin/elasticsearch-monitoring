@@ -41,6 +41,7 @@ class DashboardController
         $validated = $request->validate([
             'from' => ['nullable', 'date'],
             'to' => ['nullable', 'date', 'after_or_equal:from'],
+            'compare' => ['sometimes', 'boolean'],
         ]);
 
         $to = isset($validated['to']) ? Carbon::parse($validated['to']) : now();
@@ -56,27 +57,40 @@ class DashboardController
         $durationSeconds = max(0, $to->getTimestamp() - $from->getTimestamp());
         $aggregation = $durationSeconds > 7 * 86400 ? 'daily' : ($durationSeconds > 86400 ? 'hourly' : 'raw');
 
-        if ($aggregation === 'raw') {
-            $step = max(1, (int) ceil($total / self::MAX_HISTORY_POINTS));
-            $history = [];
-            $position = 0;
+        $history = $this->buildHistory($query, $aggregation, $total);
 
-            foreach ($query->cursor() as $snapshot) {
-                if ($position % $step === 0 || $position === $total - 1) {
-                    $history[] = [
-                        'collected_at' => $snapshot->collected_at?->toIso8601String(),
-                        'metrics' => $snapshot->metrics,
-                    ];
-                }
-                $position++;
+        $comparison = ['history' => [], 'range' => null];
+        if ($request->boolean('compare')) {
+            $comparisonFrom = $from->copy()->subSeconds(max(1, $durationSeconds));
+            $comparisonTo = $from->copy()->subSecond();
+            $comparisonQuery = MetricSnapshot::query()
+                ->whereBetween('collected_at', [$comparisonFrom, $comparisonTo])
+                ->orderBy('collected_at');
+            $comparisonTotal = (clone $comparisonQuery)->count();
+            $comparisonHistory = $this->buildHistory($comparisonQuery, $aggregation, $comparisonTotal);
+
+            foreach ($comparisonHistory as &$point) {
+                $point['collected_at'] = Carbon::parse($point['collected_at'])
+                    ->addSeconds($durationSeconds)
+                    ->toIso8601String();
             }
-        } else {
-            $history = $this->aggregateHistory($query, $aggregation);
+            unset($point);
+
+            $comparison = [
+                'history' => $comparisonHistory,
+                'range' => [
+                    'from' => $comparisonFrom->toIso8601String(),
+                    'to' => $comparisonTo->toIso8601String(),
+                    'total' => $comparisonTotal,
+                    'returned' => count($comparisonHistory),
+                ],
+            ];
         }
 
         return response()->json([
             'latest' => $latest,
             'history' => $history,
+            'comparison' => $comparison,
             'range' => [
                 'from' => $from->toIso8601String(),
                 'to' => $to->toIso8601String(),
@@ -91,6 +105,34 @@ class DashboardController
      * @param  \Illuminate\Database\Eloquent\Builder<MetricSnapshot>  $query
      * @return array<int, array{collected_at: string, metrics: array<string, mixed>}>
      */
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<MetricSnapshot>  $query
+     * @return array<int, array{collected_at: string, metrics: array<string, mixed>}>
+     */
+    private function buildHistory($query, string $aggregation, int $total): array
+    {
+        if ($aggregation !== 'raw') {
+            return $this->aggregateHistory($query, $aggregation);
+        }
+
+        $step = max(1, (int) ceil($total / self::MAX_HISTORY_POINTS));
+        $history = [];
+        $position = 0;
+
+        foreach ($query->cursor() as $snapshot) {
+            if ($position % $step === 0 || $position === $total - 1) {
+                $history[] = [
+                    'collected_at' => $snapshot->collected_at?->toIso8601String(),
+                    'metrics' => $snapshot->metrics,
+                ];
+            }
+            $position++;
+        }
+
+        return $history;
+    }
+
     private function aggregateHistory($query, string $aggregation): array
     {
         $buckets = [];
