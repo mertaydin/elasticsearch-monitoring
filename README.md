@@ -16,6 +16,10 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. The allocation explain API is used only for diagnostics and never changes cluster state.
 
+## Features
+
+- Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
+
 ## Requirements
 
 - PHP 8.2+ for Laravel 12; PHP 8.3+ for Laravel 13

@@ -16,6 +16,10 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Allocation explain API yalnızca teşhis amacıyla kullanılır, cluster durumunu değiştirmez.
 
+## Özellikler
+
+- Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
+
 ## Kurulum
 
 ```bash
