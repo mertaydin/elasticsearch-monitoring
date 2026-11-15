@@ -117,6 +117,7 @@
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.thread-pools', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Thread Pool Analizi' : 'Thread Pool Analyzer' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.snapshots', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Yedekleme İzleme' : 'Snapshot Monitoring' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarm Geçmişi' : 'Alert History' }}</a>
+            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'API İstek Geçmişi' : 'API Request History' }}</a>
             <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
         </div>
     </div>
