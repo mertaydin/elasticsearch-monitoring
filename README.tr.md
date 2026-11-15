@@ -12,6 +12,10 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 **Tasarım gereği salt okunurdur:** paket yalnızca Elasticsearch metriklerini, indeks metaverilerini, mapping, settings ve lifecycle bilgilerini okur. İndeks oluşturmaz, güncellemez, kapatmaz veya silmez; mapping, settings, shard dağılımı ya da ILM politikalarını değiştirmez.
 
+## Özellikler
+
+- Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Allocation explain API yalnızca teşhis amacıyla kullanılır, cluster durumunu değiştirmez.
+
 ## Kurulum
 
 ```bash

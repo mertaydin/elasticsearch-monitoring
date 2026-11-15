@@ -4,6 +4,7 @@ namespace ElasticsearchMonitoring\Http\Controllers;
 
 use ElasticsearchMonitoring\Services\ElasticsearchClient;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Throwable;
 
@@ -73,4 +74,36 @@ class ShardController
             ], 502);
         }
     }
+
+    public function allocationExplain(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'index' => ['required', 'string', 'max:255'],
+            'shard' => ['required', 'integer', 'min:0'],
+            'primary' => ['required', 'boolean'],
+            'current_node' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        try {
+            $query = [
+                'index' => $validated['index'],
+                'shard' => (int) $validated['shard'],
+                'primary' => filter_var($validated['primary'], FILTER_VALIDATE_BOOLEAN),
+                'include_disk_info' => 'true',
+                'include_yes_decisions' => 'false',
+            ];
+
+            if (! empty($validated['current_node'])) {
+                $query['current_node'] = $validated['current_node'];
+            }
+
+            return response()->json($this->client->request('_cluster/allocation/explain?'.http_build_query($query)));
+        } catch (Throwable $exception) {
+            return response()->json([
+                'message' => 'Unable to retrieve shard allocation explanation. Check the Elasticsearch monitor cluster privilege.',
+                'error' => $exception->getMessage(),
+            ], 502);
+        }
+    }
+
 }

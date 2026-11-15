@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0] - 2026-11-15
+
+- Add per-shard allocation explanations with node-level decider decisions, unassigned reasons, and optional disk information.
+- Use the diagnostic allocation explain API through GET requests only; no cluster state changes are performed.
+- Add localized explanation details to the Shard Allocation Explorer in all six supported languages.
+
+
 ## [0.12.0] - 2026-11-15
 
 - Expand selected-index statistics into a read-only performance analyzer covering indexing, search, merge, refresh, flush, query/request cache, segments, and translog metrics.

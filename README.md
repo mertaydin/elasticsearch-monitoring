@@ -12,6 +12,10 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 **Read-only by design:** the package only reads Elasticsearch metrics, index metadata, mappings, settings, and lifecycle information. It never creates, updates, closes, or deletes indices, and never changes mappings, settings, shard allocation, or ILM policies.
 
+## Features
+
+- Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. The allocation explain API is used only for diagnostics and never changes cluster state.
+
 ## Requirements
 
 - PHP 8.2+ for Laravel 12; PHP 8.3+ for Laravel 13

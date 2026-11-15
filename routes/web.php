@@ -27,6 +27,7 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/data-streams/{name}/details', [DataStreamController::class, 'details'])->where('name', '[A-Za-z0-9_.-]+')->name('data-streams.details');
         Route::get('/shards', [ShardController::class, 'index'])->name('shards');
         Route::get('/shards/data', [ShardController::class, 'data'])->name('shards.data');
+        Route::get('/shards/allocation-explain', [ShardController::class, 'allocationExplain'])->name('shards.allocation-explain');
         Route::get('/capacity', [CapacityController::class, 'index'])->name('capacity');
         Route::get('/capacity/data', [CapacityController::class, 'data'])->name('capacity.data');
         Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');
