@@ -55,6 +55,8 @@ Shard dağılımı ekranında primary/replica yerleşimi, shard durumları, atan
 
 Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
 
+Yedekleme izleme ekranı Elasticsearch tarafında `monitor_snapshot` cluster yetkisi gerektirir. Her repository için en son 50 snapshot kaydını okur, sonuçları 60 saniye önbelleğe alır; repository ayarlarını göstermez ve yedekleme işlemi başlatmaz.
+
 ## Güvenlik ve salt okunur çalışma
 
 Paket Elasticsearch üzerinde hiçbir veri veya yapılandırma değişikliği yapmaz. İndeks, mapping, settings, shard veya ILM politikalarını değiştiren bir özellik içermez. İndeks detaylarında ILM politikası, aşama, işlem, adım, indeks yaşı, rollover alias ve varsa hata adımı salt okunur olarak görüntülenir. Ayrı Data Streams ekranında stream metaverileri, backing index'ler, generation, template, ILM politikası, belge sayısı ve depolama boyutu görüntülenir.
