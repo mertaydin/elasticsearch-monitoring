@@ -35,7 +35,8 @@ class NodeHistoryTest extends TestCase
             'metrics' => ['node_details' => [[
                 'id' => 'node-a',
                 'name' => 'data-01',
-                'roles' => ['data', 'ingest'],
+                'ip' => '10.0.0.11',
+                'roles => ['data', 'ingest'],
                 'cpu_percent' => 20,
                 'heap_percent' => 50,
                 'filesystem_used_percent' => 60,
@@ -90,6 +91,7 @@ class NodeHistoryTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $this->assertCount(2, $payload['nodes']);
         $this->assertSame('data-01', $payload['nodes'][0]['name']);
+        $this->assertSame('10.0.0.11', collect($payload['nodes'])->firstWhere('id', 'node-a')['ip']);
         $node = collect($payload['nodes'])->firstWhere('id', 'node-a');
 
         $this->assertNotNull($node);

@@ -87,7 +87,8 @@ class MetricsCollector
             $nodeDetails[] = [
                 'id' => (string) $nodeId,
                 'name' => (string) data_get($node, 'name', $nodeId),
-                'roles' => (array) data_get($node, 'roles', []),
+                'ip' => (string) data_get($node, 'ip', data_get($node, 'host', '')),
+                'roles => (array) data_get($node, 'roles', []),
                 'cpu_percent' => data_get($node, 'process.cpu.percent'),
                 'heap_percent' => $nodeHeapMax > 0 ? round(($nodeHeapUsed / $nodeHeapMax) * 100, 2) : null,
                 'filesystem_used_percent' => $nodeFsTotal > 0 ? round((($nodeFsTotal - $nodeFsAvailable) / $nodeFsTotal) * 100, 2) : null,

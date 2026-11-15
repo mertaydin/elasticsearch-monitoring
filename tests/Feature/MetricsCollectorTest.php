@@ -71,6 +71,8 @@ class MetricsCollectorTest extends TestCase
                 return Http::response([
                     'nodes' => [
                         'node-1' => [
+                            'name' => 'data-01',
+                            'ip' => '10.0.0.11',
                             'jvm' => ['mem' => ['heap_used_in_bytes' => 50, 'heap_max_in_bytes' => 100]],
                             'process' => ['cpu' => ['percent' => 20]],
                             'indices' => [
@@ -124,6 +126,7 @@ class MetricsCollectorTest extends TestCase
         $this->assertSame('healthy', $first['health']['status']);
         $this->assertSame(100, $first['health']['score']);
         $this->assertSame('node-1', $first['node_details'][0]['id']);
+        $this->assertSame('10.0.0.11', $first['node_details'][0]['ip']);
         $this->assertSame(20, $first['node_details'][0]['cpu_percent']);
         $this->assertSame(3, $first['indices']['segments_primaries']);
         $this->assertSame(600, $first['filesystem']['used_bytes']);

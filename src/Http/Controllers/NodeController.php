@@ -78,7 +78,8 @@ class NodeController
                     $nodes[$id] = [
                         'id' => $id,
                         'name' => (string) ($detail['name'] ?? $id),
-                        'roles' => (array) ($detail['roles'] ?? []),
+                        'ip' => (string) ($detail['ip'] ?? ''),
+                        'roles => (array) ($detail['roles'] ?? []),
                         'latest' => $point,
                         'history' => [],
                     ];
