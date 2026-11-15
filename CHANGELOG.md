@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0] - 2026-11-15
+
+- Add read-only snapshot repository and backup history monitoring.
+- Show recent snapshot states, duration, index/data stream counts, shard outcomes, and failure reasons.
+- Highlight the latest successful backup and gracefully handle missing snapshot monitoring privileges.
+- Cache snapshot API responses for 60 seconds and limit history to recent records.
+
+
 ## [0.10.0] - 2026-11-15
 
 - Add a read-only Thread Pool Analyzer with per-node and per-pool thread, active, queue, completed, and rejected metrics.

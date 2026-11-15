@@ -7,6 +7,8 @@ use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Controllers\NodeController;
 use ElasticsearchMonitoring\Http\Controllers\ShardController;
+use ElasticsearchMonitoring\Http\Controllers\SnapshotController;
+use ElasticsearchMonitoring\Http\Controllers\ThreadPoolController;
 use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +33,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');
         Route::get('/thread-pools', [ThreadPoolController::class, 'index'])->name('thread-pools');
         Route::get('/thread-pools/data', [ThreadPoolController::class, 'data'])->name('thread-pools.data');
+        Route::get('/snapshots', [SnapshotController::class, 'index'])->name('snapshots');
+        Route::get('/snapshots/data', [SnapshotController::class, 'data'])->name('snapshots.data');
         Route::get('/alerts', [AlertHistoryController::class, 'index'])->name('alerts');
         Route::get('/alerts/data', [AlertHistoryController::class, 'data'])->name('alerts.data');
     });
