@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.0] - 2026-11-15
+
+- Add a read-only Shard Allocation Explorer with per-shard state, primary/replica type, node placement, unassigned reasons, and node distribution.
+- Add state, node, and text filters with 30-second refresh and localized interface in all six supported languages.
+
+
 ## [0.7.0] - 2026-11-13
 
 - Add read-only per-index indexing statistics for indexing, deletion, no-op update, and throttling counters, with primary and total comparisons.

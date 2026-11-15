@@ -42,7 +42,8 @@ Collect a snapshot with `php artisan elasticsearch:collect`.
 Dashboard: `/monitoring/elasticsearch`  
 Index management: `/monitoring/elasticsearch/indices`  
 Data Streams: `/monitoring/elasticsearch/data-streams`  
-Node performance history: `/monitoring/elasticsearch/nodes`  \nShard allocation: `/monitoring/elasticsearch/shards`  
+Node performance history: `/monitoring/elasticsearch/nodes`  
+Shard allocation: `/monitoring/elasticsearch/shards`  \nShard allocation: `/monitoring/elasticsearch/shards`  
 Alert history: `/monitoring/elasticsearch/alerts`
 
 The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
@@ -66,7 +67,7 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 
 ## Metrics
 
-Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. The dedicated Node Performance History page charts per-node CPU, JVM heap, filesystem utilization, search/indexing rates, and thread-pool queues from stored snapshots (up to the latest 1,440 collections). The Shard Allocation page displays primary/replica placement, shard states, unassigned reasons, and per-node shard distribution using the CAT Shards read API. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Rates are available after at least two successful collections. Alert history records when an alert first appears, each subsequent observation, its latest value, and when it is resolved. Open `/monitoring/elasticsearch/alerts` to review active and resolved events. Existing installations should run `php artisan migrate` after updating.
+Cluster health score, active alerts, per-node CPU/JVM/disk usage, documents, shards, search/write thread-pool queues and rejections, plus search and indexing rates calculated from counter deltas. The dedicated Node Performance History page charts per-node CPU, JVM heap, filesystem utilization, search/indexing rates, and thread-pool queues from stored snapshots (up to the latest 1,440 collections). The Shard Allocation page displays primary/replica placement, shard states, unassigned reasons, and per-node shard distribution using the CAT Shards read API. The Shard Allocation page displays primary/replica placement, shard states, unassigned reasons, and per-node shard distribution using the CAT Shards read API. Alert thresholds are configurable under `alerts.thresholds` in the package configuration. Rates are available after at least two successful collections. Alert history records when an alert first appears, each subsequent observation, its latest value, and when it is resolved. Open `/monitoring/elasticsearch/alerts` to review active and resolved events. Existing installations should run `php artisan migrate` after updating.
 
 ## Compatibility
 

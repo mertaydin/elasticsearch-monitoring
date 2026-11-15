@@ -1,10 +1,10 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Http\\Controllers;
+namespace ElasticsearchMonitoring\Http\Controllers;
 
-use ElasticsearchMonitoring\\Services\\ElasticsearchClient;
-use Illuminate\\Http\\JsonResponse;
-use Illuminate\\View\\View;
+use ElasticsearchMonitoring\Services\ElasticsearchClient;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 use Throwable;
 
 class ShardController
@@ -54,7 +54,7 @@ class ShardController
                 'initializing' => count(array_filter($shards, static fn (array $shard): bool => $shard['state'] === 'INITIALIZING')),
                 'relocating' => count(array_filter($shards, static fn (array $shard): bool => $shard['state'] === 'RELOCATING')),
                 'unassigned' => count(array_filter($shards, static fn (array $shard): bool => $shard['state'] === 'UNASSIGNED')),
-                'nodes' => count($nodeCounts),
+                'node_count' => count($nodeCounts),
             ];
 
             return response()->json([

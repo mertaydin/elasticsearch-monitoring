@@ -1,10 +1,10 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Tests\\Feature;
+namespace ElasticsearchMonitoring\Tests\Feature;
 
-use ElasticsearchMonitoring\\Http\\Controllers\\ShardController;
-use ElasticsearchMonitoring\\Tests\\TestCase;
-use Illuminate\\Support\\Facades\\Http;
+use ElasticsearchMonitoring\Http\Controllers\ShardController;
+use ElasticsearchMonitoring\Tests\TestCase;
+use Illuminate\Support\Facades\Http;
 
 class ShardAllocationTest extends TestCase
 {
@@ -25,7 +25,7 @@ class ShardAllocationTest extends TestCase
         $this->assertSame(3, $payload['summary']['total']);
         $this->assertSame(2, $payload['summary']['started']);
         $this->assertSame(1, $payload['summary']['unassigned']);
-        $this->assertSame(2, $payload['summary']['nodes']);
+        $this->assertSame(2, $payload['summary']['node_count']);
         $this->assertSame('NODE_LEFT', $payload['shards'][1]['unassigned_reason']);
         $this->assertSame('data-01', $payload['node_distribution'][0]['node']);
         Http::assertSent(fn ($request): bool => $request->method() === 'GET' && str_contains($request->url(), '_cat/shards'));
