@@ -3,6 +3,7 @@
 namespace ElasticsearchMonitoring\Http\Controllers;
 
 use ElasticsearchMonitoring\Models\MetricSnapshot;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -102,12 +103,7 @@ class DashboardController
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<MetricSnapshot>  $query
-     * @return array<int, array{collected_at: string, metrics: array<string, mixed>}>
-     */
-
-    /**
-     * @param  \Illuminate\Database\Eloquent\Builder<MetricSnapshot>  $query
+     * @param  Builder<MetricSnapshot>  $query
      * @return array<int, array{collected_at: string, metrics: array<string, mixed>}>
      */
     private function buildHistory($query, string $aggregation, int $total): array
@@ -133,6 +129,10 @@ class DashboardController
         return $history;
     }
 
+    /**
+     * @param  Builder<MetricSnapshot>  $query
+     * @return array<int, array{collected_at: string, metrics: array<string, mixed>}>
+     */
     private function aggregateHistory($query, string $aggregation): array
     {
         $buckets = [];

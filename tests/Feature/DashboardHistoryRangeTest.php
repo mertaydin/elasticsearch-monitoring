@@ -92,7 +92,6 @@ class DashboardHistoryRangeTest extends TestCase
         $this->assertEquals(60.0, $payload['history'][1]['metrics']['cpu']['percent_average']);
     }
 
-
     public function test_dashboard_history_can_compare_the_previous_equal_length_period(): void
     {
         foreach ([
