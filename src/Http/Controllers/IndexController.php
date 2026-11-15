@@ -76,7 +76,7 @@ class IndexController
                     'replicas' => (int) ($row['rep'] ?? 0),
                     'documents_count' => (int) ($row['docs.count'] ?? 0),
                     'storage_bytes' => (int) ($row['store.size'] ?? 0),
-                    'creation_date' => isset($row['creation.date.string']) ? (string) $row['creation.date'] : null,
+                    'creation_date' => isset($row['creation.date.string']) ? (string) $row['creation.date.string'] : null,
                     'data_stream' => $dataStreams[$name] ?? null,
                     'lifecycle_status' => is_array($lifecycle) ? ((bool) ($lifecycle['managed'] ?? false) ? 'managed' : 'unmanaged') : '—',
                     'lifecycle_phase' => is_array($lifecycle) ? (string) ($lifecycle['phase'] ?? '—') : '—',
