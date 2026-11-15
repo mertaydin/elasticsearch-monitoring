@@ -1,3 +1,9 @@
+## [0.24.0] - 2026-11-16
+
+- Add dashboard layout customization: hide/show sections, drag-and-drop ordering, browser-local persistence, and reset to defaults.
+- Remove the dedicated Data Streams page, controller, routes, view, and feature tests; index-level data stream metadata remains available where relevant.
+- Update English and Turkish documentation and all six dashboard locales.
+
 ## [0.22.0] - 2026-11-15
 
 - Add a dedicated Query Activity Monitor with per-node query/fetch counters, current operations, scroll/suggest rates, and search thread-pool pressure.

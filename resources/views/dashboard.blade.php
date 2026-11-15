@@ -110,7 +110,6 @@
                 </select>
             </form>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
-            <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.data-streams', ['locale' => $locale]) }}">Data Streams</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.shards', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Shard Dağılımı' : 'Shard Allocation' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.capacity', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Kapasite Analizi' : 'Capacity Analysis' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.nodes', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>
@@ -118,12 +117,20 @@
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.snapshots', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Yedekleme İzleme' : 'Snapshot Monitoring' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarm Geçmişi' : 'Alert History' }}</a>
             <a class="btn btn-outline-secondary btn-sm" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'API İstek Geçmişi' : 'API Request History' }}</a>
+            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleDashboardCustomizer()">{{ $locale === 'tr' ? 'Paneli düzenle' : 'Customize dashboard' }}</button>
             <button class="btn btn-outline-secondary btn-sm" onclick="loadMetrics()">{{ $t('refresh') }}</button>
         </div>
     </div>
     <div id="alert" class="alert alert-warning d-none"></div>
+    <section id="dashboard-customizer" class="insight-card mb-4 d-none">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+            <div><h2 class="section-title mb-1">{{ $locale === 'tr' ? 'Dashboard düzeni' : 'Dashboard layout' }}</h2><p class="small text-muted mb-0">{{ $locale === 'tr' ? 'Bölümleri sürükleyerek sıralayın, görmek istemediklerinizi gizleyin.' : 'Drag sections to reorder them and hide the ones you do not need.' }}</p></div>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="resetDashboardLayout()">{{ $locale === 'tr' ? 'Varsayılana dön' : 'Reset to default' }}</button>
+        </div>
+        <ol id="dashboard-widget-list" class="list-group list-group-flush"></ol>
+    </section>
     <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h6 fw-bold mb-0">{{ $uiText['overview'] }}</h2><small class="text-muted">● {{ $uiText['live'] }}</small></div>
-    <div class="row g-3 mb-4 justify-content-center" id="summary-cards">
+    <div class="row g-3 mb-4 justify-content-center" id="summary-cards" data-dashboard-widget="summary">
         @foreach ([
             ['id'=>'docs','label'=>$t('documents'),'unit'=>'','color'=>'#20b6a5'],
             ['id'=>'active-shards','label'=>$t('active_shards'),'unit'=>'','color'=>'#3978b8'],
@@ -146,7 +153,7 @@
         @endforeach
     </div>
 
-    <section class="insight-card mb-4" id="favorite-indices-card">
+    <section class="insight-card mb-4" id="favorite-indices-card" data-dashboard-widget="favorites">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <h2 class="section-title mb-0">{{ $favoriteText['title'] }}</h2>
             <span class="small text-muted" id="favorite-indices-count">0</span>
@@ -154,7 +161,7 @@
         <div id="favorite-indices-list" class="d-flex flex-wrap gap-2"></div>
         <p class="small text-muted mb-0 mt-2" id="favorite-indices-empty">{{ $favoriteText['empty'] }}</p>
     </section>
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-4" data-dashboard-widget="health">
         <div class="col-12 col-xl-4"><section class="insight-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="section-title mb-0">{{ $t('health_score') }}</h2><span class="badge text-bg-light" id="health-status">—</span></div>
             <div class="d-flex align-items-end gap-2"><strong class="health-score" id="health-score">—</strong><span class="text-muted mb-2">/ 100</span></div>
@@ -166,7 +173,7 @@
             <div id="health-alerts" class="alert-list"><p class="text-muted small mb-0">{{ $t('no_alerts') }}</p></div>
         </section></div>
     </div>
-    <div class="row g-3">
+    <div class="row g-3 mb-4" data-dashboard-widget="metrics">
         @foreach ([
             'status' => 'status',
             'nodes' => 'nodes',
@@ -189,7 +196,7 @@
         @endforeach
     </div>
 
-    <section class="insight-card mb-4">
+    <section class="insight-card mb-4" data-dashboard-widget="nodes">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <div><h2 class="section-title mb-1">{{ $t('node_comparison') }}</h2><p class="small text-muted mb-0">{{ $t('node_comparison_hint') }}</p></div>
             <span class="small text-muted" id="node-count">—</span>
@@ -199,7 +206,7 @@
             <tbody id="node-comparison"><tr><td colspan="8" class="text-muted text-center py-4">—</td></tr></tbody>
         </table></div>
     </section>
-    <div class="row g-3 dashboard-chart-grid">
+    <div class="row g-3 dashboard-chart-grid" data-dashboard-widget="charts">
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
         <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['search_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="search-chart"></div></div></div>
@@ -217,6 +224,40 @@ const endpoint = @json(route('elasticsearch-monitoring.data'));
 const favoritesStorageKey = 'elasticsearch-monitoring:favorites';
 const favoriteLabels = @json($favoriteText);
 const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
+const dashboardLayoutKey = 'elasticsearch-monitoring:dashboard-layout';
+const defaultDashboardWidgetOrder = ['summary', 'favorites', 'health', 'metrics', 'nodes', 'charts'];
+const dashboardWidgetLabels = @json(['summary' => $locale === 'tr' ? 'Özet metrikler' : 'Summary metrics','favorites' => $locale === 'tr' ? 'Favori indeksler' : 'Favorite indices','health' => $locale === 'tr' ? 'Küme sağlığı ve uyarılar' : 'Cluster health and alerts','metrics' => $locale === 'tr' ? 'Detaylı metrikler' : 'Detailed metrics','nodes' => $locale === 'tr' ? 'Node karşılaştırması' : 'Node comparison','charts' => $locale === 'tr' ? 'Grafikler' : 'Charts']);
+function readDashboardLayout() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(dashboardLayoutKey) || '{}');
+        const order = Array.isArray(stored.order) ? stored.order.filter(id => defaultDashboardWidgetOrder.includes(id)) : [];
+        return {order: [...new Set([...order, ...defaultDashboardWidgetOrder])], hidden: Array.isArray(stored.hidden) ? stored.hidden.filter(id => defaultDashboardWidgetOrder.includes(id)) : []};
+    } catch (error) { return {order: [...defaultDashboardWidgetOrder], hidden: []}; }
+}
+function saveDashboardLayout(layout) { try { localStorage.setItem(dashboardLayoutKey, JSON.stringify(layout)); } catch (error) {} }
+function applyDashboardLayout(layout) {
+    const main = document.querySelector('main.container');
+    const widgets = new Map([...document.querySelectorAll('[data-dashboard-widget]')].map(widget => [widget.dataset.dashboardWidget, widget]));
+    layout.order.forEach(id => { const widget = widgets.get(id); if (widget) { main.appendChild(widget); widget.hidden = layout.hidden.includes(id); } });
+}
+function renderDashboardWidgetList(layout) {
+    const list = document.getElementById('dashboard-widget-list'); list.replaceChildren();
+    layout.order.forEach(id => {
+        const item = document.createElement('li'); item.className = 'list-group-item d-flex align-items-center gap-3'; item.draggable = true;
+        const handle = document.createElement('span'); handle.className = 'text-muted'; handle.textContent = '☰';
+        const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.className = 'form-check-input mt-0'; checkbox.checked = !layout.hidden.includes(id); checkbox.setAttribute('aria-label', dashboardWidgetLabels[id]);
+        checkbox.addEventListener('change', () => { const next = readDashboardLayout(); next.hidden = checkbox.checked ? next.hidden.filter(value => value !== id) : [...new Set([...next.hidden, id])]; saveDashboardLayout(next); applyDashboardLayout(next); });
+        const label = document.createElement('span'); label.className = 'flex-grow-1'; label.textContent = dashboardWidgetLabels[id]; item.append(handle, checkbox, label);
+        item.addEventListener('dragstart', event => { event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', id); item.classList.add('opacity-50'); });
+        item.addEventListener('dragend', () => item.classList.remove('opacity-50'));
+        item.addEventListener('dragover', event => event.preventDefault());
+        item.addEventListener('drop', event => { event.preventDefault(); const moved = event.dataTransfer.getData('text/plain'); if (!moved || moved === id) return; const next = readDashboardLayout(); const from = next.order.indexOf(moved), to = next.order.indexOf(id); if (from < 0 || to < 0) return; next.order.splice(from, 1); next.order.splice(to, 0, moved); saveDashboardLayout(next); applyDashboardLayout(next); renderDashboardWidgetList(next); });
+        list.appendChild(item);
+    });
+}
+function toggleDashboardCustomizer() { document.getElementById('dashboard-customizer').classList.toggle('d-none'); }
+function resetDashboardLayout() { try { localStorage.removeItem(dashboardLayoutKey); } catch (error) {} const layout = {order: [...defaultDashboardWidgetOrder], hidden: []}; applyDashboardLayout(layout); renderDashboardWidgetList(layout); }
+const initialDashboardLayout = readDashboardLayout(); applyDashboardLayout(initialDashboardLayout); renderDashboardWidgetList(initialDashboardLayout);
 function renderFavoriteIndices() {
     const container = document.getElementById('favorite-indices-list');
     const empty = document.getElementById('favorite-indices-empty');

@@ -24,4 +24,8 @@ return [
     'shards' => 'Fragmentos',
     'search_total' => 'Búsquedas totales',
     'indexing_total' => 'Indexaciones totales',
+    'dashboard_customize' => 'Personalizar panel',
+    'dashboard_layout' => 'Diseño del panel',
+    'dashboard_layout_hint' => 'Arrastra las secciones para ordenarlas y oculta las que no necesites.',
+    'dashboard_reset' => 'Restablecer',
 ];

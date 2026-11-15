@@ -37,4 +37,8 @@ return [
     'shards' => 'Shard',
     'search_total' => 'Toplam arama',
     'indexing_total' => 'Toplam indeksleme',
+    'dashboard_customize' => 'Paneli düzenle',
+    'dashboard_layout' => 'Dashboard düzeni',
+    'dashboard_layout_hint' => 'Bölümleri sürükleyerek sıralayın ve görmek istemediklerinizi gizleyin.',
+    'dashboard_reset' => 'Varsayılana dön',
 ];

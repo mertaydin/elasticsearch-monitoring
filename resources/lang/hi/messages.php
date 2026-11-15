@@ -24,4 +24,8 @@ return [
     'shards' => 'शार्ड',
     'search_total' => 'कुल खोज',
     'indexing_total' => 'कुल इंडेक्सिंग',
+    'dashboard_customize' => 'डैशबोर्ड अनुकूलित करें',
+    'dashboard_layout' => 'डैशबोर्ड लेआउट',
+    'dashboard_layout_hint' => 'अनुभागों को खींचकर क्रम बदलें और जिनकी आवश्यकता नहीं है उन्हें छिपाएं।',
+    'dashboard_reset' => 'डिफ़ॉल्ट पर रीसेट करें',
 ];

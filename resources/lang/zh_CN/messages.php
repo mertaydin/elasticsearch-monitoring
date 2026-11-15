@@ -24,4 +24,8 @@ return [
     'shards' => '分片',
     'search_total' => '搜索总数',
     'indexing_total' => '索引总数',
+    'dashboard_customize' => '自定义仪表板',
+    'dashboard_layout' => '仪表板布局',
+    'dashboard_layout_hint' => '拖动分区以重新排序，并隐藏不需要的分区。',
+    'dashboard_reset' => '恢复默认',
 ];

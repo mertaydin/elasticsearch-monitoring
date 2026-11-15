@@ -37,4 +37,8 @@ return [
     'shards' => 'Shards',
     'search_total' => 'Search total',
     'indexing_total' => 'Indexing total',
+    'dashboard_customize' => 'Customize dashboard',
+    'dashboard_layout' => 'Dashboard layout',
+    'dashboard_layout_hint' => 'Drag sections to reorder them and hide the ones you do not need.',
+    'dashboard_reset' => 'Reset to default',
 ];

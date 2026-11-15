@@ -14,10 +14,6 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Özellikler
 
-- Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Allocation explain API yalnızca teşhis amacıyla kullanılır, cluster durumunu değiştirmez.
-
-## Özellikler
-
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
 - Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın.
 - Arama ve favori filtreleriyle görünen indeks listesini tarayıcıdan UTF-8 CSV veya JSON olarak indirin.
@@ -29,6 +25,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - Tek tıkla tüm indeks filtrelerini temizleyin ve sıralamayı varsayılana döndürün.
 - Elasticsearch API İstek Geçmişi ekranında endpoint, HTTP durum kodu, yanıt süresi, hata kayıtları ve en çok/en yavaş endpoint sıralamalarını inceleyin.
 - Node bazında query/fetch hızlarını, ortalama işlem sürelerini, aktif arama işlemlerini, search kuyruğunu ve reddedilme oranlarını geçmiş grafiklerle izleyin.
+- Dashboard bölümlerini gizleyin, sürükleyerek sıralayın ve varsayılan düzene dönün. Tercihler mevcut tarayıcı profilinde saklanır.
 
 ## Kurulum
 
@@ -50,7 +47,7 @@ ELASTICSEARCH_MONITORING_TIMEOUT=10
 ELASTICSEARCH_MONITORING_VERIFY=true
 ```
 
-Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Data Streams ekranı: `/monitoring/elasticsearch/data-streams`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Bildirim gönderim geçmişi: `/monitoring/elasticsearch/alerts/notifications`. Sorgu Aktivitesi: `/monitoring/elasticsearch/query-activity`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
+Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Bildirim gönderim geçmişi: `/monitoring/elasticsearch/alerts/notifications`. Sorgu Aktivitesi: `/monitoring/elasticsearch/query-activity`. Varsayılan middleware `web,auth` şeklindedir. Ayarları `config/elasticsearch-monitoring.php` üzerinden değiştirebilirsiniz. Data Streams ekranı yalnızca bu yapıyı kullanan cluster'larda veri gösterir; klasik indekslerle çalışan cluster'larda mevcut işleyiş değişmez.
 
 ### Panel yetkilendirmesi
 
@@ -121,3 +118,8 @@ MIT
 ### Alarm bildirimleri
 
 Bildirimler varsayılan olarak kapalıdır. Yayınladığınız paket yapılandırmasında `alerts.notifications.channels` altında e-posta, Slack ve Microsoft Teams kanallarını ayrı ayrı etkinleştirebilirsiniz. E-posta alıcılarını, webhook adreslerini ve `cooldown_minutes` bekleme süresini belirleyin. Yeni alarm olayları kanal başına bir kez gönderilir; aktif alarmın sonraki ölçümleri tekrar bildirim oluşturmaz. Çözülüp bekleme süresi içinde yeniden oluşan alarmlar bastırılır ve geçmişe kaydedilir. Başarısız kuyruk işleri en fazla üç kez yeniden denenir. Asenkron kuyruk kullanıyorsanız Laravel queue worker çalıştırın. Gönderim, hata ve beklemeye alınan kayıtları `/monitoring/elasticsearch/alerts/notifications` adresinden inceleyebilirsiniz.
+
+
+## Dashboard düzeni tercihleri
+
+**Paneli düzenle** seçeneğiyle özet, favoriler, küme sağlığı, metrikler, node karşılaştırması ve grafik bölümlerini gizleyebilir veya gösterebilirsiniz. Listedeki bölümleri sürükleyerek sıralayabilir, varsayılan düzene dönebilirsiniz. Tercihler mevcut tarayıcı profilinin localStorage alanında tutulur; cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.

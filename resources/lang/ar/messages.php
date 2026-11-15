@@ -24,4 +24,8 @@ return [
     'shards' => 'الأجزاء',
     'search_total' => 'إجمالي البحث',
     'indexing_total' => 'إجمالي الفهرسة',
+    'dashboard_customize' => 'تخصيص لوحة المراقبة',
+    'dashboard_layout' => 'تخطيط لوحة المراقبة',
+    'dashboard_layout_hint' => 'اسحب الأقسام لإعادة ترتيبها وأخفِ ما لا تحتاج إليه.',
+    'dashboard_reset' => 'إعادة التعيين',
 ];

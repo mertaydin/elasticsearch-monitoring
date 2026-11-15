@@ -7,6 +7,7 @@ use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use ElasticsearchMonitoring\Services\DashboardAuthorizer;
 use ElasticsearchMonitoring\Tests\TestCase;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DashboardAuthorizationTest extends TestCase
@@ -38,6 +39,12 @@ class DashboardAuthorizationTest extends TestCase
             Request::create('/monitoring/elasticsearch'),
             fn () => response('allowed')
         );
+    }
+
+    public function test_data_streams_page_routes_are_not_registered(): void
+    {
+        $this->assertFalse(Route::has('elasticsearch-monitoring.data-streams'));
+        $this->assertFalse(Route::has('elasticsearch-monitoring.data-streams.data'));
     }
 
     public function test_dashboard_remains_compatible_when_no_callback_is_registered(): void

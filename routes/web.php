@@ -4,7 +4,6 @@ use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\ApiRequestHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\CapacityController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
-use ElasticsearchMonitoring\Http\Controllers\DataStreamController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Controllers\NodeController;
 use ElasticsearchMonitoring\Http\Controllers\QueryActivityController;
@@ -24,9 +23,6 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/indices/data', [IndexController::class, 'data'])->name('indices.data');
         Route::get('/indices/{index}/indexing-stats', [IndexController::class, 'indexingStats'])->where('index', '[A-Za-z0-9_.-]+')->name('indices.indexing-stats');
         Route::get('/indices/{index}/details', [IndexController::class, 'details'])->where('index', '[A-Za-z0-9_.-]+')->name('indices.details');
-        Route::get('/data-streams', [DataStreamController::class, 'index'])->name('data-streams');
-        Route::get('/data-streams/data', [DataStreamController::class, 'data'])->name('data-streams.data');
-        Route::get('/data-streams/{name}/details', [DataStreamController::class, 'details'])->where('name', '[A-Za-z0-9_.-]+')->name('data-streams.details');
         Route::get('/shards', [ShardController::class, 'index'])->name('shards');
         Route::get('/shards/data', [ShardController::class, 'data'])->name('shards.data');
         Route::get('/shards/allocation-explain', [ShardController::class, 'allocationExplain'])->name('shards.allocation-explain');

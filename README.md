@@ -14,10 +14,6 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Features
 
-- Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. The allocation explain API is used only for diagnostics and never changes cluster state.
-
-## Features
-
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
 - Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard.
 - Export the currently visible index list (including search and favorites filters) as UTF-8 CSV or JSON directly in the browser.
@@ -28,6 +24,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Remember the Index Management search query and favorites-only filter in browser local storage.
 - Reset all Index Management filters and sorting with one click.
 - Monitor per-node query/fetch rates, average operation latency, active search/fetch operations, search queues, and rejection rates with historical trends.
+- Customize the dashboard by hiding sections, dragging them into a preferred order, and restoring the default layout. Preferences are stored in the current browser profile.
 
 ## Requirements
 
@@ -58,7 +55,6 @@ Collect a snapshot with `php artisan elasticsearch:collect`.
 
 Dashboard: `/monitoring/elasticsearch`  
 Index management and per-index performance analysis: `/monitoring/elasticsearch/indices`  
-Data Streams: `/monitoring/elasticsearch/data-streams`  
 Node performance history: `/monitoring/elasticsearch/nodes`  
 Thread pool analysis: `/monitoring/elasticsearch/thread-pools`  
 Snapshot & backup monitoring: `/monitoring/elasticsearch/snapshots`  
@@ -176,3 +172,8 @@ Notifications are disabled by default. Enable only the channels you use in the p
 ```
 
 Set the Slack and Teams webhook environment variables in your application environment. New alert events are delivered once per channel; recurring observations of an active event do not resend notifications. If an alert resolves and reappears during the configured cooldown, delivery is suppressed and recorded. Failed queued deliveries are retried up to three times with backoff. Run a Laravel queue worker when using an asynchronous queue connection.
+
+
+## Dashboard layout preferences
+
+Use **Customize dashboard** to hide or show the summary, favorites, health, metrics, node comparison, and chart sections. Drag sections in the list to change their order, or reset the layout to its default. Preferences are stored in browser local storage for the current browser profile; they are not synchronized across devices and do not require a database migration.
