@@ -55,8 +55,9 @@ class SnapshotMonitoringTest extends TestCase
         $this->assertSame(1, $payload['summary']['partial']);
         $this->assertSame(1, $payload['summary']['in_progress']);
         $this->assertSame('backup-last-good', $payload['meta']['latest_successful']['name']);
-        $this->assertSame(1, $payload['snapshots'][0]['shards_failed']);
-        $this->assertSame('daily-backups', $payload['snapshots'][0]['repository']);
+        $partial = collect($payload['snapshots'])->firstWhere('state', 'PARTIAL');
+        $this->assertSame(1, $partial['shards_failed']);
+        $this->assertSame('daily-backups', $partial['repository']);
         $this->assertArrayNotHasKey('settings', $payload['repositories'][0]);
     }
 
