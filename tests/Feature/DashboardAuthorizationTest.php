@@ -47,7 +47,6 @@ class DashboardAuthorizationTest extends TestCase
         $this->assertFalse(Route::has('elasticsearch-monitoring.data-streams.data'));
     }
 
-
     public function test_auto_refresh_labels_are_available_in_all_dashboard_locales(): void
     {
         foreach (['tr', 'en', 'es', 'hi', 'ar', 'zh_CN'] as $locale) {
