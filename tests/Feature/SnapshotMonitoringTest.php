@@ -51,7 +51,7 @@ class SnapshotMonitoringTest extends TestCase
         $payload = app(SnapshotController::class)->data()->getData(true);
         $this->assertTrue($payload['available']);
         $this->assertSame(2, $payload['summary']['repositories']);
-        $this->assertSame(2, $payload['summary']['snapshots']);
+        $this->assertSame(3, $payload['summary']['snapshots']);
         $this->assertSame(1, $payload['summary']['partial']);
         $this->assertSame(1, $payload['summary']['in_progress']);
         $this->assertSame('backup-last-good', $payload['meta']['latest_successful']['name']);

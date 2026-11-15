@@ -26,6 +26,7 @@ class SnapshotController
         $cacheKey = 'elasticsearch-monitoring:snapshots:'.hash('sha256', implode('|', [
             (string) ($connection['url'] ?? ''),
             (string) ($connection['username'] ?? ''),
+            (string) ($connection['password'] ?? ''),
             (string) ($connection['api_key'] ?? ''),
         ]));
 
@@ -67,13 +68,12 @@ class SnapshotController
                     $response = $this->client->request('_snapshot/'.rawurlencode($name).'/*?verbose=true&size=50&sort=start_time&order=desc');
                     $snapshots = array_values(array_filter((array) ($response['snapshots'] ?? []), 'is_array'));
                     $repositoryRow['total_snapshots'] = (int) ($response['total'] ?? count($snapshots));
+                    $summary['snapshots'] += $repositoryRow['total_snapshots'];
 
                     foreach ($snapshots as $snapshot) {
                         $normalized = $this->normalizeSnapshot($name, $snapshot);
                         $repositoryRow['snapshots'][] = $normalized;
                         $allSnapshots[] = $normalized;
-                        $summary['snapshots']++;
-
                         if ($normalized['state'] === 'SUCCESS') {
                             $summary['successful']++;
                         } elseif ($normalized['state'] === 'PARTIAL') {
