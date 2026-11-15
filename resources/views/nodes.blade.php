@@ -66,14 +66,21 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <section class="panel p-3">
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $text['comparison'] }}</h2><span class="small muted" id="updated"></span></div>
 <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-<thead><tr><th>{{ $text['name'] }}</th><th>{{ $text['roles'] }}</th><th>CPU</th><th>JVM</th><th>{{ $text['disk'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['shards'] }}</th><th>{{ $text['search_total'] }}</th><th>{{ $text['indexing_total'] }}</th></tr></thead>
-<tbody id="node-table"><tr><td colspan="9" class="text-center py-4 muted">{{ $text['loading'] }}</td></tr></tbody>
+<thead><tr><th>{{ $text['name'] }}</th><th>{{ $locale === 'tr' ? 'IP adresi' : 'IP address' }}</th><th>{{ $text['roles'] }}</th><th>CPU</th><th>JVM</th><th>{{ $text['disk'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['shards'] }}</th><th>{{ $text['search_total'] }}</th><th>{{ $text['indexing_total'] }}</th></tr></thead>
+<tbody id="node-table"><tr><td colspan="10" class="text-center py-4 muted">{{ $text['loading'] }}</td></tr></tbody>
 </table></div>
 </section>
 </main>
+<div id="copy-toast" class="copy-toast" role="status" aria-live="polite"></div>
+<style>.copy-toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:#182238;color:#fff;padding:10px 16px;border-radius:9px;opacity:0;pointer-events:none;transition:.2s;z-index:2000}.copy-toast.show{opacity:1;transform:translate(-50%,0)}</style>
 <script>
 const endpoint=@json(route('elasticsearch-monitoring.nodes.data',['locale'=>$locale]));
 const labels=@json($text);
+const copyLabels={"tr":{"copy":"Kopyala","all":"Tüm mapping'i kopyala","field":"Alanı kopyala","done":"Panoya kopyalandı","fail":"Kopyalama başarısız"},"en":{"copy":"Copy","all":"Copy entire mapping","field":"Copy field","done":"Copied to clipboard","fail":"Copy failed"},"es":{"copy":"Copiar","all":"Copiar todo el mapping","field":"Copiar campo","done":"Copiado al portapapeles","fail":"Error al copiar"},"zh_CN":{"copy":"复制","all":"复制完整 mapping","field":"复制字段","done":"已复制到剪贴板","fail":"复制失败"},"hi":{"copy":"कॉपी करें","all":"पूरा mapping कॉपी करें","field":"फ़ील्ड कॉपी करें","done":"क्लिपबोर्ड पर कॉपी किया गया","fail":"कॉपी विफल"},"ar":{"copy":"نسخ","all":"نسخ mapping بالكامل","field":"نسخ الحقل","done":"تم النسخ إلى الحافظة","fail":"فشل النسخ"}}[@json($locale)] || {"copy":"Copy","all":"Copy entire mapping","field":"Copy field","done":"Copied to clipboard","fail":"Copy failed"};
+function showCopyToast(message){const el=document.getElementById('copy-toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(window.__copyToastTimer);window.__copyToastTimer=setTimeout(()=>el.classList.remove('show'),1800);}
+async function copyText(value){try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(String(value));else{const el=document.createElement('textarea');el.value=String(value);el.style.position='fixed';el.style.opacity='0';document.body.append(el);el.select();const ok=document.execCommand('copy');el.remove();if(!ok)throw new Error('Clipboard unavailable');}showCopyToast(copyLabels.done);}catch(e){showCopyToast(copyLabels.fail);}}
+document.addEventListener('click',event=>{const button=event.target.closest('[data-copy-value]');if(button){event.preventDefault();copyText(button.dataset.copyValue);}});
+
 const number=value=>value===null||value===undefined?'—':Number(value).toLocaleString(document.documentElement.lang,{maximumFractionDigits:2});
 const percent=value=>value===null||value===undefined?'—':Number(value).toFixed(1)+'%';
 const safe=value=>String(value??'—').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
@@ -109,10 +116,10 @@ function renderSelected(){
 }
 function renderTable(){
  const body=document.getElementById('node-table');
- if(!nodes.length){body.innerHTML='<tr><td colspan="9" class="text-center py-4 muted">'+labels.empty+'</td></tr>';return;}
+ if(!nodes.length){body.innerHTML='<tr><td colspan="10" class="text-center py-4 muted">'+labels.empty+'</td></tr>';return;}
  body.innerHTML=nodes.map(node=>{
   const p=node.latest||{};
-  return '<tr><td><button class="node-pick" data-node-id="'+safe(node.id)+'">'+safe(node.name)+'</button><div class="small muted">'+safe(node.id)+'</div></td><td>'+safe((node.roles||[]).join(', ')||'—')+'</td><td>'+percent(p.cpu_percent)+'</td><td>'+percent(p.heap_percent)+'</td><td>'+percent(p.filesystem_used_percent)+'</td><td>'+number(p.documents)+'</td><td>'+number(p.shards)+'</td><td>'+number(p.search_total)+'</td><td>'+number(p.indexing_total)+'</td></tr>';
+  return '<tr><td><button class="node-pick" data-node-id="'+safe(node.id)+'">'+safe(node.name)+'</button> <button type="button" class="btn btn-sm btn-link p-0 text-secondary" data-copy-value="'+safe(node.name)+'" title="'+copyLabels.copy+'">⧉</button><div class="small muted">'+safe(node.id)+'</div></td><td>'+(node.ip?'<button type="button" class="btn btn-sm btn-link p-0" data-copy-value="'+safe(node.ip)+'" title="'+copyLabels.copy+'">'+safe(node.ip)+'</button>':'—')+'</td><td>'+safe((node.roles||[]).join(', ')||'—')+'</td><td>'+percent(p.cpu_percent)+'</td><td>'+percent(p.heap_percent)+'</td><td>'+percent(p.filesystem_used_percent)+'</td><td>'+number(p.documents)+'</td><td>'+number(p.shards)+'</td><td>'+number(p.search_total)+'</td><td>'+number(p.indexing_total)+'</td></tr>';
  }).join('');
  body.querySelectorAll('[data-node-id]').forEach(button=>button.addEventListener('click',()=>selectNode(button.dataset.nodeId)));
 }

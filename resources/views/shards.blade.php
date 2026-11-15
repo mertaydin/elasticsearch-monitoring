@@ -58,6 +58,8 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>{{ $text['index'] }}</th><th>{{ $text['shard'] }}</th><th>{{ $text['type'] }}</th><th>{{ $text['state'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['storage'] }}</th><th>{{ $text['node'] }}</th><th>{{ $text['reason'] }}</th><th></th></tr></thead><tbody id="shards"><tr><td colspan="9" class="text-center py-5 text-secondary">{{ $text['loading'] }}</td></tr></tbody></table></div>
 </section></div></div>
 </main>
+<div id="copy-toast" class="copy-toast" role="status" aria-live="polite"></div>
+<style>.copy-toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:#182238;color:#fff;padding:10px 16px;border-radius:9px;opacity:0;pointer-events:none;transition:.2s;z-index:2000}.copy-toast.show{opacity:1;transform:translate(-50%,0)}</style>
 <div class="explain-overlay" id="explain-overlay" role="dialog" aria-modal="true" aria-labelledby="explain-heading">
 <section class="explain-dialog">
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -69,6 +71,11 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <script>
 const endpoint=@json(route('elasticsearch-monitoring.shards.data',['locale'=>$locale]));
 const labels=@json($text);
+const copyLabels={"tr":{"copy":"Kopyala","all":"Tüm mapping'i kopyala","field":"Alanı kopyala","done":"Panoya kopyalandı","fail":"Kopyalama başarısız"},"en":{"copy":"Copy","all":"Copy entire mapping","field":"Copy field","done":"Copied to clipboard","fail":"Copy failed"},"es":{"copy":"Copiar","all":"Copiar todo el mapping","field":"Copiar campo","done":"Copiado al portapapeles","fail":"Error al copiar"},"zh_CN":{"copy":"复制","all":"复制完整 mapping","field":"复制字段","done":"已复制到剪贴板","fail":"复制失败"},"hi":{"copy":"कॉपी करें","all":"पूरा mapping कॉपी करें","field":"फ़ील्ड कॉपी करें","done":"क्लिपबोर्ड पर कॉपी किया गया","fail":"कॉपी विफल"},"ar":{"copy":"نسخ","all":"نسخ mapping بالكامل","field":"نسخ الحقل","done":"تم النسخ إلى الحافظة","fail":"فشل النسخ"}}[@json($locale)] || {"copy":"Copy","all":"Copy entire mapping","field":"Copy field","done":"Copied to clipboard","fail":"Copy failed"};
+function showCopyToast(message){const el=document.getElementById('copy-toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(window.__copyToastTimer);window.__copyToastTimer=setTimeout(()=>el.classList.remove('show'),1800);}
+async function copyText(value){try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(String(value));else{const el=document.createElement('textarea');el.value=String(value);el.style.position='fixed';el.style.opacity='0';document.body.append(el);el.select();const ok=document.execCommand('copy');el.remove();if(!ok)throw new Error('Clipboard unavailable');}showCopyToast(copyLabels.done);}catch(e){showCopyToast(copyLabels.fail);}}
+document.addEventListener('click',event=>{const button=event.target.closest('[data-copy-value]');if(button){event.preventDefault();copyText(button.dataset.copyValue);}});
+
 const explainLabels=@json($explainText);
 const explainEndpoint=@json(route('elasticsearch-monitoring.shards.allocation-explain',['locale'=>$locale]));
 let allShards=[];
@@ -81,7 +88,7 @@ function renderTable(){
  const rows=allShards.filter(s=>(!state||s.state===state)&&(!node||(s.node||'')===node)&&[s.index,s.node,s.unassigned_reason,s.state].join(' ').toLowerCase().includes(query));
  document.getElementById('shards').innerHTML=rows.length?rows.map(s=>{
   const stateClass=s.state==='STARTED'?'state-started':s.state==='UNASSIGNED'?'state-unassigned':['RELOCATING','INITIALIZING'].includes(s.state)?'state-relocating':'';
-  return '<tr><td class="fw-semibold">'+safe(s.index)+'</td><td>'+number(s.shard)+'</td><td><span class="badge text-bg-light">'+safe(s.type==='p'?labels.primary:s.type==='r'?labels.replica:s.type)+'</span></td><td><span class="state '+stateClass+'">'+safe(s.state)+'</span></td><td>'+number(s.documents)+'</td><td>'+(s.store_bytes===null?'—':formatBytes(s.store_bytes))+'</td><td>'+safe(s.node)+'</td><td class="text-wrap" style="min-width:170px">'+safe(s.unassigned_reason)+'</td><td><button class="btn btn-sm btn-outline-primary explain-btn" data-index="'+safe(s.index)+'" data-shard="'+safe(s.shard)+'" data-primary="'+(s.type==='p'?'true':'false')+'" data-node="'+safe(s.node||'')+'">'+safe(explainLabels.explain)+'</button></td></tr>';
+  return '<tr><td class="fw-semibold">'+safe(s.index)+' <button type="button" class="btn btn-sm btn-link p-0 text-secondary" data-copy-value="'+safe(s.index)+'" title="'+copyLabels.copy+'">⧉</button></td><td>'+number(s.shard)+'</td><td><span class="badge text-bg-light">'+safe(s.type==='p'?labels.primary:s.type==='r'?labels.replica:s.type)+'</span></td><td><span class="state '+stateClass+'">'+safe(s.state)+'</span></td><td>'+number(s.documents)+'</td><td>'+(s.store_bytes===null?'—':formatBytes(s.store_bytes))+'</td><td>'+(s.node?'<button type="button" class="btn btn-sm btn-link p-0" data-copy-value="'+safe(s.node)+'" title="'+copyLabels.copy+'">'+safe(s.node)+' ⧉</button>':'—')+'</td><td class="text-wrap" style="min-width:170px">'+safe(s.unassigned_reason)+'</td><td><button class="btn btn-sm btn-outline-primary explain-btn" data-index="'+safe(s.index)+'" data-shard="'+safe(s.shard)+'" data-primary="'+(s.type==='p'?'true':'false')+'" data-node="'+safe(s.node||'')+'">'+safe(explainLabels.explain)+'</button></td></tr>';
  }).join(''):'<tr><td colspan="9" class="text-center text-secondary py-5">'+labels.empty+'</td></tr>';
 }
 function formatBytes(bytes){if(!bytes)return '0 B';const units=['B','KB','MB','GB','TB'];const i=Math.min(Math.floor(Math.log(bytes)/Math.log(1024)),4);return (bytes/Math.pow(1024,i)).toFixed(1)+' '+units[i];}
