@@ -21,7 +21,7 @@ class IndexManagementTest extends TestCase
                     'rep' => '0',
                     'docs.count' => '1972651',
                     'store.size' => '12310000000',
-                    'creation.date' => '2026-11-01T10:15:30.000Z',
+                    'creation.date.string' => '2026-11-01T10:15:30.000Z',
                 ]]);
             }
 
@@ -46,7 +46,7 @@ class IndexManagementTest extends TestCase
         $this->assertSame('applications', $payload['indices'][0]['name']);
         $this->assertSame(1972651, $payload['indices'][0]['documents_count']);
         $this->assertSame('2026-11-01T10:15:30.000Z', $payload['indices'][0]['creation_date']);
-        Http::assertSent(fn ($request) => str_contains($request->url(), 'creation.date'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'creation.date.string'));
         $this->assertSame('application-events', $payload['indices'][0]['data_stream']);
         $this->assertSame('managed', $payload['indices'][0]['lifecycle_status']);
         $this->assertSame('hot', $payload['indices'][0]['lifecycle_phase']);
