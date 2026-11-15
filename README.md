@@ -20,6 +20,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
 - Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard.
+- Export the currently visible index list (including search and favorites filters) as UTF-8 CSV or JSON directly in the browser.
 
 ## Requirements
 
@@ -81,6 +82,10 @@ If the callback returns `false`, the package responds with HTTP 403. If no callb
 ## Favorites
 
 Favorite indices are stored in the browser's local storage. They are specific to the current browser and browser profile, are not synchronized between users or devices, and do not require a database migration.
+
+## Index exports
+
+Use **Export CSV** or **Export JSON** on the Index Management page to download the currently filtered list. Exports respect the search query and favorites-only filter and include index name, health, status, document count, storage bytes, primary/replica shard counts, creation date when returned by Elasticsearch, data stream, and lifecycle metadata. Files are generated locally in the browser; no export endpoint, database migration, or Elasticsearch write request is used.
 
 ## Metrics
 

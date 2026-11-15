@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.16.0] - 2026-11-15
+
+- Add browser-side CSV and JSON exports for the currently filtered index list, including search and favorites-only filters.
+- Include health, status, document count, storage bytes, shard counts, optional creation date, data stream, and lifecycle metadata without adding an export API or Elasticsearch write operations.
+
 ## [0.15.0] - 2026-11-15
 
 - Add browser-local favorite indices with one-click toggling and a favorites-only filter on the Index Management page.
