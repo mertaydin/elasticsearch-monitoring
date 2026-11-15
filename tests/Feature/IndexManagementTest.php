@@ -80,15 +80,31 @@ class IndexManagementTest extends TestCase
         $this->assertSame('rollover', $payload['lifecycle']['action']);
     }
 
-    public function test_it_returns_indexing_statistics_for_the_selected_index(): void
+    public function test_it_returns_performance_statistics_for_the_selected_index(): void
     {
         Http::fake(function ($request) {
-            if (str_ends_with(parse_url($request->url(), PHP_URL_PATH), '/_stats/indexing')) {
+            if (str_ends_with(parse_url($request->url(), PHP_URL_PATH), '/_stats/indexing,search,merge,refresh,flush,query_cache,request_cache,segments,translog')) {
                 return Http::response([
                     'indices' => [
                         'applications' => [
-                            'primaries' => ['indexing' => ['index_total' => 120, 'index_time_in_millis' => 2400, 'index_current' => 2, 'delete_total' => 8, 'delete_time_in_millis' => 160, 'delete_current' => 1, 'noop_update_total' => 3, 'is_throttled' => false, 'throttle_time_in_millis' => 0]],
-                            'total' => ['indexing' => ['index_total' => 240, 'index_time_in_millis' => 4800, 'index_current' => 4, 'delete_total' => 16, 'delete_time_in_millis' => 320, 'delete_current' => 2, 'noop_update_total' => 6, 'is_throttled' => false, 'throttle_time_in_millis' => 0]],
+                            'primaries' => [
+                                'indexing' => ['index_total' => 120, 'index_time_in_millis' => 2400],
+                                'search' => ['query_total' => 900, 'query_time_in_millis' => 1800],
+                                'merges' => ['total' => 12, 'total_size_in_bytes' => 4096],
+                                'refresh' => ['total' => 30],
+                                'query_cache' => ['hit_count' => 80, 'miss_count' => 20],
+                                'segments' => ['count' => 14, 'memory_in_bytes' => 2048],
+                            ],
+                            'total' => [
+                                'indexing' => ['index_total' => 240, 'delete_total' => 16],
+                                'search' => ['query_total' => 1800, 'query_time_in_millis' => 3600],
+                                'merges' => ['total' => 24, 'total_size_in_bytes' => 8192],
+                                'refresh' => ['total' => 60],
+                                'query_cache' => ['hit_count' => 160, 'miss_count' => 40],
+                                'request_cache' => ['hit_count' => 10, 'miss_count' => 2],
+                                'segments' => ['count' => 28, 'memory_in_bytes' => 4096],
+                                'translog' => ['operations' => 150, 'size_in_bytes' => 1024],
+                            ],
                         ],
                     ],
                 ]);
@@ -102,8 +118,12 @@ class IndexManagementTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $payload = $response->getData(true);
         $this->assertSame('applications', $payload['index']);
-        $this->assertSame(120, $payload['primaries']['index_total']);
-        $this->assertSame(240, $payload['total']['index_total']);
-        $this->assertSame(16, $payload['total']['delete_total']);
+        $this->assertSame(120, $payload['primaries']['indexing']['index_total']);
+        $this->assertSame(1800, $payload['total']['search']['query_total']);
+        $this->assertSame(24, $payload['total']['merges']['total']);
+        $this->assertSame(160, $payload['total']['query_cache']['hit_count']);
+        $this->assertSame(28, $payload['total']['segments']['count']);
+        $this->assertSame(150, $payload['total']['translog']['operations']);
     }
+
 }

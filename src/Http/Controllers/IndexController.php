@@ -144,17 +144,18 @@ class IndexController
     {
         try {
             $encodedIndex = rawurlencode($index);
-            $response = $this->client->request($encodedIndex.'/_stats/indexing');
+            $metrics = 'indexing,search,merge,refresh,flush,query_cache,request_cache,segments,translog';
+            $response = $this->client->request($encodedIndex.'/_stats/'.$metrics);
             $indexStats = (array) (($response['indices'] ?? [])[$index] ?? []);
 
             return response()->json([
                 'index' => $index,
-                'primaries' => (array) data_get($indexStats, 'primaries.indexing', []),
-                'total' => (array) data_get($indexStats, 'total.indexing', []),
+                'primaries' => (array) ($indexStats['primaries'] ?? []),
+                'total' => (array) ($indexStats['total'] ?? []),
             ]);
         } catch (Throwable $exception) {
             return response()->json([
-                'message' => 'Unable to retrieve index indexing statistics.',
+                'message' => 'Unable to retrieve index performance statistics.',
                 'error' => $exception->getMessage(),
             ], 502);
         }

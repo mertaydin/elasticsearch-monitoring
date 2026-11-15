@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0] - 2026-11-15
+
+- Expand selected-index statistics into a read-only performance analyzer covering indexing, search, merge, refresh, flush, query/request cache, segments, and translog metrics.
+- Compare primary-shard and total (primary + replica) statistics in the index details modal.
+- Refresh selected-index metrics on demand and every 30 seconds while the performance tab is active.
+
+
 ## [0.11.0] - 2026-11-15
 
 - Add read-only snapshot repository and backup history monitoring.

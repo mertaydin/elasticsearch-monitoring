@@ -40,7 +40,7 @@ ELASTICSEARCH_MONITORING_VERIFY=true
 Collect a snapshot with `php artisan elasticsearch:collect`.
 
 Dashboard: `/monitoring/elasticsearch`  
-Index management: `/monitoring/elasticsearch/indices`  
+Index management and per-index performance analysis: `/monitoring/elasticsearch/indices`  
 Data Streams: `/monitoring/elasticsearch/data-streams`  
 Node performance history: `/monitoring/elasticsearch/nodes`  
 Thread pool analysis: `/monitoring/elasticsearch/thread-pools`  
@@ -49,7 +49,7 @@ Shard allocation: `/monitoring/elasticsearch/shards`
 Capacity analysis: `/monitoring/elasticsearch/capacity`  
 Alert history: `/monitoring/elasticsearch/alerts`
 
-The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
+The index details modal includes a read-only performance analyzer for indexing, search, merge, refresh, flush, query/request cache, segments, and translog statistics. It compares primary-shard values with totals across primary and replica shards and refreshes only the selected index. The Elasticsearch `monitor` index privilege is required. The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
 ### Dashboard authorization
 
