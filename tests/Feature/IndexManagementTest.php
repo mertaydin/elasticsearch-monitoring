@@ -225,7 +225,7 @@ class IndexManagementTest extends TestCase
     {
         $request = Request::create('/monitoring/elasticsearch/indices/search', 'GET', ['q' => 'x']);
 
-        $this->expectException(\\Illuminate\\Validation\\ValidationException::class);
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
         app(IndexController::class)->search($request);
     }
 
