@@ -146,7 +146,7 @@ class NodeController
         $unknownVersionCount = 0;
         foreach ($result as $node) {
             $version = $node['latest']['version'] ?? null;
-            if (! is_string($version) || $version === '') {
+            if (!is_string($version) || $version === '') {
                 $unknownVersionCount++;
                 continue;
             }
