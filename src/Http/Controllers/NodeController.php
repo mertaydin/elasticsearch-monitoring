@@ -115,6 +115,7 @@ class NodeController
                 if (empty($detail['ip']) === false) {
                     $nodes[$id]['ip'] = (string) $detail['ip'];
                 }
+
                 $nodes[$id]['latest'] = $point;
                 $nodes[$id]['history'][] = $point;
 
@@ -137,6 +138,7 @@ class NodeController
         foreach ($nodes as $id => &$node) {
             $node['availability'] = $this->buildAvailabilityHistory($availabilitySamples[$id] ?? []);
         }
+
         unset($node);
 
         $result = array_values($nodes);
@@ -153,6 +155,7 @@ class NodeController
 
             $versionCounts[$version] = ($versionCounts[$version] ?? 0) + 1;
         }
+
         ksort($versionCounts, SORT_NATURAL);
         $versionSummary = [
             'status' => count($versionCounts) > 1 ? 'mixed' : (count($versionCounts) === 1 && $unknownVersionCount === 0 ? 'consistent' : (count($versionCounts) === 1 ? 'incomplete' : 'unknown')),
