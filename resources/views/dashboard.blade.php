@@ -14,14 +14,14 @@
         'ar' => 'العربية',
     ];
     $t = fn (string $key): string => __("elasticsearch-monitoring::messages.{$key}", [], $locale);
-    $indexManagementLabel = [
-        'tr' => 'İndeks Yönetimi',
-        'en' => 'Index Management',
-        'es' => 'Gestión de índices',
-        'zh_CN' => '索引管理',
-        'hi' => 'इंडेक्स प्रबंधन',
-        'ar' => 'إدارة الفهارس',
-    ][$locale] ?? 'Index Management';
+    $navigationLabels = [
+        'tr' => ['overview'=>'Genel Bakış','indices'=>'İndeks Yönetimi','json'=>'JSON Görüntüleyici','shards'=>'Shard Dağılımı','capacity'=>'Kapasite','nodes'=>'Node Geçmişi','threads'=>'Thread Pool','snapshots'=>'Yedekleme','alerts'=>'Alarmlar','api'=>'API İstekleri'],
+        'en' => ['overview'=>'Overview','indices'=>'Index Management','json'=>'JSON Viewer','shards'=>'Shard Allocation','capacity'=>'Capacity','nodes'=>'Node History','threads'=>'Thread Pools','snapshots'=>'Snapshots','alerts'=>'Alerts','api'=>'API Requests'],
+        'es' => ['overview'=>'Resumen','indices'=>'Gestión de índices','json'=>'Visor JSON','shards'=>'Asignación de shards','capacity'=>'Capacidad','nodes'=>'Historial de nodos','threads'=>'Grupos de hilos','snapshots'=>'Copias de seguridad','alerts'=>'Alertas','api'=>'Solicitudes API'],
+        'zh_CN' => ['overview'=>'概览','indices'=>'索引管理','json'=>'JSON 查看器','shards'=>'分片分配','capacity'=>'容量','nodes'=>'节点历史','threads'=>'线程池','snapshots'=>'快照','alerts'=>'告警','api'=>'API 请求'],
+        'hi' => ['overview'=>'अवलोकन','indices'=>'इंडेक्स प्रबंधन','json'=>'JSON व्यूअर','shards'=>'शार्ड आवंटन','capacity'=>'क्षमता','nodes'=>'नोड इतिहास','threads'=>'थ्रेड पूल','snapshots'=>'स्नैपशॉट','alerts'=>'अलर्ट','api'=>'API अनुरोध'],
+        'ar' => ['overview'=>'نظرة عامة','indices'=>'إدارة الفهارس','json'=>'عارض JSON','shards'=>'توزيع الأجزاء','capacity'=>'السعة','nodes'=>'سجل العقد','threads'=>'مجموعات مؤشرات الترابط','snapshots'=>'اللقطات الاحتياطية','alerts'=>'التنبيهات','api'=>'طلبات API'],
+    ][$locale] ?? ['overview'=>'Overview','indices'=>'Index Management','json'=>'JSON Viewer','shards'=>'Shard Allocation','capacity'=>'Capacity','nodes'=>'Node History','threads'=>'Thread Pools','snapshots'=>'Snapshots','alerts'=>'Alerts','api'=>'API Requests'];
     $uiText = [
         'tr' => ['overview'=>'Küme genel görünümü','performance'=>'Performans','storage'=>'Depolama','cpu'=>'CPU kullanımı','cpu_history'=>'CPU kullanım grafiği','cpu_hint'=>'Node başına ortalama CPU kullanımı','index_history'=>'İndeks depolama grafiği','index_hint'=>'İndeks verilerinin toplam boyutunun zaman içindeki değişimi','disk_history'=>'Disk kullanımı','disk_hint'=>'Kullanılan disk alanının zaman içindeki değişimi','search_history'=>'Arama hızı','indexing_history'=>'İndeksleme hızı','segments_history'=>'Segment sayısı','documents_history'=>'Belge sayısı','filesystem_hint'=>'Kullanılan ve kullanılabilir disk alanı','heap_hint'=>'JVM heap bellek kullanımı','rates_hint'=>'Saniyedeki arama ve indeksleme işlem sayısı','live'=>'Otomatik yenileme · 30 sn','compare_period'=>'Önceki dönemle karşılaştır','previous_period'=>'Önceki dönem'],
         'en' => ['overview'=>'Cluster overview','performance'=>'Performance','storage'=>'Storage','cpu'=>'CPU usage','cpu_history'=>'CPU utilization','cpu_hint'=>'Average CPU usage across nodes over time','index_history'=>'Index storage trend','index_hint'=>'Total Elasticsearch index data size over time','disk_history'=>'Disk usage','disk_hint'=>'Filesystem space in use over time','search_history'=>'Search rate','indexing_history'=>'Indexing rate','segments_history'=>'Segment count','documents_history'=>'Document count','filesystem_hint'=>'Used and available disk capacity','heap_hint'=>'JVM heap memory utilization','rates_hint'=>'Search and indexing operations per second','live'=>'Auto refresh · 30 sec','compare_period'=>'Compare with previous period','previous_period'=>'Previous period'],
@@ -175,16 +175,16 @@
         </div>
         <nav class="dashboard-nav" aria-label="{{ $locale === 'tr' ? 'Ana gezinme' : 'Main navigation' }}">
             <div class="dashboard-nav-links">
-                <a class="dashboard-nav-link active" href="{{ route('elasticsearch-monitoring.index', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Genel Bakış' : 'Overview' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.tools.json', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'JSON Görüntüleyici' : 'JSON Viewer' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.shards', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Shard Dağılımı' : 'Shard Allocation' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.capacity', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Kapasite' : 'Capacity' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.nodes', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.thread-pools', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Thread Pool' : 'Thread Pools' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.snapshots', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Yedekleme' : 'Snapshots' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Alarmlar' : 'Alerts' }}</a>
-                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">API {{ $locale === 'tr' ? 'İstekleri' : 'Requests' }}</a>
+                <a class="dashboard-nav-link active" href="{{ route('elasticsearch-monitoring.index', ['locale' => $locale]) }}">{{ $navigationLabels['overview'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $navigationLabels['indices'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.tools.json', ['locale' => $locale]) }}">{{ $navigationLabels['json'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.shards', ['locale' => $locale]) }}">{{ $navigationLabels['shards'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.capacity', ['locale' => $locale]) }}">{{ $navigationLabels['capacity'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.nodes', ['locale' => $locale]) }}">{{ $navigationLabels['nodes'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.thread-pools', ['locale' => $locale]) }}">{{ $navigationLabels['threads'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.snapshots', ['locale' => $locale]) }}">{{ $navigationLabels['snapshots'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.alerts', ['locale' => $locale]) }}">{{ $navigationLabels['alerts'] }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.api-requests', ['locale' => $locale]) }}">{{ $navigationLabels['api'] }}</a>
             </div>
             <div class="dashboard-nav-tools">
                 <button class="btn btn-outline-secondary btn-sm" type="button" onclick="toggleDashboardCustomizer()">{{ $locale === 'tr' ? 'Paneli düzenle' : 'Customize' }}</button>
