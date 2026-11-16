@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Add a simple node details panel to the existing Node Performance page with node IP, roles, CPU, JVM heap, disk usage, document and shard counts, and assigned index shard counts.
+- Retrieve node details through a read-only endpoint protected by the existing dashboard authorization middleware; refresh details when a node is selected.
+
 - Add a global dashboard index search with debounced live results, health, document count, and storage size.
 - Search Elasticsearch index names through a bounded read-only endpoint; rank prefix matches first and open the selected index details directly.
 - Support keyboard navigation, mobile layouts, and localized search labels in all six dashboard languages; preserve dashboard authorization middleware.
