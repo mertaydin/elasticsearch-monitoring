@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   group: package-screenshots
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   capture:
@@ -76,6 +76,7 @@ jobs:
           php artisan key:generate
           touch database/database.sqlite
           php artisan vendor:publish --tag=elasticsearch-monitoring-config --force
+          sed -i "s/'middleware' => \['web', 'auth'\]/'middleware' => ['web']/" config/elasticsearch-monitoring.php
           cat > app/Providers/AppServiceProvider.php <<'PHP'
           <?php
           namespace App\Providers;
@@ -102,7 +103,13 @@ jobs:
         working-directory: screenshot-app
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > /tmp/elasticsearch-monitoring-server.log 2>&1 &
-          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/monitoring/elasticsearch >/dev/null && break; sleep 2; done
+          for i in $(seq 1 30); do
+            if curl --max-time 3 -fsS http://127.0.0.1:8000/monitoring/elasticsearch >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          tail -n 200 storage/logs/laravel.log || true
+          tail -n 100 /tmp/elasticsearch-monitoring-server.log || true
+          exit 1
       - name: Capture real package pages
         working-directory: screenshot-app
         run: |
