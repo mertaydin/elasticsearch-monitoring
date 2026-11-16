@@ -32,12 +32,12 @@
     ][$locale] ?? [];
 
     $dashboardWidgetNames = [
-        'tr' => ['summary'=>'Özet metrikler','favorites'=>'Favori indeksler','health'=>'Küme sağlığı ve uyarılar','metrics'=>'Detaylı metrikler','nodes'=>'Node karşılaştırması','charts'=>'Grafikler'],
-        'en' => ['summary'=>'Summary metrics','favorites'=>'Favorite indices','health'=>'Cluster health and alerts','metrics'=>'Detailed metrics','nodes'=>'Node comparison','charts'=>'Charts'],
-        'es' => ['summary'=>'Métricas resumidas','favorites'=>'Índices favoritos','health'=>'Salud del clúster y alertas','metrics'=>'Métricas detalladas','nodes'=>'Comparación de nodos','charts'=>'Gráficos'],
-        'zh_CN' => ['summary'=>'摘要指标','favorites'=>'收藏索引','health'=>'集群健康与警报','metrics'=>'详细指标','nodes'=>'节点比较','charts'=>'图表'],
-        'hi' => ['summary'=>'सारांश मेट्रिक्स','favorites'=>'पसंदीदा इंडेक्स','health'=>'क्लस्टर स्वास्थ्य और अलर्ट','metrics'=>'विस्तृत मेट्रिक्स','nodes'=>'नोड तुलना','charts'=>'चार्ट'],
-        'ar' => ['summary'=>'المقاييس الموجزة','favorites'=>'الفهارس المفضلة','health'=>'صحة المجموعة والتنبيهات','metrics'=>'المقاييس التفصيلية','nodes'=>'مقارنة العقد','charts'=>'الرسوم البيانية'],
+        'tr' => ['summary'=>'Özet metrikler','favorites'=>'Favori indeksler','problematic'=>'Sorunlu indeksler','health'=>'Küme sağlığı ve uyarılar','metrics'=>'Detaylı metrikler','nodes'=>'Node karşılaştırması','charts'=>'Grafikler'],
+        'en' => ['summary'=>'Summary metrics','favorites'=>'Favorite indices','problematic'=>'Problematic indices','health'=>'Cluster health and alerts','metrics'=>'Detailed metrics','nodes'=>'Node comparison','charts'=>'Charts'],
+        'es' => ['summary'=>'Métricas resumidas','favorites'=>'Índices favoritos','problematic'=>'Índices problemáticos','health'=>'Salud del clúster y alertas','metrics'=>'Métricas detalladas','nodes'=>'Comparación de nodos','charts'=>'Gráficos'],
+        'zh_CN' => ['summary'=>'摘要指标','favorites'=>'收藏索引','problematic'=>'异常索引','health'=>'集群健康与警报','metrics'=>'详细指标','nodes'=>'节点比较','charts'=>'图表'],
+        'hi' => ['summary'=>'सारांश मेट्रिक्स','favorites'=>'पसंदीदा इंडेक्स','problematic'=>'समस्या वाले इंडेक्स','health'=>'क्लस्टर स्वास्थ्य और अलर्ट','metrics'=>'विस्तृत मेट्रिक्स','nodes'=>'नोड तुलना','charts'=>'चार्ट'],
+        'ar' => ['summary'=>'المقاييس الموجزة','favorites'=>'الفهارس المفضلة','problematic'=>'الفهارس التي بها مشكلات','health'=>'صحة المجموعة والتنبيهات','metrics'=>'المقاييس التفصيلية','nodes'=>'مقارنة العقد','charts'=>'الرسوم البيانية'],
     ][$locale] ?? ['summary'=>'Summary metrics','favorites'=>'Favorite indices','health'=>'Cluster health and alerts','metrics'=>'Detailed metrics','nodes'=>'Node comparison','charts'=>'Charts'];
 
     $favoriteText = [
@@ -268,6 +268,7 @@
         <div id="favorite-indices-list" class="favorite-index-grid"></div>
         <p class="small text-muted mb-0 mt-2" id="favorite-indices-empty">{{ $favoriteText['empty'] }}</p>
     </section>
+    @include('elasticsearch-monitoring::problematic-indices')
     <div class="row g-3 mb-4" data-dashboard-widget="health">
         <div class="col-12 col-xl-4"><section class="insight-card h-100">
             <div class="d-flex justify-content-between align-items-center mb-2"><h2 class="section-title mb-0">{{ $t('health_score') }}</h2><span class="badge text-bg-light" id="health-status">—</span></div>
@@ -342,7 +343,7 @@ const favoriteSummaryEndpoint = @json(route('elasticsearch-monitoring.indices.fa
 const dashboardLayoutKey = 'elasticsearch-monitoring:dashboard-layout';
 const dashboardKpiKey = 'elasticsearch-monitoring:dashboard-kpis';
 const defaultDashboardKpiOrder = ['docs', 'active-shards', 'unassigned', 'search-rate', 'index-rate', 'cpu', 'store-size'];
-const defaultDashboardWidgetOrder = ['summary', 'favorites', 'health', 'metrics', 'nodes', 'charts'];
+const defaultDashboardWidgetOrder = ['summary', 'favorites', 'problematic', 'health', 'metrics', 'nodes', 'charts'];
 const dashboardWidgetLabels = @json($dashboardWidgetNames);
 function readDashboardLayout() {
     try {

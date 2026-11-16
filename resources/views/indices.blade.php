@@ -199,7 +199,7 @@ function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;',
 async function load(){
     rows.innerHTML='<tr><td colspan="12" class="text-center text-secondary py-5">'+labels.loading+'</td></tr>';
     const params=new URLSearchParams({include_hidden:document.getElementById('hidden').checked?'1':'0',include_rollup:document.getElementById('rollup').checked?'1':'0'});
-    try{const r=await fetch(listUrl+'?'+params,{headers:{Accept:'application/json'}});const data=await r.json();if(!r.ok)throw new Error(data.error||labels.error);allIndices=data.indices||[];render();}
+    try{const r=await fetch(listUrl+'?'+params,{headers:{Accept:'application/json'}});const data=await r.json();if(!r.ok)throw new Error(data.error||labels.error);allIndices=data.indices||[];render();const openIndex=initialSearchParams.get('open');if(openIndex&&allIndices.some(index=>index.name===openIndex)){const cleanUrl=new URL(window.location.href);cleanUrl.searchParams.delete('open');window.history.replaceState({},'',cleanUrl.toString());showDetails(openIndex);}}
     catch(e){rows.innerHTML='<tr><td colspan="12" class="text-center text-danger py-5">'+escapeHtml(e.message||labels.error)+'</td></tr>';}
 }
 

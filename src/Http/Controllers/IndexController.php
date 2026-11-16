@@ -93,6 +93,53 @@ class IndexController
         }
     }
 
+    public function problematic(): JsonResponse
+    {
+        try {
+            $query = http_build_query([
+                'format' => 'json',
+                'bytes' => 'b',
+                'h' => 'health,status,index,pri,rep,docs.count,store.size',
+                'expand_wildcards' => 'open,closed,hidden',
+            ]);
+            $rows = $this->client->request('_cat/indices?'.$query);
+            $indices = array_values(array_map(static function (array $row): array {
+                return [
+                    'name' => (string) ($row['index'] ?? ''),
+                    'health' => strtolower((string) ($row['health'] ?? 'unknown')),
+                    'status' => (string) ($row['status'] ?? 'unknown'),
+                    'primaries' => (int) ($row['pri'] ?? 0),
+                    'replicas' => (int) ($row['rep'] ?? 0),
+                    'documents_count' => (int) ($row['docs.count'] ?? 0),
+                    'storage_bytes' => (int) ($row['store.size'] ?? 0),
+                ];
+            }, array_filter($rows, static fn ($row): bool => is_array($row)
+                && in_array(strtolower((string) ($row['health'] ?? '')), ['red', 'yellow'], true)
+                && (string) ($row['index'] ?? '') !== '')));
+
+            usort($indices, static function (array $a, array $b): int {
+                $healthOrder = ['red' => 0, 'yellow' => 1];
+
+                return ($healthOrder[$a['health']] <=> $healthOrder[$b['health']])
+                    ?: strcmp($a['name'], $b['name']);
+            });
+
+            return response()->json([
+                'indices' => $indices,
+                'counts' => [
+                    'red' => count(array_filter($indices, static fn (array $index): bool => $index['health'] === 'red')),
+                    'yellow' => count(array_filter($indices, static fn (array $index): bool => $index['health'] === 'yellow')),
+                    'total' => count($indices),
+                ],
+            ]);
+        } catch (Throwable $exception) {
+            return response()->json([
+                'message' => 'Unable to retrieve problematic Elasticsearch indices.',
+                'error' => $exception->getMessage(),
+            ], 502);
+        }
+    }
+
     public function favoriteSummary(Request $request): JsonResponse
     {
         $validated = $request->validate([
