@@ -15,7 +15,7 @@ permissions:
 
 concurrency:
   group: package-screenshots
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   capture:
@@ -76,6 +76,7 @@ jobs:
           php artisan key:generate
           touch database/database.sqlite
           php artisan vendor:publish --tag=elasticsearch-monitoring-config --force
+          sed -i "s/'middleware' => \['web', 'auth'\]/'middleware' => ['web']/" config/elasticsearch-monitoring.php
           cat > app/Providers/AppServiceProvider.php <<'PHP'
           <?php
           namespace App\Providers;
