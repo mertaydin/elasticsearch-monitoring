@@ -1,10 +1,11 @@
 <?php
 
-namespace ElasticsearchMonitoring\Http\Controllers;
+namespace ElasticsearchMonitoring\\Http\\Controllers;
 
-use ElasticsearchMonitoring\Models\MetricSnapshot;
-use Illuminate\Http\JsonResponse;
-use Illuminate\View\View;
+use ElasticsearchMonitoring\\Models\\MetricSnapshot;
+use Illuminate\\Http\\JsonResponse;
+use Illuminate\\Support\\Carbon;
+use Illuminate\\View\\View;
 
 class NodeController
 {
@@ -19,15 +20,14 @@ class NodeController
     public function data(): JsonResponse
     {
         $snapshots = MetricSnapshot::query()
+            ->where('collected_at', '>=', now()->subDay())
             ->latest('collected_at')
             ->limit(1440)
             ->get()
             ->reverse()
             ->values();
 
-        $nodes = [];
-        $previous = [];
-
+        $firstSeen = [];
         foreach ($snapshots as $snapshot) {
             $collectedAt = $snapshot->collected_at;
             if ($collectedAt === null) {
@@ -40,10 +40,34 @@ class NodeController
                 }
 
                 $id = (string) ($detail['id'] ?? '');
+                if ($id !== '' && ! isset($firstSeen[$id])) {
+                    $firstSeen[$id] = $collectedAt;
+                }
+            }
+        }
+
+        $nodes = [];
+        $previous = [];
+        $availabilitySamples = array_fill_keys(array_keys($firstSeen), []);
+
+        foreach ($snapshots as $snapshot) {
+            $collectedAt = $snapshot->collected_at;
+            if ($collectedAt === null) {
+                continue;
+            }
+
+            $present = [];
+            foreach ((array) data_get($snapshot->metrics, 'node_details', []) as $detail) {
+                if (! is_array($detail)) {
+                    continue;
+                }
+
+                $id = (string) ($detail['id'] ?? '');
                 if ($id === '') {
                     continue;
                 }
 
+                $present[$id] = true;
                 $point = [
                     'collected_at' => $collectedAt->toIso8601String(),
                     'cpu_percent' => isset($detail['cpu_percent']) ? (float) $detail['cpu_percent'] : null,
@@ -98,7 +122,21 @@ class NodeController
                     'point' => $point,
                 ];
             }
+
+            foreach ($firstSeen as $id => $seenAt) {
+                if ($collectedAt->greaterThanOrEqualTo($seenAt)) {
+                    $availabilitySamples[$id][] = [
+                        'collected_at' => $collectedAt,
+                        'status' => isset($present[$id]) ? 'online' : 'offline',
+                    ];
+                }
+            }
         }
+
+        foreach ($nodes as $id => &$node) {
+            $node['availability'] = $this->buildAvailabilityHistory($availabilitySamples[$id] ?? []);
+        }
+        unset($node);
 
         $result = array_values($nodes);
         usort($result, static fn (array $left, array $right): int => strcasecmp($left['name'], $right['name']));
@@ -108,8 +146,67 @@ class NodeController
             'meta' => [
                 'snapshots' => $snapshots->count(),
                 'limit' => 1440,
+                'window_hours' => 24,
                 'latest_collected_at' => $snapshots->last()?->collected_at?->toIso8601String(),
             ],
         ]);
+    }
+
+    /**
+     * @param  array<int, array{collected_at: Carbon, status: string}>  $samples
+     * @return array{status: string, offline_since: string|null, offline_duration_seconds: int, periods: array<int, array{status: string, from: string, to: string, duration_seconds: int}>}
+     */
+    private function buildAvailabilityHistory(array $samples): array
+    {
+        if ($samples === []) {
+            return [
+                'status' => 'unknown',
+                'offline_since' => null,
+                'offline_duration_seconds' => 0,
+                'periods' => [],
+            ];
+        }
+
+        $periods = [];
+        $periodStart = $samples[0]['collected_at'];
+        $periodStatus = $samples[0]['status'];
+        $lastSampleAt = $samples[0]['collected_at'];
+
+        foreach (array_slice($samples, 1) as $sample) {
+            if ($sample['status'] !== $periodStatus) {
+                $periodEnd = $sample['collected_at'];
+                $periods[] = [
+                    'status' => $periodStatus,
+                    'from' => $periodStart->toIso8601String(),
+                    'to' => $periodEnd->toIso8601String(),
+                    'duration_seconds' => max(0, (int) $periodStart->diffInSeconds($periodEnd)),
+                ];
+                $periodStart = $periodEnd;
+                $periodStatus = $sample['status'];
+            }
+
+            $lastSampleAt = $sample['collected_at'];
+        }
+
+        $now = now();
+        $periodEnd = $now->greaterThan($lastSampleAt) ? $now : $lastSampleAt;
+        $periods[] = [
+            'status' => $periodStatus,
+            'from' => $periodStart->toIso8601String(),
+            'to' => $periodEnd->toIso8601String(),
+            'duration_seconds' => max(0, (int) $periodStart->diffInSeconds($periodEnd)),
+        ];
+
+        $offlineSince = $periodStatus === 'offline' ? $periodStart->toIso8601String() : null;
+        $offlineDuration = $periodStatus === 'offline'
+            ? max(0, (int) $periodStart->diffInSeconds($now))
+            : 0;
+
+        return [
+            'status' => $periodStatus,
+            'offline_since' => $offlineSince,
+            'offline_duration_seconds' => $offlineDuration,
+            'periods' => $periods,
+        ];
     }
 }
