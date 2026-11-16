@@ -177,7 +177,12 @@ function exportIndices(format){
         downloadExport(JSON.stringify(payload,null,2),'application/json;charset=utf-8','json');
         return;
     }
-    const csvCell=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
+    const csvCell=value=>{
+        let text=String(value??'');
+        // Neutralize spreadsheet formulas: prefix a single quote when a string begins (after optional whitespace/control characters) with =, +, -, @, tab or CR.
+        if(typeof value!=='number'&&/^[\s\u0000-\u001f]*[=+\-@]|^[\t\r]/.test(text))text="'"+text;
+        return '"'+text.replace(/"/g,'""')+'"';
+    };
     const csv=[fields.join(','),...filtered.map(index=>fields.map(field=>csvCell(index[field])).join(','))].join(String.fromCharCode(13,10));
     downloadExport(String.fromCharCode(0xFEFF)+csv,'text/csv;charset=utf-8','csv');
 }
