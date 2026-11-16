@@ -8,6 +8,7 @@ use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardNoteController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Controllers\NodeController;
+use ElasticsearchMonitoring\Http\Controllers\NodeExplorerController;
 use ElasticsearchMonitoring\Http\Controllers\QueryActivityController;
 use ElasticsearchMonitoring\Http\Controllers\ShardController;
 use ElasticsearchMonitoring\Http\Controllers\SnapshotController;
@@ -43,7 +44,8 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::get('/query-activity', [QueryActivityController::class, 'index'])->name('query-activity');
         Route::get('/query-activity/data', [QueryActivityController::class, 'data'])->name('query-activity.data');
         Route::get('/nodes', [NodeController::class, 'index'])->name('nodes');
-        Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');\n        Route::get('/nodes/details', [NodeExplorerController::class, 'details'])->name('nodes.details');
+        Route::get('/nodes/data', [NodeController::class, 'data'])->name('nodes.data');
+        Route::get('/nodes/details', [NodeExplorerController::class, 'details'])->name('nodes.details');
         Route::get('/thread-pools', [ThreadPoolController::class, 'index'])->name('thread-pools');
         Route::get('/thread-pools/data', [ThreadPoolController::class, 'data'])->name('thread-pools.data');
         Route::get('/snapshots', [SnapshotController::class, 'index'])->name('snapshots');
