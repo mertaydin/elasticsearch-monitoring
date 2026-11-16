@@ -177,6 +177,7 @@
             <div class="dashboard-nav-links">
                 <a class="dashboard-nav-link active" href="{{ route('elasticsearch-monitoring.index', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Genel Bakış' : 'Overview' }}</a>
                 <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.indices', ['locale' => $locale]) }}">{{ $indexManagementLabel }}</a>
+                <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.tools.json', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'JSON Görüntüleyici' : 'JSON Viewer' }}</a>
                 <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.shards', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Shard Dağılımı' : 'Shard Allocation' }}</a>
                 <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.capacity', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Kapasite' : 'Capacity' }}</a>
                 <a class="dashboard-nav-link" href="{{ route('elasticsearch-monitoring.nodes', ['locale' => $locale]) }}">{{ $locale === 'tr' ? 'Node Geçmişi' : 'Node History' }}</a>
