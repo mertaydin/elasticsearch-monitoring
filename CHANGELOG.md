@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add client-side sorting to the Node Performance comparison table by CPU, JVM heap (RAM), or disk utilization, with highest usage shown first and missing metrics placed last.
+
 - Add a simple node details panel to the existing Node Performance page with node IP, roles, CPU, JVM heap, disk usage, document and shard counts, and assigned index shard counts.
 - Retrieve node details through a read-only endpoint protected by the existing dashboard authorization middleware; refresh details when a node is selected.
 

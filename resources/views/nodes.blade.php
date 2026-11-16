@@ -83,7 +83,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['queue'] }} / {{ $text['rejected'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['queue-chart'], labels.queue + ' / ' + labels.rejected, 'node-queue-chart')">PNG</button></div><p>{{ $text['search'] }} · {{ $text['indexing'] }}</p><div id="queue-chart"></div></section></div>
 </div>
 <section class="panel p-3">
-<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $text['comparison'] }}</h2><span class="small muted" id="updated"></span></div>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $text['comparison'] }}</h2><div class="d-flex align-items-center gap-2"><label for="node-sort" class="small muted mb-0">{{ $locale === 'tr' ? 'Sırala:' : 'Sort by:' }}</label><select id="node-sort" class="form-select form-select-sm" style="width:auto"><option value="cpu">{{ $locale === 'tr' ? 'CPU kullanımı' : 'CPU usage' }}</option><option value="heap">{{ $locale === 'tr' ? 'RAM / JVM kullanımı' : 'RAM / JVM usage' }}</option><option value="disk">{{ $locale === 'tr' ? 'Disk kullanımı' : 'Disk usage' }}</option></select><span class="small muted ms-2" id="updated"></span></div></div>
 <div class="table-responsive"><table class="table table-hover align-middle mb-0">
 <thead><tr><th>{{ $text['name'] }}</th><th>{{ $locale === 'tr' ? 'IP adresi' : 'IP address' }}</th><th>{{ $text['roles'] }}</th><th>CPU</th><th>JVM</th><th>{{ $text['disk'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['shards'] }}</th><th>{{ $text['search_total'] }}</th><th>{{ $text['indexing_total'] }}</th></tr></thead>
 <tbody id="node-table"><tr><td colspan="10" class="text-center py-4 muted">{{ $text['loading'] }}</td></tr></tbody>
@@ -156,7 +156,16 @@ function renderSelected(){
 function renderTable(){
  const body=document.getElementById('node-table');
  if(!nodes.length){body.innerHTML='<tr><td colspan="10" class="text-center py-4 muted">'+labels.empty+'</td></tr>';return;}
- body.innerHTML=nodes.map(node=>{
+ const sortKey=document.getElementById('node-sort')?.value||'cpu';
+ const metricKey={cpu:'cpu_percent',heap:'heap_percent',disk:'filesystem_used_percent'}[sortKey];
+ const sortedNodes=[...nodes].sort((a,b)=>{
+  const aValue=Number(a.latest?.[metricKey]),bValue=Number(b.latest?.[metricKey]);
+  const aValid=Number.isFinite(aValue),bValid=Number.isFinite(bValue);
+  if(!aValid&&!bValid)return String(a.name).localeCompare(String(b.name));
+  if(!aValid)return 1;if(!bValid)return -1;
+  return bValue-aValue;
+ });
+ body.innerHTML=sortedNodes.map(node=>{
   const p=node.latest||{};
   return '<tr><td><button class="node-pick" data-node-id="'+safe(node.id)+'">'+safe(node.name)+'</button> <button type="button" class="btn btn-sm btn-link p-0 text-secondary" data-copy-value="'+safe(node.name)+'" title="'+copyLabels.copy+'">⧉</button><div class="small muted">'+safe(node.id)+'</div></td><td>'+(node.ip?'<button type="button" class="btn btn-sm btn-link p-0" data-copy-value="'+safe(node.ip)+'" title="'+copyLabels.copy+'">'+safe(node.ip)+'</button>':'—')+'</td><td>'+safe((node.roles||[]).join(', ')||'—')+'</td><td>'+percent(p.cpu_percent)+'</td><td>'+percent(p.heap_percent)+'</td><td>'+percent(p.filesystem_used_percent)+'</td><td>'+number(p.documents)+'</td><td>'+number(p.shards)+'</td><td>'+number(p.search_total)+'</td><td>'+number(p.indexing_total)+'</td></tr>';
  }).join('');
@@ -198,6 +207,7 @@ async function loadNodes(){
 }
 document.getElementById('node-select').addEventListener('change',event=>selectNode(event.target.value));
 document.getElementById('refresh').addEventListener('click',loadNodes);
+document.getElementById('node-sort').addEventListener('change',renderTable);
 loadNodes();setInterval(loadNodes,30000);
 </script>
 </body>
