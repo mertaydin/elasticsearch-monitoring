@@ -214,7 +214,7 @@ class IndexManagementTest extends TestCase
 
         $this->assertSame(200, $response->getStatusCode());
         $payload = $response->getData(true);
-        $this->assertSame(['app-logs', 'logs-2026'], array_column($payload['indices'], 'name'));
+        $this->assertSame(['logs-2026', 'app-logs'], array_column($payload['indices'], 'name'));
         $this->assertSame('yellow', $payload['indices'][0]['health']);
         $this->assertSame(300, $payload['indices'][0]['documents_count']);
         $this->assertSame(2048, $payload['indices'][0]['storage_bytes']);
