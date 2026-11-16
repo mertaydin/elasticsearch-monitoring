@@ -4,7 +4,7 @@ namespace ElasticsearchMonitoring\Http\Controllers;
 
 use ElasticsearchMonitoring\Models\MetricSnapshot;
 use Illuminate\Http\JsonResponse;
-use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\View\View;
 
 class NodeController
