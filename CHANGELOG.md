@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Add a browser-only JSON Viewer at `monitoring/elasticsearch/tools/json` with a collapsible tree, key/value search, source editing, pretty printing, minifying, copy, and download. JSON content remains in the browser and is never sent to Elasticsearch or uploaded to the application.
+
 - Add client-side sorting to the Node Performance comparison table by CPU, JVM heap (RAM), or disk utilization, with highest usage shown first and missing metrics placed last.
 
 - Add a simple node details panel to the existing Node Performance page with node IP, roles, CPU, JVM heap, disk usage, document and shard counts, and assigned index shard counts.
