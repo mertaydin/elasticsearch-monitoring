@@ -114,7 +114,7 @@ public function boot(): void
 }
 ```
 
-If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, the existing middleware behavior is preserved (`web` and `auth` by default). Keep the `auth` middleware enabled unless your callback intentionally handles authentication itself.
+If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, dashboard access is denied (HTTP 403), even when the middleware stack is customized. Register an explicit callback before exposing the dashboard. Keep the `auth` middleware enabled unless your callback intentionally handles authentication itself.
 
 ## Query Activity Monitor
 
