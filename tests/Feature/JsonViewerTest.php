@@ -18,7 +18,7 @@ class JsonViewerTest extends TestCase
 
     public function test_json_viewer_renders_without_an_elasticsearch_request(): void
     {
-        $this->view('elasticsearch-monitoring::tools.json-viewer')
+        $this->view('elasticsearch-monitoring::tools.json-viewer', ['locale' => 'en'])
             ->assertSee('JSON Viewer')
             ->assertSee('Your data is never uploaded')
             ->assertSee('navigator.clipboard')
