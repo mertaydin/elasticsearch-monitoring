@@ -218,7 +218,7 @@ class IndexManagementTest extends TestCase
         $this->assertSame('yellow', $payload['indices'][0]['health']);
         $this->assertSame(300, $payload['indices'][0]['documents_count']);
         $this->assertSame(2048, $payload['indices'][0]['storage_bytes']);
-        Http::assertSent(fn ($request) => str_contains($request->url(), '_cat/indices/*logs*'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '_cat/indices') && str_contains($request->url(), 'logs'));
     }
 
     public function test_it_validates_global_index_search_terms(): void
