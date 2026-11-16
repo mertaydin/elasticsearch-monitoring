@@ -40,7 +40,6 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <a class="btn btn-sm btn-light" href="{{ route('elasticsearch-monitoring.index',['locale'=>$locale]) }}">← {{ $text['back'] }}</a>
 <a class="btn btn-sm btn-outline-light" href="{{ route('elasticsearch-monitoring.indices',['locale'=>$locale]) }}">{{ $text['indices'] }}</a>
 <a class="btn btn-sm btn-outline-light" href="{{ route('elasticsearch-monitoring.nodes',['locale'=>$locale]) }}">{{ $text['nodes'] }}</a>
-<a class="btn btn-sm btn-outline-light" href="{{ route('elasticsearch-monitoring.data-streams',['locale'=>$locale]) }}">{{ $text['streams'] }}</a>
 <a class="btn btn-sm btn-outline-light" href="{{ route('elasticsearch-monitoring.alerts',['locale'=>$locale]) }}">{{ $text['alerts'] }}</a>
 </div><h1 class="h3 fw-bold mb-1">{{ $text['title'] }}</h1><p class="mb-0">{{ $text['description'] }}</p></div>
 <button class="btn btn-light" id="refresh">↻ {{ $text['refresh'] }}</button></div></header>
