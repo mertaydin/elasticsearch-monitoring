@@ -14,9 +14,10 @@ use ElasticsearchMonitoring\Http\Controllers\ShardController;
 use ElasticsearchMonitoring\Http\Controllers\SnapshotController;
 use ElasticsearchMonitoring\Http\Controllers\ThreadPoolController;
 use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
+use ElasticsearchMonitoring\Http\Middleware\ApplyDashboardTheme;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['web', 'auth']), AuthorizeDashboard::class])
+Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['web', 'auth']), AuthorizeDashboard::class, ApplyDashboardTheme::class])
     ->prefix(config('elasticsearch-monitoring.dashboard.path', 'monitoring/elasticsearch'))
     ->name('elasticsearch-monitoring.')
     ->group(function (): void {
