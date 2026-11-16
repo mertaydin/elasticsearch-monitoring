@@ -9,6 +9,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
+class DashboardNoteTestUser
+{
+    public function __construct(private string $id) {}
+
+    public function getAuthIdentifier(): string
+    {
+        return $this->id;
+    }
+}
+
 class DashboardNoteTest extends TestCase
 {
     protected function setUp(): void
@@ -66,14 +76,7 @@ class DashboardNoteTest extends TestCase
     private function request(string $method, array $data = [], string $userId = 'user-1'): Request
     {
         $request = Request::create('/monitoring/elasticsearch/notes', $method, $data);
-        $request->setUserResolver(fn () => new class($userId) {
-            public function __construct(private string $id) {}
-
-            public function getAuthIdentifier(): string
-            {
-                return $this->id;
-            }
-        });
+        $request->setUserResolver(fn () => new DashboardNoteTestUser($userId));
         return $request;
     }
 }
