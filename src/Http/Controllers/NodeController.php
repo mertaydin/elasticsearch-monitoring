@@ -177,7 +177,7 @@ class NodeController
     }
 
     /**
-     * @param  array<int, array{collected_at: CarbonImmutable, status: string}>  $samples
+     * @param  array<int, array{collected_at: CarbonInterface, status: string}>  $samples
      * @return array{status: string, offline_since: string|null, offline_duration_seconds: int, periods: array<int, array{status: string, from: string, to: string, duration_seconds: int}>}
      */
     private function buildAvailabilityHistory(array $samples): array
