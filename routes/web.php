@@ -28,6 +28,7 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
         Route::delete('/notes/{note}', [DashboardNoteController::class, 'destroy'])->whereNumber('note')->name('notes.destroy');
         Route::get('/indices', [IndexController::class, 'index'])->name('indices');
         Route::get('/indices/data', [IndexController::class, 'data'])->name('indices.data');
+        Route::get('/indices/search', [IndexController::class, 'search'])->name('indices.search');
         Route::get('/indices/problematic', [IndexController::class, 'problematic'])->name('indices.problematic');
         Route::get('/indices/favorites-summary', [IndexController::class, 'favoriteSummary'])->name('indices.favorites-summary');
         Route::get('/indices/{index}/indexing-stats', [IndexController::class, 'indexingStats'])->where('index', '[A-Za-z0-9_.-]+')->name('indices.indexing-stats');
