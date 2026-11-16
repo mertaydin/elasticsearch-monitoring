@@ -55,6 +55,25 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="col-6 col-xl"><div class="panel metric"><div class="label">{{ $text['documents'] }}</div><div class="value" id="documents-value">—</div></div></div>
 <div class="col-6 col-xl"><div class="panel metric"><div class="label">{{ $text['shards'] }}</div><div class="value" id="shards-value">—</div></div></div>
 </div>
+<section class="panel p-3 mb-4" id="node-details-panel">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+<h2 class="h6 fw-bold mb-0">{{ $locale === 'tr' ? 'Node detayları' : 'Node details' }}</h2>
+<span class="small muted" id="node-details-meta">—</span>
+</div>
+<div class="row g-3 mb-3">
+<div class="col-6 col-lg-3"><div class="label muted small">IP / {{ $locale === 'tr' ? 'Roller' : 'Roles' }}</div><div class="fw-semibold" id="node-detail-address">—</div><div class="small muted" id="node-detail-roles">—</div></div>
+<div class="col-6 col-lg-3"><div class="label muted small">CPU</div><div class="fw-semibold" id="node-detail-cpu">—</div></div>
+<div class="col-6 col-lg-3"><div class="label muted small">JVM Heap</div><div class="fw-semibold" id="node-detail-heap">—</div></div>
+<div class="col-6 col-lg-3"><div class="label muted small">Disk</div><div class="fw-semibold" id="node-detail-disk">—</div></div>
+</div>
+<div class="d-flex flex-wrap gap-3 small mb-2">
+<span>{{ $locale === 'tr' ? 'Doküman' : 'Documents' }}: <strong id="node-detail-documents">—</strong></span>
+<span>{{ $locale === 'tr' ? 'Shard' : 'Shards' }}: <strong id="node-detail-shards">—</strong></span>
+</div>
+<div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0">
+<thead><tr><th>{{ $locale === 'tr' ? 'İndeks' : 'Index' }}</th><th>{{ $locale === 'tr' ? 'Primary shard' : 'Primary shards' }}</th><th>{{ $locale === 'tr' ? 'Replica shard' : 'Replica shards' }}</th></tr></thead>
+<tbody id="node-detail-indices"><tr><td colspan="3" class="muted">{{ $locale === 'tr' ? 'Yükleniyor…' : 'Loading…' }}</td></tr></tbody>
+</table></div></section>
 <div class="row g-3 mb-4">
 <div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['cpu'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['cpu-chart'], labels.cpu, 'node-cpu-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="cpu-chart"></div></section></div>
 <div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['heap'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['heap-chart'], labels.heap, 'node-heap-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="heap-chart"></div></section></div>
@@ -75,6 +94,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <style>.copy-toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:#182238;color:#fff;padding:10px 16px;border-radius:9px;opacity:0;pointer-events:none;transition:.2s;z-index:2000}.copy-toast.show{opacity:1;transform:translate(-50%,0)}</style>
 <script>
 const endpoint=@json(route('elasticsearch-monitoring.nodes.data',['locale'=>$locale]));
+const detailsEndpoint=@json(route('elasticsearch-monitoring.nodes.details',['locale'=>$locale]));
 const labels=@json($text);
 const chartExportLabels = {error: @json(trans('elasticsearch-monitoring::messages.chart_export_failed', [], $locale))};
 async function exportMonitoringChartPng(chart, title, filename) {
@@ -142,7 +162,24 @@ function renderTable(){
  }).join('');
  body.querySelectorAll('[data-node-id]').forEach(button=>button.addEventListener('click',()=>selectNode(button.dataset.nodeId)));
 }
-function selectNode(id){selectedId=id;document.getElementById('node-select').value=id;renderSelected();}
+async function loadNodeDetails(id){
+ const body=document.getElementById('node-detail-indices');
+ try{
+  const response=await fetch(detailsEndpoint+'?node_id='+encodeURIComponent(id),{headers:{Accept:'application/json'}});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const payload=await response.json(), node=payload.node||{};
+  document.getElementById('node-detail-address').textContent=node.ip||'—';
+  document.getElementById('node-detail-roles').textContent=(node.roles||[]).join(', ')||'—';
+  document.getElementById('node-detail-cpu').textContent=percent(node.cpu_percent);
+  document.getElementById('node-detail-heap').textContent=percent(node.heap_percent);
+  document.getElementById('node-detail-disk').textContent=percent(node.disk_percent);
+  document.getElementById('node-detail-documents').textContent=number(node.documents);
+  document.getElementById('node-detail-shards').textContent=number(node.shards);
+  document.getElementById('node-details-meta').textContent=node.name||'—';
+  body.innerHTML=(payload.indices||[]).length?(payload.indices||[]).map(index=>'<tr><td>'+safe(index.name)+'</td><td>'+number(index.primary_shards)+'</td><td>'+number(index.replica_shards)+'</td></tr>').join(''):'<tr><td colspan="3" class="muted">—</td></tr>';
+ }catch(error){body.innerHTML='<tr><td colspan="3" class="text-danger">'+safe(error.message)+'</td></tr>';}
+}
+function selectNode(id){selectedId=id;document.getElementById('node-select').value=id;renderSelected();loadNodeDetails(id);}
 async function loadNodes(){
  const notice=document.getElementById('notice');
  try{
@@ -154,7 +191,7 @@ async function loadNodes(){
   notice.classList.add('d-none');
   if(!nodes.some(node=>node.id===selectedId))selectedId=nodes[0].id;
   select.innerHTML=nodes.map(node=>'<option value="'+safe(node.id)+'">'+safe(node.name)+' ('+safe(node.id)+')</option>').join('');
-  select.disabled=false;select.value=selectedId;renderSelected();renderTable();
+  select.disabled=false;select.value=selectedId;renderSelected();renderTable();loadNodeDetails(selectedId);
   const latest=payload.meta?.latest_collected_at;
   document.getElementById('updated').textContent=labels.updated+': '+(latest?new Intl.DateTimeFormat(document.documentElement.lang,{dateStyle:'medium',timeStyle:'short'}).format(new Date(latest)):'—')+' · '+(payload.meta?.snapshots||0)+' '+labels.points;
  }catch(error){notice.textContent=labels.error+' '+error.message;notice.classList.remove('d-none');}
