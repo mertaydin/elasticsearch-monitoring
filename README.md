@@ -36,6 +36,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Reset all Index Management filters and sorting with one click.
 - Monitor per-node query/fetch rates, average operation latency, active search/fetch operations, search queues, and rejection rates with historical trends.
 - Customize the dashboard by hiding sections, dragging them into a preferred order, and restoring the default layout. Preferences are stored in the current browser profile.
+- Customize the seven summary KPI cards independently: show/hide cards, drag to reorder, and pin important cards to the top. Preferences are saved locally in the browser and require no database migration or Elasticsearch requests.
 
 - Add private dashboard notes to a selected history chart and timestamp. Notes persist in the package database, appear as markers on the matching chart, and can be edited or deleted.
 

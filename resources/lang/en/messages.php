@@ -91,4 +91,8 @@ return [
     'pdf_unknown_cluster' => 'Unknown cluster',
     'pdf_unavailable' => 'Monitoring data is not available yet.',
     'pdf_failed' => 'Unable to create the PDF report. Please try again.',
+    'dashboard_kpi_title' => 'Summary KPI cards',
+    'dashboard_kpi_hint' => 'Show or hide cards, drag to reorder, and pin important metrics to the top.',
+    'dashboard_kpi_pin' => 'Pin to top',
+    'dashboard_kpi_unpin' => 'Unpin',
 ];

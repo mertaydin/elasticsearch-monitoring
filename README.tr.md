@@ -37,6 +37,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - Elasticsearch API İstek Geçmişi ekranında endpoint, HTTP durum kodu, yanıt süresi, hata kayıtları ve en çok/en yavaş endpoint sıralamalarını inceleyin.
 - Node bazında query/fetch hızlarını, ortalama işlem sürelerini, aktif arama işlemlerini, search kuyruğunu ve reddedilme oranlarını geçmiş grafiklerle izleyin.
 - Dashboard bölümlerini gizleyin, sürükleyerek sıralayın ve varsayılan düzene dönün. Tercihler mevcut tarayıcı profilinde saklanır.
+- Yedi özet KPI kartını bağımsız yönetin: kartları gösterin/gizleyin, sürükleyerek sıralayın ve önemli kartları üste sabitleyin. Tercihler tarayıcıda saklanır; migration veya ek Elasticsearch isteği gerekmez.
 
 - İlgili geçmiş grafiğine ve tam tarih/saat bilgisine bağlı kalıcı dashboard notları ekleyin. Notlar hesap bazında saklanır ve seçili tarih aralığında ilgili grafikte işaretlenir.
 

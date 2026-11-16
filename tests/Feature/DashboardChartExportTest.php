@@ -28,6 +28,28 @@ class DashboardChartExportTest extends TestCase
         $this->assertStringContainsString('pdfCharts', $html);
     }
 
+    public function test_dashboard_kpi_cards_can_be_customized_and_pinned_without_server_requests(): void
+    {
+        $html = view('elasticsearch-monitoring::dashboard')->render();
+
+        $this->assertStringContainsString('dashboard-kpi-list', $html);
+        $this->assertStringContainsString('readDashboardKpis()', $html);
+        $this->assertStringContainsString('applyDashboardKpis()', $html);
+        $this->assertStringContainsString('defaultDashboardKpiOrder', $html);
+        $this->assertStringContainsString('dashboardKpiKey', $html);
+    }
+
+    public function test_dashboard_kpi_labels_are_available_in_all_supported_locales(): void
+    {
+        foreach (['tr', 'en', 'es', 'zh_CN', 'hi', 'ar'] as $locale) {
+            foreach (['dashboard_kpi_title', 'dashboard_kpi_hint', 'dashboard_kpi_pin', 'dashboard_kpi_unpin'] as $key) {
+                $value = trans('elasticsearch-monitoring::messages.'.$key, [], $locale);
+                $this->assertIsString($value);
+                $this->assertNotSame($key, $value);
+            }
+        }
+    }
+
     public function test_pdf_report_labels_are_available_in_all_supported_locales(): void
     {
         foreach (['tr', 'en', 'es', 'zh_CN', 'hi', 'ar'] as $locale) {

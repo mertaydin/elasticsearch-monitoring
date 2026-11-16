@@ -78,4 +78,8 @@ return [
     'pdf_unknown_cluster' => 'Clúster desconocido',
     'pdf_unavailable' => 'Aún no hay datos de monitorización.',
     'pdf_failed' => 'No se pudo crear el informe PDF. Inténtalo de nuevo.',
+    'dashboard_kpi_title' => 'Tarjetas KPI resumidas',
+    'dashboard_kpi_hint' => 'Muestra u oculta tarjetas, arrástralas para reordenarlas y fija las métricas importantes arriba.',
+    'dashboard_kpi_pin' => 'Fijar arriba',
+    'dashboard_kpi_unpin' => 'Desfijar',
 ];

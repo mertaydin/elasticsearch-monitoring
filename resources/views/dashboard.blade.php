@@ -129,7 +129,7 @@
         .table-hover>tbody>tr:hover>*{--bs-table-bg:#f7f8ff}
         .badge.text-bg-light{background:#f0f3fa!important;color:#5d6a84!important;border:1px solid #e6eaf2}
         .progress{background:#edf0f6;border-radius:20px}.progress-bar{border-radius:20px}
-        #dashboard-customizer{border-color:#dfe4f1}
+        #dashboard-customizer{border-color:#dfe4f1}.dashboard-kpi-pinned .summary-card{outline:2px solid rgba(79,91,213,.22);outline-offset:-2px}
         #updated{color:#8a95a8!important}
         @media(max-width:1199px){#summary-cards>.col-xl-3{max-width:50%}}
         @media(max-width:991px){.dashboard-nav{align-items:stretch;flex-direction:column}.dashboard-nav-tools{justify-content:flex-end}.dashboard-nav-links{padding-bottom:2px}}
@@ -227,7 +227,8 @@
             <div><h2 class="section-title mb-1">{{ $locale === 'tr' ? 'Dashboard düzeni' : 'Dashboard layout' }}</h2><p class="small text-muted mb-0">{{ $locale === 'tr' ? 'Bölümleri sürükleyerek sıralayın, görmek istemediklerinizi gizleyin.' : 'Drag sections to reorder them and hide the ones you do not need.' }}</p></div>
             <button type="button" class="btn btn-sm btn-outline-secondary" onclick="resetDashboardLayout()">{{ $locale === 'tr' ? 'Varsayılana dön' : 'Reset to default' }}</button>
         </div>
-        <ol id="dashboard-widget-list" class="list-group list-group-flush"></ol>
+        <ol id="dashboard-widget-list" class="list-group list-group-flush mb-4"></ol>
+        <div class="border-top pt-3"><h3 class="section-title mb-1">{{ $t('dashboard_kpi_title') }}</h3><p class="small text-muted mb-2">{{ $t('dashboard_kpi_hint') }}</p><ol id="dashboard-kpi-list" class="list-group list-group-flush"></ol></div>
     </section>
     <div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h6 fw-bold mb-0">{{ $uiText['overview'] }}</h2></div>
     <div class="row g-3 mb-4 justify-content-center" id="summary-cards" data-dashboard-widget="summary">
@@ -240,7 +241,7 @@
             ['id'=>'cpu','label'=>$uiText['cpu'],'unit'=>'%','color'=>'#8064c8'],
             ['id'=>'store-size','label'=>$t('store_size'),'unit'=>'','color'=>'#16a085'],
         ] as $card)
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-12 col-sm-6 col-xl-3" data-dashboard-card="{{ $card['id'] }}">
                 <div class="summary-card" style="--spark-color: {{ $card['color'] }}">
                     <div class="d-flex justify-content-between align-items-start gap-2">
                         <span class="summary-label">{{ $card['label'] }}</span>
@@ -331,6 +332,8 @@ const favoritesStorageKey = 'elasticsearch-monitoring:favorites';
 const favoriteLabels = @json($favoriteText);
 const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
 const dashboardLayoutKey = 'elasticsearch-monitoring:dashboard-layout';
+const dashboardKpiKey = 'elasticsearch-monitoring:dashboard-kpis';
+const defaultDashboardKpiOrder = ['docs', 'active-shards', 'unassigned', 'search-rate', 'index-rate', 'cpu', 'store-size'];
 const defaultDashboardWidgetOrder = ['summary', 'favorites', 'health', 'metrics', 'nodes', 'charts'];
 const dashboardWidgetLabels = @json($dashboardWidgetNames);
 function readDashboardLayout() {
@@ -362,9 +365,49 @@ function renderDashboardWidgetList(layout) {
         list.appendChild(item);
     });
 }
+function readDashboardKpis() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(dashboardKpiKey) || '{}');
+        const order = Array.isArray(stored.order) ? stored.order.filter(id => defaultDashboardKpiOrder.includes(id)) : [];
+        return {order: [...new Set([...order, ...defaultDashboardKpiOrder])], hidden: Array.isArray(stored.hidden) ? [...new Set(stored.hidden.filter(id => defaultDashboardKpiOrder.includes(id)))] : [], pinned: Array.isArray(stored.pinned) ? [...new Set(stored.pinned.filter(id => defaultDashboardKpiOrder.includes(id)))] : []};
+    } catch (error) { return {order: [...defaultDashboardKpiOrder], hidden: [], pinned: []}; }
+}
+function saveDashboardKpis(state) { try { localStorage.setItem(dashboardKpiKey, JSON.stringify(state)); } catch (error) {} }
+function applyDashboardKpis(state) {
+    const container = document.getElementById('summary-cards');
+    const cards = new Map([...container.querySelectorAll('[data-dashboard-card]')].map(card => [card.dataset.dashboardCard, card]));
+    const ordered = [...state.pinned.filter(id => state.order.includes(id)), ...state.order.filter(id => !state.pinned.includes(id))];
+    ordered.forEach(id => { const card = cards.get(id); if (card) { container.appendChild(card); card.hidden = state.hidden.includes(id); card.classList.toggle('dashboard-kpi-pinned', state.pinned.includes(id)); } });
+}
+function renderDashboardKpiList(state) {
+    const list = document.getElementById('dashboard-kpi-list'); list.replaceChildren();
+    state.order.forEach(id => {
+        const card = document.querySelector('[data-dashboard-card="' + id + '"]'); if (!card) return;
+        const item = document.createElement('li'); item.className = 'list-group-item d-flex align-items-center gap-3'; item.draggable = true;
+        const handle = document.createElement('span'); handle.className = 'text-muted'; handle.textContent = '☰';
+        const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.className = 'form-check-input mt-0'; checkbox.checked = !state.hidden.includes(id);
+        checkbox.setAttribute('aria-label', card.querySelector('.summary-label')?.textContent || id);
+        checkbox.addEventListener('change', () => { const next = readDashboardKpis(); next.hidden = checkbox.checked ? next.hidden.filter(value => value !== id) : [...new Set([...next.hidden, id])]; saveDashboardKpis(next); applyDashboardKpis(next); });
+        const label = document.createElement('span'); label.className = 'flex-grow-1'; label.textContent = card.querySelector('.summary-label')?.textContent || id;
+        const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'btn btn-sm ' + (state.pinned.includes(id) ? 'btn-primary' : 'btn-outline-secondary'); pin.textContent = state.pinned.includes(id) ? '★' : '☆';
+        pin.title = state.pinned.includes(id) ? @json($t('dashboard_kpi_unpin')) : @json($t('dashboard_kpi_pin')); pin.setAttribute('aria-label', pin.title);
+        pin.addEventListener('click', () => { const next = readDashboardKpis(); next.pinned = next.pinned.includes(id) ? next.pinned.filter(value => value !== id) : [...next.pinned, id]; saveDashboardKpis(next); applyDashboardKpis(next); renderDashboardKpiList(next); });
+        item.append(handle, checkbox, label, pin);
+        item.addEventListener('dragstart', event => { event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', id); item.classList.add('opacity-50'); });
+        item.addEventListener('dragend', () => item.classList.remove('opacity-50'));
+        item.addEventListener('dragover', event => event.preventDefault());
+        item.addEventListener('drop', event => { event.preventDefault(); const moved = event.dataTransfer.getData('text/plain'); if (!moved || moved === id) return; const next = readDashboardKpis(); const from = next.order.indexOf(moved), to = next.order.indexOf(id); if (from < 0 || to < 0) return; next.order.splice(from, 1); next.order.splice(to, 0, moved); saveDashboardKpis(next); applyDashboardKpis(next); renderDashboardKpiList(next); });
+        list.appendChild(item);
+    });
+}
 function toggleDashboardCustomizer() { document.getElementById('dashboard-customizer').classList.toggle('d-none'); }
-function resetDashboardLayout() { try { localStorage.removeItem(dashboardLayoutKey); } catch (error) {} const layout = {order: [...defaultDashboardWidgetOrder], hidden: []}; applyDashboardLayout(layout); renderDashboardWidgetList(layout); }
+function resetDashboardLayout() {
+    try { localStorage.removeItem(dashboardLayoutKey); localStorage.removeItem(dashboardKpiKey); } catch (error) {}
+    const layout = {order: [...defaultDashboardWidgetOrder], hidden: []}, kpis = {order: [...defaultDashboardKpiOrder], hidden: [], pinned: []};
+    applyDashboardLayout(layout); renderDashboardWidgetList(layout); applyDashboardKpis(kpis); renderDashboardKpiList(kpis);
+}
 const initialDashboardLayout = readDashboardLayout(); applyDashboardLayout(initialDashboardLayout); renderDashboardWidgetList(initialDashboardLayout);
+const initialDashboardKpis = readDashboardKpis(); applyDashboardKpis(initialDashboardKpis); renderDashboardKpiList(initialDashboardKpis);
 function renderFavoriteIndices() {
     const container = document.getElementById('favorite-indices-list');
     const empty = document.getElementById('favorite-indices-empty');

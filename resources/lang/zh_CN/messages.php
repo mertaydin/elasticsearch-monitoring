@@ -78,4 +78,8 @@ return [
     'pdf_unknown_cluster' => '未知集群',
     'pdf_unavailable' => '暂无监控数据。',
     'pdf_failed' => '无法生成 PDF 报告，请重试。',
+    'dashboard_kpi_title' => '摘要 KPI 卡片',
+    'dashboard_kpi_hint' => '显示或隐藏卡片，拖动以重新排序，并将重要指标固定在顶部。',
+    'dashboard_kpi_pin' => '固定到顶部',
+    'dashboard_kpi_unpin' => '取消固定',
 ];

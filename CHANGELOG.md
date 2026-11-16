@@ -67,6 +67,13 @@
 - Strip URL query parameters and never record credentials or request bodies.
 - Add a localized history page and feature tests.
 
+## [0.31.0] - 2026-11-16
+
+- Add independent summary KPI card customization: show/hide, drag-and-drop ordering, and pin important cards to the top.
+- Persist KPI card preferences in browser local storage and reset them together with the dashboard layout.
+- Localize KPI customization controls in all six supported languages; update both READMEs and feature tests.
+- Keep the feature client-side with no database migration or additional Elasticsearch requests.
+
 # Changelog
 
 ## [0.21.0] - 2026-11-15

@@ -91,4 +91,8 @@ return [
     'pdf_unknown_cluster' => 'Bilinmeyen küme',
     'pdf_unavailable' => 'Henüz izleme verisi bulunmuyor.',
     'pdf_failed' => 'PDF raporu oluşturulamadı. Lütfen tekrar deneyin.',
+    'dashboard_kpi_title' => 'Özet KPI kartları',
+    'dashboard_kpi_hint' => 'Kartları gösterin veya gizleyin, sürükleyerek sıralayın ve önemli olanları üste sabitleyin.',
+    'dashboard_kpi_pin' => 'Üste sabitle',
+    'dashboard_kpi_unpin' => 'Sabitlemeyi kaldır',
 ];
