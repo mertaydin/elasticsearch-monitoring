@@ -21,6 +21,7 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
     ->name('elasticsearch-monitoring.')
     ->group(function (): void {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
+        Route::view('/tools/json', 'elasticsearch-monitoring::tools.json-viewer')->name('tools.json');
         Route::get('/data', [DashboardController::class, 'data'])->name('data');
         Route::get('/connection', [ConnectionStatusController::class, 'show'])->name('connection');
         Route::get('/notes', [DashboardNoteController::class, 'index'])->name('notes.index');
