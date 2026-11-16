@@ -12,6 +12,20 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 **Read-only by design:** the package only reads Elasticsearch metrics, index metadata, mappings, settings, and lifecycle information. It never creates, updates, closes, or deletes indices, and never changes mappings, settings, shard allocation, or ILM policies.
 
+## Screenshots
+
+These screenshots are captured from the package running inside a temporary Laravel application connected to a disposable Elasticsearch 8.18 cluster in GitHub Actions. The pages use the package's real dashboard and live Elasticsearch responses; only the indexed demo documents are synthetic.
+
+| Cluster dashboard | Node performance |
+| --- | --- |
+| ![Cluster dashboard](docs/screenshots/cluster-dashboard.png) | ![Node performance](docs/screenshots/node-performance.png) |
+
+| Index management | Shard allocation |
+| --- | --- |
+| ![Index management](docs/screenshots/index-management.png) | ![Shard allocation](docs/screenshots/shard-allocation.png) |
+
+![Thread pools](docs/screenshots/thread-pools.png)
+
 ## Features
 
 - Open and inspect JSON files in a browser-only JSON Viewer with a collapsible tree, key/value search, source editing, pretty printing, minifying, copy, and download. File contents stay in the browser and are never sent to Elasticsearch or uploaded to the server.

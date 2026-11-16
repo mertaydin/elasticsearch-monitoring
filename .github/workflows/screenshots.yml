@@ -1,0 +1,136 @@
+name: Capture package screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/screenshots.yml'
+      - 'README.md'
+      - 'resources/views/**'
+      - 'resources/**/css/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: package-screenshots
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.18.2
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: 'false'
+          ES_JAVA_OPTS: -Xms512m -Xmx512m
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl -fsS http://localhost:9200/_cluster/health"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, sqlite3, pdo_sqlite
+          tools: composer:v2
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Wait for Elasticsearch
+        run: |
+          for i in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:9200 >/dev/null && exit 0
+            sleep 2
+          done
+          exit 1
+      - name: Create temporary Laravel host application
+        run: composer create-project laravel/laravel screenshot-app '^12.0' --no-interaction
+      - name: Install package and prepare host application
+        working-directory: screenshot-app
+        run: |
+          composer config repositories.elasticsearch-monitoring '{"type":"path","url":"../","options":{"symlink":false}}'
+          composer require mertaydin/elasticsearch-monitoring:@dev --no-interaction
+          cat > .env <<'ENV'
+          APP_NAME="Elasticsearch Monitoring Screenshot"
+          APP_ENV=local
+          APP_KEY=
+          APP_DEBUG=true
+          APP_URL=http://127.0.0.1:8000
+          LOG_CHANNEL=stack
+          DB_CONNECTION=sqlite
+          DB_DATABASE=database/database.sqlite
+          CACHE_STORE=file
+          SESSION_DRIVER=file
+          ELASTICSEARCH_MONITORING_URL=http://127.0.0.1:9200
+          ELASTICSEARCH_MONITORING_VERIFY=false
+          ENV
+          php artisan key:generate
+          touch database/database.sqlite
+          php artisan vendor:publish --tag=elasticsearch-monitoring-config --force
+          cat > app/Providers/AppServiceProvider.php <<'PHP'
+          <?php
+          namespace App\Providers;
+          use Illuminate\Support\ServiceProvider;
+          class AppServiceProvider extends ServiceProvider {
+              public function boot(): void {
+                  config(['elasticsearch-monitoring.dashboard.middleware' => ['web']]);
+              }
+          }
+          PHP
+          php artisan migrate --force
+          npm install --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Seed demo Elasticsearch documents and collect real metrics
+        working-directory: screenshot-app
+        run: |
+          curl -fsS -X PUT 'http://127.0.0.1:9200/demo-products' -H 'Content-Type: application/json' -d '{"settings":{"number_of_shards":1,"number_of_replicas":0},"mappings":{"properties":{"name":{"type":"text"},"category":{"type":"keyword"},"price":{"type":"float"},"created_at":{"type":"date"}}}}'
+          printf '%s\n' '{"index":{"_index":"demo-products","_id":"1"}}' '{"name":"Wireless Headphones","category":"electronics","price":129.99,"created_at":"2026-11-15T10:00:00Z"}' '{"index":{"_index":"demo-products","_id":"2"}}' '{"name":"Mechanical Keyboard","category":"electronics","price":89.50,"created_at":"2026-11-15T11:00:00Z"}' '{"index":{"_index":"demo-products","_id":"3"}}' '{"name":"Desk Lamp","category":"home","price":42.00,"created_at":"2026-11-15T12:00:00Z"}' > /tmp/demo-bulk.ndjson
+          curl -fsS -X POST 'http://127.0.0.1:9200/_bulk?refresh=true' -H 'Content-Type: application/x-ndjson' --data-binary @/tmp/demo-bulk.ndjson
+          php artisan elasticsearch:collect
+          sleep 2
+          php artisan elasticsearch:collect
+      - name: Start Laravel
+        working-directory: screenshot-app
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 > /tmp/elasticsearch-monitoring-server.log 2>&1 &
+          for i in $(seq 1 30); do curl -fsS http://127.0.0.1:8000/monitoring/elasticsearch >/dev/null && break; sleep 2; done
+      - name: Capture real package pages
+        working-directory: screenshot-app
+        run: |
+          mkdir -p ../docs/screenshots
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage({viewport:{width:1440,height:1100},deviceScaleFactor:1});
+          page.on('pageerror', error => console.error(error));
+          for (const [path,file] of [
+            ['/monitoring/elasticsearch','cluster-dashboard.png'],
+            ['/monitoring/elasticsearch/nodes','node-performance.png'],
+            ['/monitoring/elasticsearch/indices','index-management.png'],
+            ['/monitoring/elasticsearch/shards','shard-allocation.png'],
+            ['/monitoring/elasticsearch/thread-pools','thread-pools.png'],
+          ]) {
+            const response = await page.goto('http://127.0.0.1:8000'+path,{waitUntil:'networkidle'});
+            if (!response || response.status() >= 400) throw new Error('Screenshot route failed: '+path+' '+response?.status());
+            await page.screenshot({path:'../docs/screenshots/'+file,fullPage:true});
+          }
+          await browser.close();
+          NODE
+      - name: Commit screenshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots
+          if ! git diff --cached --quiet; then
+            git commit -m "Add real package UI screenshots"
+            git push
+          fi
