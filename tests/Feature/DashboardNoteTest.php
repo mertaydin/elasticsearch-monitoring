@@ -4,20 +4,11 @@ namespace ElasticsearchMonitoring\Tests\Feature;
 
 use ElasticsearchMonitoring\Http\Controllers\DashboardNoteController;
 use ElasticsearchMonitoring\Tests\TestCase;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
-
-class DashboardNoteTestUser
-{
-    public function __construct(private string $id) {}
-
-    public function getAuthIdentifier(): string
-    {
-        return $this->id;
-    }
-}
 
 class DashboardNoteTest extends TestCase
 {
@@ -76,7 +67,10 @@ class DashboardNoteTest extends TestCase
     private function request(string $method, array $data = [], string $userId = 'user-1'): Request
     {
         $request = Request::create('/monitoring/elasticsearch/notes', $method, $data);
-        $request->setUserResolver(fn () => new DashboardNoteTestUser($userId));
+        $user = \Mockery::mock(Authenticatable::class);
+        $user->shouldReceive('getAuthIdentifier')->andReturn($userId);
+        $request->setUserResolver(fn () => $user);
+
         return $request;
     }
 }
