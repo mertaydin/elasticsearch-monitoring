@@ -196,6 +196,7 @@ function renderSelected(){
  if(!node)return;
  const latest=node.latest||{},points=node.history||[];
  renderAvailability(node.availability);
+ document.getElementById('node-detail-version').textContent=latest.version||'—';
  document.getElementById('cpu-value').textContent=percent(latest.cpu_percent);
  document.getElementById('heap-value').textContent=percent(latest.heap_percent);
  document.getElementById('disk-value').textContent=percent(latest.filesystem_used_percent);
