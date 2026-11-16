@@ -21,6 +21,11 @@ class DashboardAuthorizer
 
     public function allows(Request $request): bool
     {
-        return $this->callback === null || (bool) ($this->callback)($request);
+        // Fail closed: without an explicit host-registered callback no request is authorized.
+        if ($this->callback === null) {
+            return false;
+        }
+
+        return (bool) ($this->callback)($request);
     }
 }
