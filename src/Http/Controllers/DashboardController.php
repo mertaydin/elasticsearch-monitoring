@@ -52,8 +52,18 @@ class DashboardController
             return response()->json(['message' => 'The selected date range exceeds the configured metric retention period.'], 422);
         }
 
-        $latest = MetricSnapshot::query()->latest('collected_at')->first();
-        $query = MetricSnapshot::query()->whereBetween('collected_at', [$from, $to])->orderBy('collected_at');
+        // Enforce the retention boundary as an absolute age limit, independent of collector cleanup.
+        $retentionDays = (int) config('elasticsearch-monitoring.collection.retention_days', 90);
+        $cutoff = $retentionDays > 0 ? now()->subDays($retentionDays) : null;
+
+        $latest = MetricSnapshot::query()
+            ->when($cutoff !== null, fn ($q) => $q->where('collected_at', '>=', $cutoff))
+            ->latest('collected_at')
+            ->first();
+        $query = MetricSnapshot::query()
+            ->when($cutoff !== null, fn ($q) => $q->where('collected_at', '>=', $cutoff))
+            ->whereBetween('collected_at', [$from, $to])
+            ->orderBy('collected_at');
         $total = (clone $query)->count();
         $durationSeconds = max(0, $to->getTimestamp() - $from->getTimestamp());
         $aggregation = $durationSeconds > 7 * 86400 ? 'daily' : ($durationSeconds > 86400 ? 'hourly' : 'raw');
@@ -65,6 +75,7 @@ class DashboardController
             $comparisonFrom = $from->copy()->subSeconds(max(1, $durationSeconds));
             $comparisonTo = $from->copy()->subSecond();
             $comparisonQuery = MetricSnapshot::query()
+                ->when($cutoff !== null, fn ($q) => $q->where('collected_at', '>=', $cutoff))
                 ->whereBetween('collected_at', [$comparisonFrom, $comparisonTo])
                 ->orderBy('collected_at');
             $comparisonTotal = (clone $comparisonQuery)->count();
