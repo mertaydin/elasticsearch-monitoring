@@ -1,10 +1,10 @@
 <?php
 
-namespace ElasticsearchMonitoring\Tests\Feature;
+namespace ElasticsearchMonitoring\\Tests\\Feature;
 
-use ElasticsearchMonitoring\Http\Controllers\NodeExplorerController;
-use ElasticsearchMonitoring\Tests\TestCase;
-use Illuminate\Support\Facades\Http;
+use ElasticsearchMonitoring\\Http\\Controllers\\NodeExplorerController;
+use ElasticsearchMonitoring\\Tests\\TestCase;
+use Illuminate\\Support\\Facades\\Http;
 
 class NodeExplorerTest extends TestCase
 {
@@ -39,8 +39,8 @@ class NodeExplorerTest extends TestCase
         $this->assertSame('data-01', $payload['node']['name']);
         $this->assertSame('10.0.0.11', $payload['node']['ip']);
         $this->assertSame(25, $payload['node']['cpu_percent']);
-        $this->assertSame(50.0, $payload['node']['heap_percent']);
-        $this->assertSame(60.0, $payload['node']['disk_percent']);
+        $this->assertEquals(50.0, $payload['node']['heap_percent']);
+        $this->assertEquals(60.0, $payload['node']['disk_percent']);
         $this->assertSame(120, $payload['node']['documents']);
         $this->assertSame(3, $payload['node']['shards']);
         $this->assertSame([['name' => 'applications', 'primary_shards' => 1, 'replica_shards' => 1]], $payload['indices']);
