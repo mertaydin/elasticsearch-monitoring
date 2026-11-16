@@ -25,6 +25,54 @@ class IndexController
         return view($viewName);
     }
 
+    public function search(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'q' => ['required', 'string', 'min:2', 'max:100', 'regex:/^[a-z0-9._-]+$/i'],
+        ]);
+
+        try {
+            $term = strtolower($validated['q']);
+            $query = http_build_query([
+                'format' => 'json',
+                'bytes' => 'b',
+                'h' => 'health,status,index,docs.count,store.size',
+                'expand_wildcards' => 'open,closed,hidden',
+            ]);
+            $rows = $this->client->request('_cat/indices/*'.rawurlencode($term).'*?'.$query);
+            $indices = [];
+
+            foreach (array_filter($rows, 'is_array') as $row) {
+                $name = (string) ($row['index'] ?? '');
+                if ($name === '' || stripos($name, $term) === false) {
+                    continue;
+                }
+
+                $indices[] = [
+                    'name' => $name,
+                    'health' => strtolower((string) ($row['health'] ?? 'unknown')),
+                    'status' => (string) ($row['status'] ?? 'unknown'),
+                    'documents_count' => (int) ($row['docs.count'] ?? 0),
+                    'storage_bytes' => (int) ($row['store.size'] ?? 0),
+                ];
+            }
+
+            usort($indices, static function (array $a, array $b) use ($term): int {
+                $aPrefix = str_starts_with(strtolower($a['name']), $term) ? 0 : 1;
+                $bPrefix = str_starts_with(strtolower($b['name']), $term) ? 0 : 1;
+
+                return ($aPrefix <=> $bPrefix) ?: strcmp($a['name'], $b['name']);
+            });
+
+            return response()->json(['indices' => array_slice($indices, 0, 12)]);
+        } catch (Throwable $exception) {
+            return response()->json([
+                'message' => 'Unable to search Elasticsearch indices.',
+                'error' => $exception->getMessage(),
+            ], 502);
+        }
+    }
+
     public function data(Request $request): JsonResponse
     {
         try {

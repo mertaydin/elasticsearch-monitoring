@@ -40,6 +40,15 @@
         'ar' => ['summary'=>'المقاييس الموجزة','favorites'=>'الفهارس المفضلة','problematic'=>'الفهارس التي بها مشكلات','health'=>'صحة المجموعة والتنبيهات','metrics'=>'المقاييس التفصيلية','nodes'=>'مقارنة العقد','charts'=>'الرسوم البيانية'],
     ][$locale] ?? ['summary'=>'Summary metrics','favorites'=>'Favorite indices','health'=>'Cluster health and alerts','metrics'=>'Detailed metrics','nodes'=>'Node comparison','charts'=>'Charts'];
 
+    $globalIndexSearchText = [
+        'tr' => ['title'=>'Global indeks arama','placeholder'=>'İndeks adı yazın…','hint'=>'En az 2 karakter yazın','loading'=>'İndeksler aranıyor…','empty'=>'Eşleşen indeks bulunamadı.','error'=>'İndeksler aranamadı.','documents'=>'Belge','storage'=>'Depolama','open'=>'Detayları aç','health'=>['green'=>'Sağlıklı','yellow'=>'Uyarı','red'=>'Kritik','unknown'=>'Bilinmiyor']],
+        'en' => ['title'=>'Global index search','placeholder'=>'Type an index name…','hint'=>'Enter at least 2 characters','loading'=>'Searching indices…','empty'=>'No matching indices found.','error'=>'Unable to search indices.','documents'=>'Documents','storage'=>'Storage','open'=>'Open details','health'=>['green'=>'Healthy','yellow'=>'Warning','red'=>'Critical','unknown'=>'Unknown']],
+        'es' => ['title'=>'Búsqueda global de índices','placeholder'=>'Escriba el nombre de un índice…','hint'=>'Introduzca al menos 2 caracteres','loading'=>'Buscando índices…','empty'=>'No se encontraron índices.','error'=>'No se pudieron buscar índices.','documents'=>'Documentos','storage'=>'Almacenamiento','open'=>'Ver detalles','health'=>['green'=>'Saludable','yellow'=>'Advertencia','red'=>'Crítico','unknown'=>'Desconocido']],
+        'zh_CN' => ['title'=>'全局索引搜索','placeholder'=>'输入索引名称…','hint'=>'至少输入 2 个字符','loading'=>'正在搜索索引…','empty'=>'未找到匹配的索引。','error'=>'无法搜索索引。','documents'=>'文档','storage'=>'存储','open'=>'查看详情','health'=>['green'=>'正常','yellow'=>'警告','red'=>'严重','unknown'=>'未知']],
+        'hi' => ['title'=>'ग्लोबल इंडेक्स खोज','placeholder'=>'इंडेक्स का नाम लिखें…','hint'=>'कम से कम 2 अक्षर दर्ज करें','loading'=>'इंडेक्स खोजे जा रहे हैं…','empty'=>'कोई मेल खाता इंडेक्स नहीं मिला।','error'=>'इंडेक्स खोजने में असमर्थ।','documents'=>'दस्तावेज़','storage'=>'स्टोरेज','open'=>'विवरण खोलें','health'=>['green'=>'स्वस्थ','yellow'=>'चेतावनी','red'=>'गंभीर','unknown'=>'अज्ञात']],
+        'ar' => ['title'=>'بحث شامل في الفهارس','placeholder'=>'اكتب اسم الفهرس…','hint'=>'أدخل حرفين على الأقل','loading'=>'جارٍ البحث عن الفهارس…','empty'=>'لم يتم العثور على فهارس مطابقة.','error'=>'تعذر البحث عن الفهارس.','documents'=>'المستندات','storage'=>'التخزين','open'=>'فتح التفاصيل','health'=>['green'=>'سليم','yellow'=>'تحذير','red'=>'حرج','unknown'=>'غير معروف']],
+    ][$locale] ?? ['title'=>'Global index search','placeholder'=>'Type an index name…','hint'=>'Enter at least 2 characters','loading'=>'Searching indices…','empty'=>'No matching indices found.','error'=>'Unable to search indices.','documents'=>'Documents','storage'=>'Storage','open'=>'Open details','health'=>['green'=>'Healthy','yellow'=>'Warning','red'=>'Critical','unknown'=>'Unknown']];
+
     $favoriteText = [
         'tr' => ['title'=>'Favori indeksler','empty'=>'Henüz favori indeks eklemediniz. İndeks yönetimi ekranında yıldız simgesini kullanarak ekleyebilirsiniz.','open'=>'İndeksi aç'],
         'en' => ['title'=>'Favorite indices','empty'=>'You have not added any favorite indices yet. Use the star in Index Management to add some.','open'=>'Open index'],
@@ -181,6 +190,29 @@
             </div>
         </nav>
     </header>
+    <section class="global-index-search mb-3" aria-label="{{ $globalIndexSearchText['title'] }}">
+        <div class="d-flex align-items-center gap-2 mb-2"><span class="global-index-search-icon" aria-hidden="true">⌕</span><label for="global-index-search-input" class="small fw-bold mb-0">{{ $globalIndexSearchText['title'] }}</label></div>
+        <div class="position-relative">
+            <input id="global-index-search-input" type="search" class="form-control" autocomplete="off" spellcheck="false" maxlength="100" placeholder="{{ $globalIndexSearchText['placeholder'] }}" aria-controls="global-index-search-results" aria-expanded="false">
+            <div id="global-index-search-results" class="global-index-search-results d-none" role="listbox" aria-label="{{ $globalIndexSearchText['title'] }}"></div>
+        </div>
+        <div class="small text-muted mt-1" id="global-index-search-status">{{ $globalIndexSearchText['hint'] }}</div>
+    </section>
+    <style>
+        .global-index-search{position:relative;z-index:20;padding:15px 17px;border:1px solid var(--em-line);border-radius:15px;background:#fff;box-shadow:0 4px 15px rgba(31,45,82,.025)}
+        .global-index-search-icon{display:inline-grid;place-items:center;width:25px;height:25px;border-radius:8px;background:#eef1ff;color:#4655c5;font-size:1.25rem;font-weight:800}
+        .global-index-search input{height:43px;border:1px solid #dfe5f0;border-radius:10px;padding-left:14px}
+        .global-index-search input:focus{border-color:#8792eb;box-shadow:0 0 0 3px rgba(79,91,213,.1)}
+        .global-index-search-results{position:absolute;top:calc(100% + 7px);left:0;right:0;max-height:390px;overflow:auto;border:1px solid #e4e9f2;border-radius:12px;background:#fff;box-shadow:0 15px 35px rgba(31,45,82,.14);padding:6px;z-index:100}
+        .global-index-search-result{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:11px 12px;border:0;border-radius:9px;background:#fff;text-align:left;color:#293650}
+        .global-index-search-result:hover,.global-index-search-result.active{background:#f3f5ff}
+        .global-index-search-result-name{display:block;overflow-wrap:anywhere;font-size:.82rem;font-weight:800}
+        .global-index-search-result-meta{display:block;margin-top:4px;color:#7c879b;font-size:.68rem}
+        .global-index-search-health{flex:none;border-radius:7px;padding:4px 7px;font-size:.64rem;font-weight:800}
+        .global-index-search-health.green{background:#e5f7ef;color:#16865b}.global-index-search-health.yellow{background:#fff4df;color:#a96b13}.global-index-search-health.red{background:#ffebe9;color:#c34840}.global-index-search-health.unknown{background:#eef1f6;color:#68758c}
+        .global-index-search-empty{padding:16px 12px;color:#7c879b;font-size:.78rem}
+        @media(max-width:575.98px){.global-index-search{padding:12px}.global-index-search-results{max-height:55vh}.global-index-search-result{align-items:flex-start}}
+    </style>
     <div id="dashboard-refresh-controls" class="d-flex align-items-center flex-wrap gap-2 mb-3">
         <label for="dashboard-refresh-interval" class="small text-muted mb-0">{{ $t('refresh_interval') }}</label>
         <select id="dashboard-refresh-interval" class="form-select form-select-sm" style="width:auto" onchange="changeDashboardRefreshInterval(this.value)">
@@ -340,6 +372,137 @@ const favoritesStorageKey = 'elasticsearch-monitoring:favorites';
 const favoriteLabels = {...@json($favoriteText),health:@json($t('favorite_health')),documents:@json($t('favorite_documents')),storage:@json($t('favorite_storage')),indexing:@json($t('favorite_indexing')),active:@json($t('favorite_indexing_active')),total:@json($t('favorite_indexing_total')),missing:@json($t('favorite_missing')),loading:@json($t('favorite_loading')),loadFailed:@json($t('favorite_load_failed'))};
 const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
 const favoriteSummaryEndpoint = @json(route('elasticsearch-monitoring.indices.favorites-summary'));
+const globalIndexSearchEndpoint = @json(route('elasticsearch-monitoring.indices.search'));
+const globalIndexDetailsUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
+const globalIndexSearchLabels = @json($globalIndexSearchText);
+let globalIndexSearchTimer = null;
+let globalIndexSearchAbort = null;
+let globalIndexSearchItems = [];
+let globalIndexSearchActive = -1;
+function globalIndexBytes(value) {
+    const bytes = Number(value || 0);
+    if (bytes < 1024) return bytes + ' B';
+    const units = ['KB', 'MB', 'GB', 'TB', 'PB'];
+    let size = bytes / 1024, unit = 0;
+    while (size >= 1024 && unit < units.length - 1) { size /= 1024; unit++; }
+    return size.toFixed(1) + ' ' + units[unit];
+}
+function renderGlobalIndexSearch(items) {
+    const box = document.getElementById('global-index-search-results');
+    const input = document.getElementById('global-index-search-input');
+    const status = document.getElementById('global-index-search-status');
+    const labels = globalIndexSearchLabels;
+    const locale = @json($locale);
+    box.replaceChildren();
+    globalIndexSearchItems = items;
+    globalIndexSearchActive = -1;
+    if (!items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'global-index-search-empty';
+        empty.textContent = labels.empty;
+        box.append(empty);
+    } else {
+        items.forEach((item, index) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'global-index-search-result';
+            button.setAttribute('role', 'option');
+            button.dataset.index = String(index);
+            const details = document.createElement('span');
+            details.style.minWidth = '0';
+            const name = document.createElement('span');
+            name.className = 'global-index-search-result-name';
+            name.textContent = item.name;
+            const meta = document.createElement('span');
+            meta.className = 'global-index-search-result-meta';
+            meta.textContent = labels.documents + ': ' + Number(item.documents_count || 0).toLocaleString(locale) + ' · ' + labels.storage + ': ' + globalIndexBytes(item.storage_bytes);
+            const health = document.createElement('span');
+            health.className = 'global-index-search-health ' + (['green','yellow','red'].includes(item.health) ? item.health : 'unknown');
+            health.textContent = labels.health[item.health] || labels.health.unknown;
+            details.append(name, meta);
+            button.append(details, health);
+            button.addEventListener('click', () => openGlobalIndexSearchResult(item.name));
+            box.append(button);
+        });
+    }
+    box.classList.remove('d-none');
+    input.setAttribute('aria-expanded', 'true');
+    status.textContent = items.length ? items.length + ' / 12' : labels.empty;
+}
+function openGlobalIndexSearchResult(name) {
+    const url = new URL(globalIndexDetailsUrl, window.location.origin);
+    url.searchParams.set('search', name);
+    url.searchParams.set('open', name);
+    window.location.assign(url.toString());
+}
+function closeGlobalIndexSearch() {
+    const box = document.getElementById('global-index-search-results');
+    const input = document.getElementById('global-index-search-input');
+    box.classList.add('d-none');
+    input.setAttribute('aria-expanded', 'false');
+    globalIndexSearchActive = -1;
+}
+function setGlobalIndexSearchActive(next) {
+    const box = document.getElementById('global-index-search-results');
+    const buttons = [...box.querySelectorAll('.global-index-search-result')];
+    if (!buttons.length) return;
+    globalIndexSearchActive = (next + buttons.length) % buttons.length;
+    buttons.forEach((button, index) => {
+        button.classList.toggle('active', index === globalIndexSearchActive);
+        button.setAttribute('aria-selected', index === globalIndexSearchActive ? 'true' : 'false');
+    });
+    buttons[globalIndexSearchActive].scrollIntoView({block:'nearest'});
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('global-index-search-input');
+    if (!input) return;
+    const box = document.getElementById('global-index-search-results');
+    const status = document.getElementById('global-index-search-status');
+    const labels = globalIndexSearchLabels;
+    input.addEventListener('input', () => {
+        clearTimeout(globalIndexSearchTimer);
+        const term = input.value.trim();
+        if (term.length < 2) {
+            if (globalIndexSearchAbort) globalIndexSearchAbort.abort();
+            closeGlobalIndexSearch();
+            status.textContent = labels.hint;
+            return;
+        }
+        status.textContent = labels.loading;
+        globalIndexSearchTimer = setTimeout(async () => {
+            if (globalIndexSearchAbort) globalIndexSearchAbort.abort();
+            globalIndexSearchAbort = new AbortController();
+            try {
+                const url = new URL(globalIndexSearchEndpoint, window.location.origin);
+                url.searchParams.set('q', term);
+                const response = await fetch(url, {headers:{Accept:'application/json'},signal:globalIndexSearchAbort.signal});
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.message || labels.error);
+                renderGlobalIndexSearch(data.indices || []);
+            } catch (error) {
+                if (error.name === 'AbortError') return;
+                box.replaceChildren();
+                const message = document.createElement('div');
+                message.className = 'global-index-search-empty';
+                message.textContent = labels.error;
+                box.append(message);
+                box.classList.remove('d-none');
+                input.setAttribute('aria-expanded', 'true');
+                status.textContent = labels.error;
+            }
+        }, 250);
+    });
+    input.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown') { event.preventDefault(); setGlobalIndexSearchActive(globalIndexSearchActive + 1); }
+        else if (event.key === 'ArrowUp') { event.preventDefault(); setGlobalIndexSearchActive(globalIndexSearchActive - 1); }
+        else if (event.key === 'Enter' && globalIndexSearchItems[globalIndexSearchActive]) { event.preventDefault(); openGlobalIndexSearchResult(globalIndexSearchItems[globalIndexSearchActive].name); }
+        else if (event.key === 'Escape') closeGlobalIndexSearch();
+    });
+    document.addEventListener('click', event => {
+        if (!event.target.closest('.global-index-search')) closeGlobalIndexSearch();
+    });
+});
+
 const dashboardLayoutKey = 'elasticsearch-monitoring:dashboard-layout';
 const dashboardKpiKey = 'elasticsearch-monitoring:dashboard-kpis';
 const defaultDashboardKpiOrder = ['docs', 'active-shards', 'unassigned', 'search-rate', 'index-rate', 'cpu', 'store-size'];

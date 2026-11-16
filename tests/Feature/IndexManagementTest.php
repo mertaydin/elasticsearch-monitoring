@@ -195,4 +195,41 @@ class IndexManagementTest extends TestCase
         $this->assertSame(28, $payload['total']['segments']['count']);
         $this->assertSame(150, $payload['total']['translog']['operations']);
     }
+
+    public function test_it_searches_indices_by_name_and_returns_compact_metrics(): void
+    {
+        Http::fake(function ($request) {
+            if (str_contains($request->url(), '_cat/indices')) {
+                return Http::response([
+                    ['index' => 'logs-2026', 'health' => 'green', 'status' => 'open', 'docs.count' => '1200', 'store.size' => '4096'],
+                    ['index' => 'app-logs', 'health' => 'yellow', 'status' => 'open', 'docs.count' => '300', 'store.size' => '2048'],
+                    ['index' => 'orders', 'health' => 'red', 'status' => 'open', 'docs.count' => '12', 'store.size' => '1024'],
+                ]);
+            }
+
+            return Http::response([], 404);
+        });
+
+        $request = Request::create('/monitoring/elasticsearch/indices/search', 'GET', ['q' => 'logs']);
+        $response = app(IndexController::class)->search($request);
+
+        $this->assertSame(200, $response->getStatusCode());
+        $payload = $response->getData(true);
+        $this->assertSame(['logs-2026', 'app-logs'], array_column($payload['indices'], 'name'));
+        $this->assertSame('green', $payload['indices'][0]['health']);
+        $this->assertSame(1200, $payload['indices'][0]['documents_count']);
+        $this->assertSame(4096, $payload['indices'][0]['storage_bytes']);
+        Http::assertSent(fn ($request) => str_contains($request->url(), '_cat/indices') && str_contains($request->url(), 'logs'));
+    }
+
+    public function test_dashboard_renders_global_index_search(): void
+    {
+        $this->withoutMiddleware();
+
+        $this->get('/monitoring/elasticsearch')->assertOk()
+            ->assertSee('global-index-search-input', false)
+            ->assertSee('global-index-search-results', false)
+            ->assertSee('globalIndexSearchEndpoint', false)
+            ->assertSee('openGlobalIndexSearchResult', false);
+    }
 }

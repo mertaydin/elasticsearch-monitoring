@@ -32,6 +32,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Copy the complete formatted mapping JSON or individual top-level mapping sections from Index Management.
 - Show localized clipboard feedback in all six supported languages.
 - Add sortable columns to Index Management for index name, health, primary/replica shard counts, document count, and storage size.
+- Search indices globally from the dashboard with live suggestions, health/document/storage summaries, and direct links to index details.
 - Remember the Index Management search query and favorites-only filter in browser local storage.
 - Reset all Index Management filters and sorting with one click.
 - Monitor per-node query/fetch rates, average operation latency, active search/fetch operations, search queues, and rejection rates with historical trends.
