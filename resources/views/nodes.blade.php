@@ -271,5 +271,6 @@ document.getElementById('refresh').addEventListener('click',loadNodes);
 document.getElementById('node-sort').addEventListener('change',renderTable);
 loadNodes();setInterval(loadNodes,30000);
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>

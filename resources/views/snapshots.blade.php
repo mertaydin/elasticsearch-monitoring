@@ -84,5 +84,6 @@ async function load(){
 document.getElementById('refresh').addEventListener('click',load);
 load();setInterval(load,60000);
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>

@@ -136,5 +136,6 @@ document.getElementById('pool-select').addEventListener('change',event=>{selecte
 document.getElementById('refresh').addEventListener('click',load);
 load();setInterval(load,30000);
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>

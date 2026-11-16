@@ -103,4 +103,5 @@
  $('json-search').addEventListener('input',e=>search(e.target.value.trim()));
 })();
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body></html>

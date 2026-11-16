@@ -51,5 +51,6 @@ async function load(){
 }
 document.getElementById('refresh').addEventListener('click',load);load();
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>

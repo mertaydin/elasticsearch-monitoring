@@ -96,4 +96,5 @@ document.getElementById('meta').textContent=number(d.meta?.snapshots)+' '+t.samp
 async function load(){document.getElementById('metrics').innerHTML='<div class="col-12 text-secondary">'+t.loading+'</div>';try{const r=await fetch(endpoint+'&days='+document.getElementById('period').value,{headers:{Accept:'application/json'}});if(!r.ok)throw new Error();render(await r.json());}catch(e){document.getElementById('metrics').innerHTML='<div class="col-12 text-danger">'+t.error+'</div>';}}
 document.getElementById('refresh').addEventListener('click',load);document.getElementById('period').addEventListener('change',load);load();setInterval(load,60000);
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body></html>

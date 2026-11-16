@@ -35,4 +35,5 @@ document.getElementById('logs').innerHTML=(data.logs||[]).map(x=>'<tr><td>'+esc(
 document.getElementById('count').textContent=(data.meta.returned||0)+' / '+(data.meta.limit||500);notice.classList.add('d-none');
 }catch(error){notice.textContent=error.message;notice.classList.remove('d-none')}}
 document.getElementById('refresh').addEventListener('click',load);load();setInterval(load,30000);
-</script></body></html>
+</script>    @include('elasticsearch-monitoring::partials.theme')
+</body></html>

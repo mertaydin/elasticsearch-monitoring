@@ -82,5 +82,6 @@ document.querySelectorAll('.filter').forEach(button=>button.addEventListener('cl
 document.getElementById('refresh').addEventListener('click',loadEvents);
 loadEvents();
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>

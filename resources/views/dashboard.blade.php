@@ -1169,5 +1169,6 @@ startDashboardRefresh();
 refreshElasticsearchConnection();
 window.setInterval(refreshElasticsearchConnection, 30000);
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>

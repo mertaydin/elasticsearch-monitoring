@@ -145,4 +145,5 @@ function renderExplanation(data){
 ['search','state-filter','node-filter'].forEach(id=>document.getElementById(id).addEventListener(id==='search'?'input':'change',renderTable));
 load();setInterval(load,30000);
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body></html>

@@ -320,5 +320,6 @@ document.getElementById('detailsModal').addEventListener('hidden.bs.modal',()=>{
 updateSortIndicators();
 load();
 </script>
+    @include('elasticsearch-monitoring::partials.theme')
 </body>
 </html>
