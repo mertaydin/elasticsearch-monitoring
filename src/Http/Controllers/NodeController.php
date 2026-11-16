@@ -150,6 +150,7 @@ class NodeController
             $version = $node['latest']['version'] ?? null;
             if (is_string($version) === false || $version === '') {
                 $unknownVersionCount++;
+
                 continue;
             }
 
