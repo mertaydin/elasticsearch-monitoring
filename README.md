@@ -14,15 +14,11 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Screenshots
 
-These screenshots are captured from the package running inside a temporary Laravel application connected to a disposable Elasticsearch 8.18 cluster in GitHub Actions. The pages use the package's real dashboard and live Elasticsearch responses; only the indexed demo documents are synthetic.
+These screenshots are captured from the package running inside a temporary Laravel application connected to a disposable Elasticsearch 8.18 cluster in GitHub Actions. The pages are rendered by the package's real views and use live Elasticsearch responses; only the indexed demo documents are synthetic.
 
-| Cluster dashboard | Node performance |
+| Cluster dashboard | Index management |
 | --- | --- |
-| ![Cluster dashboard](docs/screenshots/cluster-dashboard.png) | ![Node performance](docs/screenshots/node-performance.png) |
-
-| Index management | Shard allocation |
-| --- | --- |
-| ![Index management](docs/screenshots/index-management.png) | ![Shard allocation](docs/screenshots/shard-allocation.png) |
+| ![Cluster dashboard](docs/screenshots/cluster-dashboard.png) | ![Index management](docs/screenshots/index-management.png) |
 
 ![Thread pools](docs/screenshots/thread-pools.png)
 
