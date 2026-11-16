@@ -6,6 +6,7 @@ use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 
 class IndexManagementTest extends TestCase
 {
