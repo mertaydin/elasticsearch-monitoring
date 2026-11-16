@@ -14,6 +14,8 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Features
 
+- Generate a PDF dashboard report with the selected date range, cluster name, key metrics, visible performance charts, optional previous-period comparison, and notes recorded in that period. PDF generation runs in the browser and does not add Elasticsearch requests or server-side PDF dependencies.
+
 - Export any dashboard chart as a titled PNG or combine all visible dashboard charts into one PNG directly in the browser.
 - Compare dashboard history charts with the immediately preceding period of equal duration; previous-period lines are aligned to the selected time window and can be toggled locally.
 - Refreshed dashboard layout with a compact navigation bar, clearer visual hierarchy, responsive controls, and consistent cards for KPIs, health, and charts.

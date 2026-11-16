@@ -16,6 +16,8 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Özellikler
 
+- Seçili tarih aralığı, küme adı, temel metrikler, görünür performans grafikleri, varsa önceki dönem karşılaştırması ve o dönemde kaydedilen notları içeren PDF dashboard raporu oluşturun. PDF tarayıcıda hazırlanır; ek Elasticsearch isteği veya sunucu tarafı PDF bağımlılığı gerektirmez.
+
 - Dashboard grafiklerini tek tek başlıklı PNG olarak indirin veya görünür tüm grafikleri tek bir PNG görselinde birleştirin. Seçili tarih aralığı dışa aktarılan görsele eklenir.
 - Dashboard geçmiş grafiklerini aynı uzunluktaki bir önceki dönemle karşılaştırın. Önceki dönem çizgileri seçili zaman aralığına hizalanır ve karşılaştırma tercihi tarayıcıda saklanır.
 - Daha düzenli gezinme çubuğu, belirgin görsel hiyerarşi, mobil uyumlu kontroller ve tutarlı KPI/sağlık/grafik kartlarıyla yenilenmiş dashboard tasarımı.

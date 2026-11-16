@@ -63,6 +63,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     @endif
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root{--em-ink:#182238;--em-muted:#77839a;--em-line:#e7ebf3;--em-surface:#fff;--em-bg:#f3f5fa;--em-primary:#4f5bd5}
         body{background:var(--em-bg)!important;color:var(--em-ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.01em}
@@ -203,6 +204,7 @@
                 <label class="form-check-label small fw-semibold" for="dashboard-compare-period">{{ $uiText['compare_period'] }}</label>
             </div>
             <button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadAllDashboardCharts()">{{ $t('download_all_charts') }}</button>
+            <button type="button" id="dashboard-pdf-button" class="btn btn-sm btn-primary" onclick="downloadDashboardPdf()">{{ $t('download_pdf_report') }}</button>
             <span id="dashboard-history-summary" class="small text-muted ms-auto"></span>
         </div>
     </div>
@@ -394,6 +396,7 @@ const labels = {
     lastCollected: @json($t('last_collected')),
     loadError: @json($t('load_error')),
     chartExportFailed: @json($t('chart_export_failed')),
+    pdfTitle: @json($t('pdf_title')), pdfCluster: @json($t('pdf_cluster')), pdfGenerated: @json($t('pdf_generated')), pdfPeriod: @json($t('pdf_period')), pdfSummary: @json($t('pdf_summary')), pdfCharts: @json($t('pdf_charts')), pdfComparisonIncluded: @json($t('pdf_comparison_included')), pdfNoNotes: @json($t('pdf_no_notes')), pdfUnknownCluster: @json($t('pdf_unknown_cluster')), pdfUnavailable: @json($t('pdf_unavailable')), pdfPreparing: @json($t('pdf_preparing')), pdfFailed: @json($t('pdf_failed')), notesTitle: @json($t('notes_title')), health: @json($t('health_score')),
     notesEmpty:@json($t('notes_empty')),notesLoadFailed:@json($t('notes_load_failed')),notesSaveFailed:@json($t('notes_save_failed')),notesDeleteConfirm:@json($t('notes_delete_confirm')),notesDelete:@json($t('notes_delete')),notesEdit:@json($t('notes_edit')),notesSaved:@json($t('notes_saved')),notesUpdated:@json($t('notes_updated')),notesUpdateButton:@json($t('notes_update_button')),notesDeleted:@json($t('notes_deleted')),notesError:@json($t('notes_error')),
     heapUsed: @json($t('heap_used')),
     used: @json($t('used')),
@@ -401,6 +404,7 @@ const labels = {
 };
 const charts = {};
 const sparkCharts = {};
+let latestDashboardMetrics = {};
 function renderChart(id, options) {
     if (charts[id]) charts[id].destroy();
     charts[id] = new ApexCharts(document.querySelector(id), options);
@@ -472,6 +476,77 @@ async function downloadDashboardCharts(ids, filename) {
         URL.revokeObjectURL(url);
     } catch (error) {
         window.alert(labels.chartExportFailed);
+    }
+}
+
+async function downloadDashboardPdf() {
+    const button = document.getElementById('dashboard-pdf-button');
+    const originalLabel = button.textContent;
+    let report = null;
+    try {
+        if (typeof html2pdf !== 'function' || !Object.keys(latestDashboardMetrics).length) throw new Error(labels.pdfUnavailable);
+        button.disabled = true;
+        button.textContent = labels.pdfPreparing;
+        const selectedRange = getDashboardHistoryRange();
+        const rangeText = new Date(selectedRange.from).toLocaleString() + ' – ' + new Date(selectedRange.to).toLocaleString();
+        const clusterName = latestDashboardMetrics.cluster?.name || labels.pdfUnknownCluster;
+        const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+        const summaryCards = [...document.querySelectorAll('#summary-cards .summary-card')].map(card => ({
+            label: card.querySelector('.summary-label')?.textContent?.trim() || '',
+            value: card.querySelector('.summary-value')?.textContent?.trim() || '—'
+        })).filter(item => item.label);
+        const healthScore = document.getElementById('health-score')?.textContent?.trim() || '—';
+        const healthStatus = document.getElementById('health-status')?.textContent?.trim() || '—';
+        const visibleChartIds = dashboardChartIds.filter(id => {
+            const element = document.getElementById(id);
+            return element && !element.closest('[data-dashboard-widget="charts"]')?.hidden;
+        });
+        const chartImages = await Promise.all(visibleChartIds.map(async id => {
+            const chart = charts['#' + id], element = document.getElementById(id);
+            if (!chart || !element) return null;
+            const result = await chart.dataURI({scale: 2});
+            return {title: element.closest('.chart-card')?.querySelector('h2')?.textContent?.trim() || id, src: result.imgURI};
+        }));
+        const notes = dashboardNotes.filter(note => {
+            const time = new Date(note.noted_at).getTime();
+            return time >= new Date(selectedRange.from).getTime() && time <= new Date(selectedRange.to).getTime();
+        }).sort((a,b) => new Date(a.noted_at)-new Date(b.noted_at));
+        const noteRows = notes.length ? notes.map(note => '<article class="note"><strong>' + escapeHtml(noteChartLabels[note.chart_key] || note.chart_key) + '</strong><time>' + escapeHtml(new Date(note.noted_at).toLocaleString()) + '</time><p>' + escapeHtml(note.note).replace(/\n/g,'<br>') + '</p></article>').join('') : '<p class="muted">' + escapeHtml(labels.pdfNoNotes) + '</p>';
+        const chartSections = chartImages.filter(Boolean).map(item => '<section class="chart"><h3>' + escapeHtml(item.title) + '</h3><img src="' + item.src + '" alt="' + escapeHtml(item.title) + '"></section>').join('');
+        const metricSections = summaryCards.map(item => '<div class="metric"><span>' + escapeHtml(item.label) + '</span><strong>' + escapeHtml(item.value) + '</strong></div>').join('');
+        const comparisonText = document.getElementById('dashboard-compare-period')?.checked ? '<p class="muted">' + escapeHtml(labels.pdfComparisonIncluded) + '</p>' : '';
+        report = document.createElement('div');
+        report.className = 'pdf-report';
+        report.setAttribute('dir', document.documentElement.dir || 'ltr');
+        report.innerHTML = '<style>' +
+            '.pdf-report{width:760px;padding:28px;background:#fff;color:#182238;font-family:Arial,sans-serif;font-size:12px;line-height:1.45}' +
+            '.pdf-report h1{font-size:25px;margin:0 0 5px;color:#182238}.pdf-report h2{font-size:17px;margin:22px 0 10px;border-bottom:1px solid #e7ebf3;padding-bottom:7px}.pdf-report h3{font-size:14px;margin:0 0 8px;color:#26334e}.pdf-report .muted{color:#77839a;font-size:10px;margin:3px 0}' +
+            '.pdf-report .cover{padding:20px 22px;background:#f3f5fa;border-radius:12px;border-left:5px solid #4f5bd5;margin-bottom:18px}.pdf-report .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.pdf-report .metric{border:1px solid #e7ebf3;border-radius:9px;padding:10px}.pdf-report .metric span{display:block;color:#77839a;font-size:10px;margin-bottom:5px}.pdf-report .metric strong{font-size:17px;color:#26334e}' +
+            '.pdf-report .health{margin-top:10px;padding:10px;border:1px solid #e7ebf3;border-radius:9px}.pdf-report .chart{border:1px solid #e7ebf3;border-radius:10px;padding:12px;margin:0 0 12px;break-inside:avoid;page-break-inside:avoid}.pdf-report .chart img{display:block;width:100%;height:215px;object-fit:contain}.pdf-report .note{border-bottom:1px solid #e7ebf3;padding:9px 0;break-inside:avoid}.pdf-report .note time{float:right;color:#77839a;font-size:10px}.pdf-report .note p{margin:6px 0 0;overflow-wrap:anywhere}' +
+            '</style><header class="cover"><h1>' + escapeHtml(labels.pdfTitle) + '</h1><p class="muted">' + escapeHtml(labels.pdfCluster) + ': <strong>' + escapeHtml(clusterName) + '</strong></p><p class="muted">' + escapeHtml(labels.pdfGenerated) + ': ' + escapeHtml(new Date().toLocaleString()) + '</p><p class="muted">' + escapeHtml(labels.pdfPeriod) + ': ' + escapeHtml(rangeText) + '</p>' + comparisonText + '</header>' +
+            '<h2>' + escapeHtml(labels.pdfSummary) + '</h2><div class="metrics">' + metricSections + '</div><div class="health"><strong>' + escapeHtml(labels.health) + ': </strong>' + escapeHtml(healthStatus) + ' · ' + escapeHtml(healthScore) + '</div>' +
+            '<h2>' + escapeHtml(labels.pdfCharts) + '</h2>' + chartSections +
+            '<h2>' + escapeHtml(labels.notesTitle) + ' (' + notes.length + ')</h2>' + noteRows;
+        report.style.position = 'fixed';
+        report.style.left = '-10000px';
+        report.style.top = '0';
+        report.style.zIndex = '-1';
+        document.body.appendChild(report);
+        const safeCluster = String(clusterName).replace(/[^a-z0-9-_]+/gi,'-').replace(/^-|-$/g,'');
+        await html2pdf().set({
+            margin: [10, 10, 12, 10],
+            filename: 'elasticsearch-monitoring-' + (safeCluster || 'cluster') + '-' + new Date().toISOString().slice(0,10) + '.pdf',
+            image: {type:'jpeg', quality:0.94},
+            html2canvas: {scale:1.5, useCORS:true, backgroundColor:'#ffffff', logging:false},
+            jsPDF: {unit:'mm', format:'a4', orientation:'portrait', compress:true},
+            pagebreak: {mode:['css','legacy']}
+        }).from(report).save();
+    } catch (error) {
+        window.alert(labels.pdfFailed);
+    } finally {
+        if (report) report.remove();
+        button.disabled = false;
+        button.textContent = originalLabel;
     }
 }
 function dashboardNoteDateValue(value){const date=value?new Date(value):new Date(),pad=n=>String(n).padStart(2,'0');return date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate())+'T'+pad(date.getHours())+':'+pad(date.getMinutes());}
@@ -620,6 +695,7 @@ async function loadMetrics() {
             ? labels.rangeSummary.replace(':count', Number(payload.range.total).toLocaleString()).replace(':returned', Number(payload.range.returned).toLocaleString()) + (aggregationLabel ? ' · ' + aggregationLabel : '')
             : labels.rangeNoData;
         const m = payload.latest.metrics || {};
+        latestDashboardMetrics = m;
         const health = m.health || {};
         const healthScore = Number(health.score ?? 0);
         const healthStatus = health.status || 'unknown';

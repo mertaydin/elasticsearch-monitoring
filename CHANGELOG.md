@@ -1,3 +1,10 @@
+## [0.30.0] - 2026-11-16
+
+- Add browser-generated PDF dashboard reports with cluster name, report timestamp, selected date range, and key KPI values.
+- Include visible performance charts, previous-period comparison status, and dashboard notes recorded within the selected period.
+- Keep PDF generation client-side with no additional Elasticsearch requests, database changes, or server-side PDF dependency.
+- Localize report controls and content in all six supported dashboard languages; update both READMEs and feature tests.
+
 ## [0.29.0] - 2026-11-16
 
 - Add persistent dashboard notes linked to a selected history chart and exact date/time.
