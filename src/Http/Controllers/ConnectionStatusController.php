@@ -1,10 +1,10 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Http\\Controllers;
+namespace ElasticsearchMonitoring\Http\Controllers;
 
-use ElasticsearchMonitoring\\Models\\ApiRequestLog;
-use ElasticsearchMonitoring\\Services\\ElasticsearchClient;
-use Illuminate\\Http\\JsonResponse;
+use ElasticsearchMonitoring\Models\ApiRequestLog;
+use ElasticsearchMonitoring\Services\ElasticsearchClient;
+use Illuminate\Http\JsonResponse;
 use Throwable;
 
 class ConnectionStatusController

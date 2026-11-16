@@ -1,9 +1,9 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Tests\\Feature;
+namespace ElasticsearchMonitoring\Tests\Feature;
 
-use ElasticsearchMonitoring\\Tests\\TestCase;
-use Illuminate\\Support\\Facades\\Http;
+use ElasticsearchMonitoring\Tests\TestCase;
+use Illuminate\Support\Facades\Http;
 
 class ConnectionStatusTest extends TestCase
 {

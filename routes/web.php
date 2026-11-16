@@ -20,7 +20,7 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
     ->group(function (): void {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::get('/data', [DashboardController::class, 'data'])->name('data');
-        Route::get('/connection', [\\ElasticsearchMonitoring\\Http\\Controllers\\ConnectionStatusController::class, 'show'])->name('connection');
+        Route::get('/connection', [ConnectionStatusController::class, 'show'])->name('connection');
         Route::get('/notes', [DashboardNoteController::class, 'index'])->name('notes.index');
         Route::post('/notes', [DashboardNoteController::class, 'store'])->name('notes.store');
         Route::patch('/notes/{note}', [DashboardNoteController::class, 'update'])->whereNumber('note')->name('notes.update');
