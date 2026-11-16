@@ -95,4 +95,11 @@ return [
     'dashboard_kpi_hint' => 'Kartları gösterin veya gizleyin, sürükleyerek sıralayın ve önemli olanları üste sabitleyin.',
     'dashboard_kpi_pin' => 'Üste sabitle',
     'dashboard_kpi_unpin' => 'Sabitlemeyi kaldır',
+    'connection_connected' => 'Bağlı',
+    'connection_slow' => 'Yavaş yanıt',
+    'connection_disconnected' => 'Bağlantı kesildi',
+    'connection_checking' => 'Bağlantı kontrol ediliyor…',
+    'connection_last_success' => 'Son başarılı bağlantı',
+    'connection_never' => 'Henüz başarılı bağlantı yok',
+    'connection_unavailable' => 'Bağlantı bilgisi alınamadı',
 ];

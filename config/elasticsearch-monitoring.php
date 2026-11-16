@@ -7,6 +7,7 @@ return [
         'password' => env('ELASTICSEARCH_MONITORING_PASSWORD'),
         'api_key' => env('ELASTICSEARCH_MONITORING_API_KEY'),
         'timeout' => (int) env('ELASTICSEARCH_MONITORING_TIMEOUT', 10),
+        'slow_response_ms' => (int) env('ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS', 1000),
         'verify' => (bool) env('ELASTICSEARCH_MONITORING_VERIFY', true),
     ],
     'collection' => [

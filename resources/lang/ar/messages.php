@@ -82,4 +82,11 @@ return [
     'dashboard_kpi_hint' => 'أظهر البطاقات أو أخفها، واسحب لإعادة ترتيبها، وثبّت المقاييس المهمة في الأعلى.',
     'dashboard_kpi_pin' => 'تثبيت في الأعلى',
     'dashboard_kpi_unpin' => 'إلغاء التثبيت',
+    'connection_connected' => 'متصل',
+    'connection_slow' => 'استجابة بطيئة',
+    'connection_disconnected' => 'انقطع الاتصال',
+    'connection_checking' => 'جارٍ التحقق من الاتصال…',
+    'connection_last_success' => 'آخر اتصال ناجح',
+    'connection_never' => 'لا يوجد اتصال ناجح بعد',
+    'connection_unavailable' => 'تفاصيل الاتصال غير متاحة',
 ];

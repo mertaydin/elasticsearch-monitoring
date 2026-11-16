@@ -77,6 +77,7 @@
         .dashboard-header-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
         .dashboard-language-select{min-width:126px;background-color:rgba(255,255,255,.12)!important;color:#fff!important;border:1px solid rgba(255,255,255,.24)!important}
         .dashboard-language-select option{color:#182238}
+        .connection-indicator{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font-size:.72rem;font-weight:700}.connection-indicator .connection-dot{width:8px;height:8px;border-radius:50%;background:#9aa6bd;box-shadow:0 0 0 3px rgba(255,255,255,.1)}.connection-indicator.connected .connection-dot{background:#35d49a}.connection-indicator.slow .connection-dot{background:#ffc45c}.connection-indicator.disconnected .connection-dot{background:#ff7777}.connection-meta{font-size:.68rem;color:#d1daf1}
         .dashboard-primary-action{background:#fff!important;color:#26386d!important;border:0!important;font-weight:700!important;padding:.55rem .9rem!important;box-shadow:0 5px 14px rgba(0,0,0,.12)}
         .dashboard-nav{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 16px;background:#fff}
         .dashboard-nav-links{display:flex;align-items:center;gap:5px;min-width:0;overflow-x:auto;scrollbar-width:thin}
@@ -144,6 +145,10 @@
                 <div class="dashboard-eyebrow">ELASTICSEARCH · OBSERVABILITY</div>
                 <h1 class="h3 mb-1">{{ $t('title') }}</h1>
                 <p class="mb-0">{{ $t('subtitle') }}</p>
+                <div class="d-flex align-items-center flex-wrap gap-2 mt-3" aria-live="polite">
+                    <div id="elasticsearch-connection-status" class="connection-indicator" role="status"><span class="connection-dot"></span><span id="elasticsearch-connection-label">{{ $t('connection_checking') }}</span></div>
+                    <span id="elasticsearch-connection-meta" class="connection-meta">{{ $t('connection_last_success') }}: —</span>
+                </div>
             </div>
             <div class="dashboard-header-actions">
                 <form method="GET" action="{{ route('elasticsearch-monitoring.index') }}" class="d-flex align-items-center gap-2">
@@ -322,6 +327,7 @@
 </main>
 <script>
 const endpoint = @json(route('elasticsearch-monitoring.data'));
+const connectionEndpoint = @json(route('elasticsearch-monitoring.connection'));
 const notesEndpoint = @json(route('elasticsearch-monitoring.notes.index'));
 const notesStoreEndpoint = @json(route('elasticsearch-monitoring.notes.store'));
 const notesUpdateEndpoint = @json(route('elasticsearch-monitoring.notes.update', ['note' => '__NOTE__']));
@@ -432,6 +438,27 @@ function renderFavoriteIndices() {
         link.title = favoriteLabels.open;
         container.appendChild(link);
     });
+}
+const connectionLabels = {connected:@json($t('connection_connected')),slow:@json($t('connection_slow')),disconnected:@json($t('connection_disconnected')),checking:@json($t('connection_checking')),lastSuccess:@json($t('connection_last_success')),never:@json($t('connection_never')),unavailable:@json($t('connection_unavailable'))};
+async function refreshElasticsearchConnection() {
+    const indicator = document.getElementById('elasticsearch-connection-status');
+    const label = document.getElementById('elasticsearch-connection-label');
+    const meta = document.getElementById('elasticsearch-connection-meta');
+    try {
+        const response = await fetch(connectionEndpoint, {headers: {'Accept': 'application/json'}, cache: 'no-store'});
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const result = await response.json();
+        const status = ['connected', 'slow'].includes(result.status) ? result.status : 'disconnected';
+        indicator.className = 'connection-indicator ' + status;
+        label.textContent = connectionLabels[status];
+        meta.textContent = connectionLabels.lastSuccess + ': ' + (result.last_successful_at ? new Date(result.last_successful_at).toLocaleString() : connectionLabels.never);
+        indicator.title = result.duration_ms !== null && result.duration_ms !== undefined ? result.duration_ms + ' ms' : (result.error || connectionLabels.unavailable);
+    } catch (error) {
+        indicator.className = 'connection-indicator disconnected';
+        label.textContent = connectionLabels.disconnected;
+        meta.textContent = connectionLabels.lastSuccess + ': ' + connectionLabels.unavailable;
+        indicator.title = connectionLabels.unavailable;
+    }
 }
 const labels = {
     noMetrics: @json($t('no_metrics')),
@@ -896,6 +923,8 @@ renderFavoriteIndices();
 loadDashboardNotes();
 window.addEventListener('storage', event => { if (event.key === favoritesStorageKey) renderFavoriteIndices(); });
 startDashboardRefresh();
+refreshElasticsearchConnection();
+window.setInterval(refreshElasticsearchConnection, 30000);
 </script>
 </body>
 </html>

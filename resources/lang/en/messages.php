@@ -95,4 +95,11 @@ return [
     'dashboard_kpi_hint' => 'Show or hide cards, drag to reorder, and pin important metrics to the top.',
     'dashboard_kpi_pin' => 'Pin to top',
     'dashboard_kpi_unpin' => 'Unpin',
+    'connection_connected' => 'Connected',
+    'connection_slow' => 'Slow response',
+    'connection_disconnected' => 'Connection lost',
+    'connection_checking' => 'Checking connection…',
+    'connection_last_success' => 'Last successful connection',
+    'connection_never' => 'No successful connection yet',
+    'connection_unavailable' => 'Connection details unavailable',
 ];

@@ -82,4 +82,11 @@ return [
     'dashboard_kpi_hint' => 'Muestra u oculta tarjetas, arrástralas para reordenarlas y fija las métricas importantes arriba.',
     'dashboard_kpi_pin' => 'Fijar arriba',
     'dashboard_kpi_unpin' => 'Desfijar',
+    'connection_connected' => 'Conectado',
+    'connection_slow' => 'Respuesta lenta',
+    'connection_disconnected' => 'Conexión perdida',
+    'connection_checking' => 'Comprobando conexión…',
+    'connection_last_success' => 'Última conexión correcta',
+    'connection_never' => 'Aún no hay conexiones correctas',
+    'connection_unavailable' => 'Detalles de conexión no disponibles',
 ];

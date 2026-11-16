@@ -149,3 +149,7 @@ Dashboard için **15 saniye, 30 saniye, 1 dakika veya 5 dakika** yenileme aralı
 ## Dashboard grafiklerini dışa aktarma
 
 Her grafiğin üzerindeki **PNG indir** seçeneğiyle grafiği başlığı ve seçili tarih aralığıyla birlikte ayrı kaydedebilir, **Tüm grafikleri PNG indir** seçeneğiyle görünür dashboard grafiklerini tek bir görselde birleştirebilirsiniz. Görseller tarayıcıda oluşturulur; ek bir endpoint, veritabanı değişikliği veya Elasticsearch isteği gerekmez.
+
+## Elasticsearch bağlantı durumu
+
+Dashboard başlığında Elasticsearch bağlantısı **Bağlı**, **Yavaş yanıt** veya **Bağlantı kesildi** olarak gösterilir; son başarılı bağlantı zamanı ve kontrol yanıt süresi de görüntülenir. Durum, metrik toplama işleminden bağımsız olarak 30 saniyede bir kontrol edilir. Yavaş yanıt eşiği varsayılan olarak 1.000 ms'dir; `ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS` ortam değişkeniyle veya yayınlanan yapılandırmadaki `connection.slow_response_ms` değeriyle değiştirilebilir. Kontrol kimlik doğrulamalı, salt okunur bir GET isteği kullanır ve küme durumunu değiştirmez.

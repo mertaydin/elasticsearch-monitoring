@@ -82,4 +82,11 @@ return [
     'dashboard_kpi_hint' => 'कार्ड दिखाएं या छिपाएं, क्रम बदलने के लिए खींचें और महत्वपूर्ण मेट्रिक्स को ऊपर पिन करें।',
     'dashboard_kpi_pin' => 'सबसे ऊपर पिन करें',
     'dashboard_kpi_unpin' => 'अनपिन करें',
+    'connection_connected' => 'कनेक्टेड',
+    'connection_slow' => 'धीमा जवाब',
+    'connection_disconnected' => 'कनेक्शन टूट गया',
+    'connection_checking' => 'कनेक्शन जांच रहे हैं…',
+    'connection_last_success' => 'अंतिम सफल कनेक्शन',
+    'connection_never' => 'अभी तक कोई सफल कनेक्शन नहीं',
+    'connection_unavailable' => 'कनेक्शन विवरण उपलब्ध नहीं',
 ];

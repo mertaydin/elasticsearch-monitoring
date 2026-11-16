@@ -1,3 +1,8 @@
+## [Unreleased]
+
+- Add a live Elasticsearch connection indicator with connected, slow-response, and disconnected states, including response time and last successful connection.
+- Add a lightweight read-only connection check endpoint, configurable slow-response threshold, localized dashboard labels, and feature tests.
+
 ## [0.31.0] - 2026-11-16
 
 - Add independent summary KPI card customization: show/hide, drag-and-drop ordering, and pin important cards to the top.

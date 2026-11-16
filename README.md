@@ -203,3 +203,7 @@ Choose a dashboard refresh interval of **15 seconds, 30 seconds, 1 minute, or 5 
 ## Dashboard chart exports
 
 Use the **Download PNG** action on an individual chart to save a titled image, or choose **Download all charts as PNG** to create one combined image containing the visible dashboard charts. The selected date range is included in the image. Exports are generated in the browser; no export endpoint, database change, or additional Elasticsearch request is required.
+
+## Elasticsearch connection status
+
+The dashboard header checks the Elasticsearch root information endpoint and displays **Connected**, **Slow response**, or **Connection lost**, along with the latest successful connection time and check latency. The status is refreshed every 30 seconds independently of metric collection. The slow-response threshold defaults to 1,000 ms and can be changed with `ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS` (or `connection.slow_response_ms` in the published configuration). The check uses an authenticated, read-only GET request and does not change cluster state.

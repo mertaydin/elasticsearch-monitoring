@@ -82,4 +82,11 @@ return [
     'dashboard_kpi_hint' => '显示或隐藏卡片，拖动以重新排序，并将重要指标固定在顶部。',
     'dashboard_kpi_pin' => '固定到顶部',
     'dashboard_kpi_unpin' => '取消固定',
+    'connection_connected' => '已连接',
+    'connection_slow' => '响应缓慢',
+    'connection_disconnected' => '连接已断开',
+    'connection_checking' => '正在检查连接…',
+    'connection_last_success' => '上次成功连接',
+    'connection_never' => '尚无成功连接',
+    'connection_unavailable' => '无法获取连接详情',
 ];
