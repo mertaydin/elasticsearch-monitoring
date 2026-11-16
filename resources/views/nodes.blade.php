@@ -27,6 +27,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 .hero{background:linear-gradient(115deg,#171d38,#303b70 62%,#625bdb);color:#fff;border-radius:20px;padding:24px 28px}.hero p{color:#d5d9f2}
 .metric{padding:18px 20px;height:100%}.metric .label{font-size:.82rem;color:#6b7487}.metric .value{font-size:1.65rem;font-weight:750;letter-spacing:-.03em;margin-top:5px}.chart-panel{padding:18px 20px;height:100%;min-height:330px}.chart-panel h2{font-size:1rem;font-weight:700;margin:0}.chart-panel p{font-size:.8rem;color:#7b8496;margin:5px 0 12px}.node-select{min-width:230px}.table thead th{font-size:.76rem;color:#68748a;font-weight:650;white-space:nowrap}.table tbody td{font-size:.86rem;white-space:nowrap}.node-pick{border:0;background:none;color:#334c9b;font-weight:650;padding:0}.muted{color:#7b8496}
 .availability-panel{padding:18px 20px}.availability-track{display:flex;height:13px;overflow:hidden;border-radius:99px;background:#edf0f5;gap:2px}.availability-segment{height:100%;min-width:2px}.availability-segment.online{background:#20a36b}.availability-segment.offline{background:#e05252}.availability-legend{font-size:.78rem;color:#68748a}.availability-period{display:flex;justify-content:space-between;gap:12px;font-size:.82rem;padding:7px 0;border-bottom:1px solid #edf0f5}.availability-period:last-child{border-bottom:0}.availability-state{font-size:.82rem;font-weight:700;border-radius:99px;padding:5px 10px}.availability-state.online{background:#e6f6ee;color:#167448}.availability-state.offline{background:#fff0f0;color:#b83232}.availability-state.unknown{background:#edf0f5;color:#68748a}
+.version-summary{display:flex;flex-wrap:wrap;gap:10px}.version-chip{border:1px solid #e7ebf2;background:#f8f9fc;border-radius:12px;padding:10px 14px;min-width:150px}.version-chip strong{display:block;font-size:1rem;color:#263451}.version-chip span{font-size:.78rem;color:#738097}.version-status{font-size:.8rem;font-weight:700;border-radius:99px;padding:5px 10px}.version-status.consistent{background:#e6f6ee;color:#167448}.version-status.mixed{background:#fff1df;color:#9b5b08}.version-status.incomplete,.version-status.unknown{background:#edf0f5;color:#68748a}
 </style>
 </head>
 <body>
@@ -56,6 +57,10 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="col-6 col-xl"><div class="panel metric"><div class="label">{{ $text['documents'] }}</div><div class="value" id="documents-value">—</div></div></div>
 <div class="col-6 col-xl"><div class="panel metric"><div class="label">{{ $text['shards'] }}</div><div class="value" id="shards-value">—</div></div></div>
 </div>
+<section class="panel p-3 mb-4" aria-live="polite" id="version-panel">
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h2 class="h6 fw-bold mb-1">{{ $locale === 'tr' ? 'Elasticsearch sürüm dağılımı' : 'Elasticsearch version distribution' }}</h2><div class="small muted">{{ $locale === 'tr' ? 'Node sürümlerini karşılaştırın; rolling upgrade sırasında farklı kalan node’ları görün.' : 'Compare node versions and spot nodes left behind during a rolling upgrade.' }}</div></div><span id="version-status" class="version-status unknown">—</span></div>
+<div id="version-summary" class="version-summary"><div class="small muted">{{ $text['loading'] }}</div></div>
+</section>
 <section class="panel p-3 mb-4" id="node-details-panel">
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
 <h2 class="h6 fw-bold mb-0">{{ $locale === 'tr' ? 'Node detayları' : 'Node details' }}</h2>
@@ -63,6 +68,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 </div>
 <div class="row g-3 mb-3">
 <div class="col-6 col-lg-3"><div class="label muted small">IP / {{ $locale === 'tr' ? 'Roller' : 'Roles' }}</div><div class="fw-semibold" id="node-detail-address">—</div><div class="small muted" id="node-detail-roles">—</div></div>
+<div class="col-6 col-lg-3"><div class="label muted small">{{ $locale === 'tr' ? 'Elasticsearch sürümü' : 'Elasticsearch version' }}</div><div class="fw-semibold" id="node-detail-version">—</div></div>
 <div class="col-6 col-lg-3"><div class="label muted small">CPU</div><div class="fw-semibold" id="node-detail-cpu">—</div></div>
 <div class="col-6 col-lg-3"><div class="label muted small">JVM Heap</div><div class="fw-semibold" id="node-detail-heap">—</div></div>
 <div class="col-6 col-lg-3"><div class="label muted small">Disk</div><div class="fw-semibold" id="node-detail-disk">—</div></div>
@@ -100,8 +106,8 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <section class="panel p-3">
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $text['comparison'] }}</h2><div class="d-flex align-items-center gap-2"><label for="node-sort" class="small muted mb-0">{{ $locale === 'tr' ? 'Sırala:' : 'Sort by:' }}</label><select id="node-sort" class="form-select form-select-sm" style="width:auto"><option value="cpu">{{ $locale === 'tr' ? 'CPU kullanımı' : 'CPU usage' }}</option><option value="heap">{{ $locale === 'tr' ? 'RAM / JVM kullanımı' : 'RAM / JVM usage' }}</option><option value="disk">{{ $locale === 'tr' ? 'Disk kullanımı' : 'Disk usage' }}</option></select><span class="small muted ms-2" id="updated"></span></div></div>
 <div class="table-responsive"><table class="table table-hover align-middle mb-0">
-<thead><tr><th>{{ $text['name'] }}</th><th>{{ $locale === 'tr' ? 'IP adresi' : 'IP address' }}</th><th>{{ $text['roles'] }}</th><th>CPU</th><th>JVM</th><th>{{ $text['disk'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['shards'] }}</th><th>{{ $text['search_total'] }}</th><th>{{ $text['indexing_total'] }}</th></tr></thead>
-<tbody id="node-table"><tr><td colspan="10" class="text-center py-4 muted">{{ $text['loading'] }}</td></tr></tbody>
+<thead><tr><th>{{ $text['name'] }}</th><th>{{ $locale === 'tr' ? 'IP adresi' : 'IP address' }}</th><th>{{ $text['roles'] }}</th><th>{{ $locale === 'tr' ? 'Sürüm' : 'Version' }}</th><th>CPU</th><th>JVM</th><th>{{ $text['disk'] }}</th><th>{{ $text['documents'] }}</th><th>{{ $text['shards'] }}</th><th>{{ $text['search_total'] }}</th><th>{{ $text['indexing_total'] }}</th></tr></thead>
+<tbody id="node-table"><tr><td colspan="11" class="text-center py-4 muted">{{ $text['loading'] }}</td></tr></tbody>
 </table></div>
 </section>
 </main>
@@ -153,6 +159,14 @@ function formatDuration(seconds){
  if(minutes>0)return minutes+'m '+remaining+'s';
  return remaining+'s';
 }
+function renderVersionSummary(summary){
+ const status=summary?.status||'unknown';
+ const statusLabels={consistent:@json($locale === 'tr' ? 'Sürümler tutarlı' : 'Versions consistent'),mixed:@json($locale === 'tr' ? 'Sürüm farklılığı var' : 'Mixed versions'),incomplete:@json($locale === 'tr' ? 'Eksik sürüm bilgisi' : 'Incomplete version data'),unknown:@json($locale === 'tr' ? 'Sürüm bilgisi yok' : 'No version data')};
+ const badge=document.getElementById('version-status');badge.className='version-status '+status;badge.textContent=statusLabels[status]||statusLabels.unknown;
+ const chips=(summary?.versions||[]).map(item=>'<div class="version-chip"><strong>'+safe(item.version)+'</strong><span>'+number(item.node_count)+' '+@json($locale === 'tr' ? 'node' : 'nodes')+'</span></div>');
+ const unknown=Number(summary?.unknown_count)||0;if(unknown>0)chips.push('<div class="version-chip"><strong>—</strong><span>'+number(unknown)+' '+@json($locale === 'tr' ? 'sürümü bilinmeyen node' : 'nodes with unknown version')+'</span></div>');
+ document.getElementById('version-summary').innerHTML=chips.join('')||'<div class="small muted">'+@json($locale === 'tr' ? 'Henüz node sürüm bilgisi bulunamadı.' : 'No node version information available yet.')+'</div>';
+}
 function renderAvailability(availability){
  const state=availability?.status||'unknown';
  const stateElement=document.getElementById('availability-state');
@@ -182,6 +196,7 @@ function renderSelected(){
  if(!node)return;
  const latest=node.latest||{},points=node.history||[];
  renderAvailability(node.availability);
+ document.getElementById('node-detail-version').textContent=latest.version||'—';
  document.getElementById('cpu-value').textContent=percent(latest.cpu_percent);
  document.getElementById('heap-value').textContent=percent(latest.heap_percent);
  document.getElementById('disk-value').textContent=percent(latest.filesystem_used_percent);
@@ -202,7 +217,7 @@ function renderSelected(){
 }
 function renderTable(){
  const body=document.getElementById('node-table');
- if(!nodes.length){body.innerHTML='<tr><td colspan="10" class="text-center py-4 muted">'+labels.empty+'</td></tr>';return;}
+ if(!nodes.length){body.innerHTML='<tr><td colspan="11" class="text-center py-4 muted">'+labels.empty+'</td></tr>';return;}
  const sortKey=document.getElementById('node-sort')?.value||'cpu';
  const metricKey={cpu:'cpu_percent',heap:'heap_percent',disk:'filesystem_used_percent'}[sortKey];
  const sortedNodes=[...nodes].sort((a,b)=>{
@@ -214,7 +229,7 @@ function renderTable(){
  });
  body.innerHTML=sortedNodes.map(node=>{
   const p=node.latest||{};
-  return '<tr><td><button class="node-pick" data-node-id="'+safe(node.id)+'">'+safe(node.name)+'</button> <button type="button" class="btn btn-sm btn-link p-0 text-secondary" data-copy-value="'+safe(node.name)+'" title="'+copyLabels.copy+'">⧉</button><div class="small muted">'+safe(node.id)+'</div></td><td>'+(node.ip?'<button type="button" class="btn btn-sm btn-link p-0" data-copy-value="'+safe(node.ip)+'" title="'+copyLabels.copy+'">'+safe(node.ip)+'</button>':'—')+'</td><td>'+safe((node.roles||[]).join(', ')||'—')+'</td><td>'+percent(p.cpu_percent)+'</td><td>'+percent(p.heap_percent)+'</td><td>'+percent(p.filesystem_used_percent)+'</td><td>'+number(p.documents)+'</td><td>'+number(p.shards)+'</td><td>'+number(p.search_total)+'</td><td>'+number(p.indexing_total)+'</td></tr>';
+  return '<tr><td><button class="node-pick" data-node-id="'+safe(node.id)+'">'+safe(node.name)+'</button> <button type="button" class="btn btn-sm btn-link p-0 text-secondary" data-copy-value="'+safe(node.name)+'" title="'+copyLabels.copy+'">⧉</button><div class="small muted">'+safe(node.id)+'</div></td><td>'+(node.ip?'<button type="button" class="btn btn-sm btn-link p-0" data-copy-value="'+safe(node.ip)+'" title="'+copyLabels.copy+'">'+safe(node.ip)+'</button>':'—')+'</td><td>'+safe((node.roles||[]).join(', ')||'—')+'</td><td>'+safe(p.version||'—')+'</td><td>'+percent(p.cpu_percent)+'</td><td>'+percent(p.heap_percent)+'</td><td>'+percent(p.filesystem_used_percent)+'</td><td>'+number(p.documents)+'</td><td>'+number(p.shards)+'</td><td>'+number(p.search_total)+'</td><td>'+number(p.indexing_total)+'</td></tr>';
  }).join('');
  body.querySelectorAll('[data-node-id]').forEach(button=>button.addEventListener('click',()=>selectNode(button.dataset.nodeId)));
 }
@@ -241,7 +256,7 @@ async function loadNodes(){
  try{
   const response=await fetch(endpoint,{headers:{Accept:'application/json'}});
   if(!response.ok)throw new Error('HTTP '+response.status);
-  const payload=await response.json();nodes=payload.nodes||[];
+  const payload=await response.json();nodes=payload.nodes||[];renderVersionSummary(payload.version_summary);
   const select=document.getElementById('node-select');
   if(!nodes.length){select.innerHTML='<option>'+labels.node+'</option>';select.disabled=true;notice.textContent=labels.empty;notice.classList.remove('d-none');renderTable();return;}
   notice.classList.add('d-none');

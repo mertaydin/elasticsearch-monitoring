@@ -21,6 +21,7 @@ class MetricsCollector
         $responses = [
             'health' => $this->client->request('_cluster/health'),
             'nodes' => $this->client->request('_nodes/stats/jvm,process,os,fs,thread_pool,indices'),
+            'node_info' => $this->client->request('_nodes'),
             'cluster' => $this->client->request('_cluster/stats'),
             'indices_stats' => $this->client->request('_stats/docs,store,segments'),
         ];
@@ -56,6 +57,7 @@ class MetricsCollector
     private function normalize(array $responses): array
     {
         $nodes = (array) data_get($responses, 'nodes.nodes', []);
+        $nodeInfo = (array) data_get($responses, 'node_info.nodes', []);
         $nodeCount = count($nodes);
         $heapUsed = $heapMax = $cpu = $search = $index = $docs = $shards = 0;
         $searchQueue = $searchRejected = $bulkQueue = $bulkRejected = 0;
@@ -89,6 +91,7 @@ class MetricsCollector
                 'name' => (string) data_get($node, 'name', $nodeId),
                 'ip' => (string) data_get($node, 'ip', data_get($node, 'host', '')),
                 'roles' => (array) data_get($node, 'roles', []),
+                'version' => isset($nodeInfo[$nodeId]) ? data_get($nodeInfo[$nodeId], 'version') : null,
                 'cpu_percent' => data_get($node, 'process.cpu.percent'),
                 'heap_percent' => $nodeHeapMax > 0 ? round(($nodeHeapUsed / $nodeHeapMax) * 100, 2) : null,
                 'filesystem_used_percent' => $nodeFsTotal > 0 ? round((($nodeFsTotal - $nodeFsAvailable) / $nodeFsTotal) * 100, 2) : null,

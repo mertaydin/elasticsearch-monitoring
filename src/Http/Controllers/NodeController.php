@@ -4,7 +4,7 @@ namespace ElasticsearchMonitoring\Http\Controllers;
 
 use ElasticsearchMonitoring\Models\MetricSnapshot;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\View\View;
 
 class NodeController
@@ -70,6 +70,7 @@ class NodeController
                 $present[$id] = true;
                 $point = [
                     'collected_at' => $collectedAt->toIso8601String(),
+                    'version' => isset($detail['version']) && is_string($detail['version']) ? $detail['version'] : null,
                     'cpu_percent' => isset($detail['cpu_percent']) ? (float) $detail['cpu_percent'] : null,
                     'heap_percent' => isset($detail['heap_percent']) ? (float) $detail['heap_percent'] : null,
                     'filesystem_used_percent' => isset($detail['filesystem_used_percent']) ? (float) $detail['filesystem_used_percent'] : null,
@@ -141,8 +142,31 @@ class NodeController
         $result = array_values($nodes);
         usort($result, static fn (array $left, array $right): int => strcasecmp($left['name'], $right['name']));
 
+        $versionCounts = [];
+        $unknownVersionCount = 0;
+        foreach ($result as $node) {
+            $version = $node['latest']['version'] ?? null;
+            if (is_string($version) === false || $version === '') {
+                $unknownVersionCount++;
+                continue;
+            }
+
+            $versionCounts[$version] = ($versionCounts[$version] ?? 0) + 1;
+        }
+        ksort($versionCounts, SORT_NATURAL);
+        $versionSummary = [
+            'status' => count($versionCounts) > 1 ? 'mixed' : (count($versionCounts) === 1 && $unknownVersionCount === 0 ? 'consistent' : (count($versionCounts) === 1 ? 'incomplete' : 'unknown')),
+            'node_count' => count($result),
+            'unknown_count' => $unknownVersionCount,
+            'versions' => array_map(static fn (string $version, int $count): array => [
+                'version' => $version,
+                'node_count' => $count,
+            ], array_keys($versionCounts), array_values($versionCounts)),
+        ];
+
         return response()->json([
             'nodes' => $result,
+            'version_summary' => $versionSummary,
             'meta' => [
                 'snapshots' => $snapshots->count(),
                 'limit' => 1440,
@@ -153,7 +177,7 @@ class NodeController
     }
 
     /**
-     * @param  array<int, array{collected_at: Carbon, status: string}>  $samples
+     * @param  array<int, array{collected_at: CarbonInterface, status: string}>  $samples
      * @return array{status: string, offline_since: string|null, offline_duration_seconds: int, periods: array<int, array{status: string, from: string, to: string, duration_seconds: int}>}
      */
     private function buildAvailabilityHistory(array $samples): array

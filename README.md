@@ -16,6 +16,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 - Open and inspect JSON files in a browser-only JSON Viewer with a collapsible tree, key/value search, source editing, pretty printing, minifying, copy, and download. File contents stay in the browser and are never sent to Elasticsearch or uploaded to the server.
 - Inspect a selected Elasticsearch node from the Node Performance page, including IP, roles, CPU, JVM heap, disk usage, document/shard counts, and assigned indices with primary/replica shard counts.
+- Compare Elasticsearch versions across nodes on the Node Performance page, with a version distribution summary and a warning when nodes report different versions. Per-node versions are collected from the read-only `/_nodes` API.
 - Sort the Node Performance comparison table by CPU, JVM heap (RAM), or disk utilization, with the highest usage first.
 - Generate a PDF dashboard report with the selected date range, cluster name, key metrics, visible performance charts, optional previous-period comparison, and notes recorded in that period. PDF generation runs in the browser and does not add Elasticsearch requests or server-side PDF dependencies.
 

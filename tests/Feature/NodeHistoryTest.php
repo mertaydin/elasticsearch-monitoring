@@ -163,12 +163,37 @@ class NodeHistoryTest extends TestCase
         $this->assertSame('2026-11-13T10:01:00+00:00', $node['availability']['offline_since']);
     }
 
+    public function test_it_summarizes_mixed_node_versions_and_unknown_versions(): void
+    {
+        MetricSnapshot::query()->create([
+            'collected_at' => now(),
+            'elasticsearch_version' => '8.19.14',
+            'metrics' => ['node_details' => [
+                ['id' => 'node-a', 'name' => 'data-01', 'version' => '8.19.14'],
+                ['id' => 'node-b', 'name' => 'data-02', 'version' => '8.18.2'],
+                ['id' => 'node-c', 'name' => 'master-01'],
+            ]],
+        ]);
+
+        $payload = app(NodeController::class)->data()->getData(true);
+
+        $this->assertSame('mixed', $payload['version_summary']['status']);
+        $this->assertSame(3, $payload['version_summary']['node_count']);
+        $this->assertSame(1, $payload['version_summary']['unknown_count']);
+        $this->assertSame([
+            ['version' => '8.18.2', 'node_count' => 1],
+            ['version' => '8.19.14', 'node_count' => 1],
+        ], $payload['version_summary']['versions']);
+    }
+
     public function test_it_returns_an_empty_node_list_when_no_snapshots_exist(): void
     {
         $payload = app(NodeController::class)->data()->getData(true);
 
         $this->assertSame([], $payload['nodes']);
         $this->assertSame(0, $payload['meta']['snapshots']);
+        $this->assertSame('unknown', $payload['version_summary']['status']);
+        $this->assertSame([], $payload['version_summary']['versions']);
     }
 
     protected function tearDown(): void
