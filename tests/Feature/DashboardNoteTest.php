@@ -66,8 +66,7 @@ class DashboardNoteTest extends TestCase
     private function request(string $method, array $data = [], string $userId = 'user-1'): Request
     {
         $request = Request::create('/monitoring/elasticsearch/notes', $method, $data);
-        $request->setUserResolver(fn () => new class($userId)
-        {
+        $request->setUserResolver(fn () => new class($userId) {
             public function __construct(private string $id) {}
 
             public function getAuthIdentifier(): string
