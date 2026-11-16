@@ -93,6 +93,62 @@ class IndexController
         }
     }
 
+    public function favoriteSummary(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'indices' => ['required', 'array', 'min:1', 'max:30'],
+            'indices.*' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9._-]+$/'],
+        ]);
+
+        try {
+            $requestedNames = array_values(array_unique($validated['indices']));
+            $indexPath = implode(',', array_map('rawurlencode', $requestedNames));
+            $query = http_build_query(['format' => 'json', 'bytes' => 'b', 'h' => 'health,status,index,docs.count,store.size']);
+            $rows = $this->client->request('_cat/indices/'.$indexPath.'?'.$query);
+            $availableRows = array_values(array_filter($rows, 'is_array'));
+
+            if ($availableRows === []) {
+                return response()->json(['indices' => []]);
+            }
+
+            $availableNames = array_values(array_filter(array_map(
+                static fn (array $row): string => (string) ($row['index'] ?? ''),
+                $availableRows
+            )));
+            $availablePath = implode(',', array_map('rawurlencode', $availableNames));
+            $stats = $this->client->request($availablePath.'/_stats/indexing');
+            $indices = [];
+
+            foreach ($availableRows as $row) {
+                $name = (string) ($row['index'] ?? '');
+                if ($name === '') {
+                    continue;
+                }
+
+                $indexStats = (array) (($stats['indices'] ?? [])[$name] ?? []);
+                $totalIndexing = (array) data_get($indexStats, 'total.indexing', []);
+                $indices[] = [
+                    'name' => $name,
+                    'health' => (string) ($row['health'] ?? 'unknown'),
+                    'status' => (string) ($row['status'] ?? 'unknown'),
+                    'documents_count' => (int) ($row['docs.count'] ?? 0),
+                    'storage_bytes' => (int) ($row['store.size'] ?? 0),
+                    'indexing' => [
+                        'total' => (int) ($totalIndexing['index_total'] ?? 0),
+                        'current' => (int) ($totalIndexing['index_current'] ?? 0),
+                    ],
+                ];
+            }
+
+            return response()->json(['indices' => $indices]);
+        } catch (Throwable $exception) {
+            return response()->json([
+                'message' => 'Unable to retrieve favorite index summaries.',
+                'error' => $exception->getMessage(),
+            ], 502);
+        }
+    }
+
     public function details(string $index): JsonResponse
     {
         try {

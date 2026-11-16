@@ -102,4 +102,13 @@ return [
     'connection_last_success' => 'Son başarılı bağlantı',
     'connection_never' => 'Henüz başarılı bağlantı yok',
     'connection_unavailable' => 'Bağlantı bilgisi alınamadı',
+    'favorite_health' => 'Sağlık',
+    'favorite_documents' => 'Belgeler',
+    'favorite_storage' => 'Depolama',
+    'favorite_indexing' => 'İndeksleme',
+    'favorite_indexing_active' => 'aktif',
+    'favorite_indexing_total' => 'toplam',
+    'favorite_missing' => 'İndeks bulunamadı veya erişilemiyor',
+    'favorite_loading' => 'İndeks bilgileri yükleniyor…',
+    'favorite_load_failed' => 'İndeks bilgileri alınamadı',
 ];

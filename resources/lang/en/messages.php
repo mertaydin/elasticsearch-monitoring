@@ -102,4 +102,13 @@ return [
     'connection_last_success' => 'Last successful connection',
     'connection_never' => 'No successful connection yet',
     'connection_unavailable' => 'Connection details unavailable',
+    'favorite_health' => 'Health',
+    'favorite_documents' => 'Documents',
+    'favorite_storage' => 'Storage',
+    'favorite_indexing' => 'Indexing',
+    'favorite_indexing_active' => 'active',
+    'favorite_indexing_total' => 'total',
+    'favorite_missing' => 'Index not found or unavailable',
+    'favorite_loading' => 'Loading index details…',
+    'favorite_load_failed' => 'Index details unavailable',
 ];

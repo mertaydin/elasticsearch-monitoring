@@ -89,4 +89,13 @@ return [
     'connection_last_success' => '上次成功连接',
     'connection_never' => '尚无成功连接',
     'connection_unavailable' => '无法获取连接详情',
+    'favorite_health' => '健康状态',
+    'favorite_documents' => '文档数',
+    'favorite_storage' => '存储空间',
+    'favorite_indexing' => '索引操作',
+    'favorite_indexing_active' => '进行中',
+    'favorite_indexing_total' => '总计',
+    'favorite_missing' => '索引不存在或不可用',
+    'favorite_loading' => '正在加载索引详情…',
+    'favorite_load_failed' => '无法获取索引详情',
 ];

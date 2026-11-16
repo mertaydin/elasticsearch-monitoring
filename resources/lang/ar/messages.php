@@ -89,4 +89,13 @@ return [
     'connection_last_success' => 'آخر اتصال ناجح',
     'connection_never' => 'لا يوجد اتصال ناجح بعد',
     'connection_unavailable' => 'تفاصيل الاتصال غير متاحة',
+    'favorite_health' => 'الحالة',
+    'favorite_documents' => 'المستندات',
+    'favorite_storage' => 'التخزين',
+    'favorite_indexing' => 'الفهرسة',
+    'favorite_indexing_active' => 'نشط',
+    'favorite_indexing_total' => 'الإجمالي',
+    'favorite_missing' => 'الفهرس غير موجود أو غير متاح',
+    'favorite_loading' => 'جارٍ تحميل تفاصيل الفهرس…',
+    'favorite_load_failed' => 'تفاصيل الفهرس غير متاحة',
 ];

@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+- Expand dashboard favorite-index quick links into summary cards showing health, document count, storage size, and current/total indexing operations.
+- Add a bounded, read-only favorite-summary endpoint and refresh summaries with the dashboard; keep favorite selection in browser local storage with no database migration.
+- Localize favorite summary labels in all six supported languages and add feature tests.
+
 - Add a live Elasticsearch connection indicator with connected, slow-response, and disconnected states, including response time and last successful connection.
 - Add a lightweight read-only connection check endpoint, configurable slow-response threshold, localized dashboard labels, and feature tests.
 

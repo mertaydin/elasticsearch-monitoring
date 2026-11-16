@@ -89,4 +89,13 @@ return [
     'connection_last_success' => 'Última conexión correcta',
     'connection_never' => 'Aún no hay conexiones correctas',
     'connection_unavailable' => 'Detalles de conexión no disponibles',
+    'favorite_health' => 'Salud',
+    'favorite_documents' => 'Documentos',
+    'favorite_storage' => 'Almacenamiento',
+    'favorite_indexing' => 'Indexación',
+    'favorite_indexing_active' => 'activos',
+    'favorite_indexing_total' => 'total',
+    'favorite_missing' => 'Índice no encontrado o no disponible',
+    'favorite_loading' => 'Cargando detalles del índice…',
+    'favorite_load_failed' => 'Detalles del índice no disponibles',
 ];

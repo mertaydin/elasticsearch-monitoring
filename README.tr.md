@@ -26,7 +26,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - Dashboard otomatik yenileme aralığını (15 saniye, 30 saniye, 1 dakika veya 5 dakika) seçin; yenilemeyi duraklatın/sürdürün ve arka planda gereksiz istekleri durdurun.
 
 - Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
-- Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın.
+- Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın. Dashboard favori kartları ayrıca indeks sağlığını, belge sayısını, depolama boyutunu ve aktif/toplam indeksleme işlemlerini gösterir; özetler dashboard ile yenilenir ve veritabanı migration'ı gerektirmez.
 - Arama ve favori filtreleriyle görünen indeks listesini tarayıcıdan UTF-8 CSV veya JSON olarak indirin.
 - İndeks, node, shard ve snapshot bilgilerini tek tıkla kopyalayın.
 - Mapping içeriğinin tamamını biçimlendirilmiş JSON olarak veya üst seviye bölümlerini ayrı ayrı kopyalayın.

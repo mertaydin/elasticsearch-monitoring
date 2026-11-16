@@ -26,7 +26,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Choose a dashboard auto-refresh interval (15 seconds, 30 seconds, 1 minute, or 5 minutes), pause/resume refresh, and suspend background-tab requests.
 
 - Shard Allocation Explorer with per-node allocation explanations for unassigned or assigned shards. This diagnostic endpoint requires the Elasticsearch cluster `monitor` privilege and does not change cluster state.
-- Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard.
+- Save frequently used indices as browser-local favorites, filter the index list to favorites, and open them quickly from the dashboard. Dashboard favorite cards also show index health, document count, storage size, and current/total indexing operations; summaries refresh with the dashboard and require no database migration.
 - Export the currently visible index list (including search and favorites filters) as UTF-8 CSV or JSON directly in the browser.
 - Copy index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/name values with one click.
 - Copy the complete formatted mapping JSON or individual top-level mapping sections from Index Management.

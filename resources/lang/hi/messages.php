@@ -89,4 +89,13 @@ return [
     'connection_last_success' => 'अंतिम सफल कनेक्शन',
     'connection_never' => 'अभी तक कोई सफल कनेक्शन नहीं',
     'connection_unavailable' => 'कनेक्शन विवरण उपलब्ध नहीं',
+    'favorite_health' => 'स्वास्थ्य',
+    'favorite_documents' => 'दस्तावेज़',
+    'favorite_storage' => 'स्टोरेज',
+    'favorite_indexing' => 'इंडेक्सिंग',
+    'favorite_indexing_active' => 'सक्रिय',
+    'favorite_indexing_total' => 'कुल',
+    'favorite_missing' => 'इंडेक्स नहीं मिला या उपलब्ध नहीं है',
+    'favorite_loading' => 'इंडेक्स विवरण लोड हो रहा है…',
+    'favorite_load_failed' => 'इंडेक्स विवरण उपलब्ध नहीं है',
 ];

@@ -97,6 +97,7 @@
         .chart-export-button{flex:none;border:1px solid #e4e8f1;border-radius:8px;background:#fff;color:#65718a;font-size:.68rem;font-weight:700;padding:5px 8px;line-height:1.2}
         .chart-export-button:hover{background:#f2f4ff;border-color:#cfd5fb;color:#414fbd}
         .dashboard-note-item{border:1px solid #e9edf4;border-radius:12px;padding:12px 14px;background:#fcfdff}.dashboard-note-item p{white-space:pre-wrap;overflow-wrap:anywhere}.dashboard-note-meta{font-size:.72rem;color:#7c879b}
+        .favorite-index-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}.favorite-index-card{min-width:0;border:1px solid #e8ecf4;border-radius:13px;padding:13px 15px;background:linear-gradient(145deg,#fff,#fbfcff)}.favorite-index-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.favorite-index-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#34436a;text-decoration:none;font-size:.82rem;font-weight:800}.favorite-index-name:hover{color:#4f5bd5}.favorite-index-health{font-size:.65rem;font-weight:800;text-transform:uppercase}.favorite-index-health.green{background:#e5f7ef;color:#16865b}.favorite-index-health.yellow{background:#fff4df;color:#a96b13}.favorite-index-health.red{background:#ffebe9;color:#c34840}.favorite-index-health.unknown{background:#eef1f6;color:#68758c}.favorite-index-metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.favorite-index-metric{min-width:0;border-radius:9px;background:#f5f7fb;padding:8px 10px}.favorite-index-metric span{display:block;color:#7c879b;font-size:.65rem;font-weight:700}.favorite-index-metric strong{display:block;margin-top:3px;color:#293650;font-size:.86rem;font-weight:800;overflow:hidden;text-overflow:ellipsis}.favorite-index-activity{margin:10px 0 0;color:#7c879b;font-size:.68rem}.favorite-index-unavailable{margin:12px 0 0;color:#a06b32;font-size:.7rem}
         .insight-card,.metric-card,.chart-card,.summary-card{background:var(--em-surface);border:1px solid var(--em-line);border-radius:16px;box-shadow:0 5px 20px rgba(31,45,82,.035);height:100%}
         .insight-card{padding:21px}
         .section-title{font-size:.96rem;font-weight:800;color:#26334e;letter-spacing:-.025em}
@@ -264,7 +265,7 @@
             <h2 class="section-title mb-0">{{ $favoriteText['title'] }}</h2>
             <span class="small text-muted" id="favorite-indices-count">0</span>
         </div>
-        <div id="favorite-indices-list" class="d-flex flex-wrap gap-2"></div>
+        <div id="favorite-indices-list" class="favorite-index-grid"></div>
         <p class="small text-muted mb-0 mt-2" id="favorite-indices-empty">{{ $favoriteText['empty'] }}</p>
     </section>
     <div class="row g-3 mb-4" data-dashboard-widget="health">
@@ -335,8 +336,9 @@ const notesDeleteEndpoint = @json(route('elasticsearch-monitoring.notes.destroy'
 const noteChartLabels = {'cpu-chart':@json($uiText['cpu_history']),'storage-chart':@json($uiText['index_history']),'disk-chart':@json($uiText['disk_history']),'search-chart':@json($uiText['search_history']),'indexing-chart':@json($uiText['indexing_history']),'segments-chart':@json($uiText['segments_history']),'documents-chart':@json($uiText['documents_history'])};
 let dashboardNotes = [];
 const favoritesStorageKey = 'elasticsearch-monitoring:favorites';
-const favoriteLabels = @json($favoriteText);
+const favoriteLabels = {...@json($favoriteText),health:@json($t('favorite_health')),documents:@json($t('favorite_documents')),storage:@json($t('favorite_storage')),indexing:@json($t('favorite_indexing')),active:@json($t('favorite_indexing_active')),total:@json($t('favorite_indexing_total')),missing:@json($t('favorite_missing')),loading:@json($t('favorite_loading')),loadFailed:@json($t('favorite_load_failed'))};
 const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
+const favoriteSummaryEndpoint = @json(route('elasticsearch-monitoring.indices.favorites-summary'));
 const dashboardLayoutKey = 'elasticsearch-monitoring:dashboard-layout';
 const dashboardKpiKey = 'elasticsearch-monitoring:dashboard-kpis';
 const defaultDashboardKpiOrder = ['docs', 'active-shards', 'unassigned', 'search-rate', 'index-rate', 'cpu', 'store-size'];
@@ -414,30 +416,103 @@ function resetDashboardLayout() {
 }
 const initialDashboardLayout = readDashboardLayout(); applyDashboardLayout(initialDashboardLayout); renderDashboardWidgetList(initialDashboardLayout);
 const initialDashboardKpis = readDashboardKpis(); applyDashboardKpis(initialDashboardKpis); renderDashboardKpiList(initialDashboardKpis);
+let favoriteIndexSummaries = new Map();
+let favoriteSummaryLoading = false;
+let favoriteSummaryFailed = false;
+function readFavoriteIndexNames() {
+    try {
+        const stored = JSON.parse(localStorage.getItem(favoritesStorageKey) || '[]');
+        return Array.isArray(stored) ? [...new Set(stored.filter(name => typeof name === 'string' && name.length > 0))].sort() : [];
+    } catch (error) { return []; }
+}
+function formatFavoriteBytes(value) {
+    const bytes = Number(value || 0);
+    if (bytes >= 1024 ** 3) return (bytes / (1024 ** 3)).toFixed(2) + ' GB';
+    if (bytes >= 1024 ** 2) return (bytes / (1024 ** 2)).toFixed(2) + ' MB';
+    if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    return bytes.toLocaleString() + ' B';
+}
 function renderFavoriteIndices() {
     const container = document.getElementById('favorite-indices-list');
     const empty = document.getElementById('favorite-indices-empty');
     const count = document.getElementById('favorite-indices-count');
-    let favorites = [];
-    try {
-        const stored = JSON.parse(localStorage.getItem(favoritesStorageKey) || '[]');
-        favorites = Array.isArray(stored) ? [...new Set(stored.filter(name => typeof name === 'string'))].sort() : [];
-    } catch (error) {
-        favorites = [];
-    }
+    const favorites = readFavoriteIndexNames();
     count.textContent = String(favorites.length);
     container.replaceChildren();
     empty.classList.toggle('d-none', favorites.length > 0);
     favorites.forEach(name => {
+        const summary = favoriteIndexSummaries.get(name);
+        const card = document.createElement('article');
+        card.className = 'favorite-index-card';
+        const head = document.createElement('div');
+        head.className = 'favorite-index-card-head';
         const link = document.createElement('a');
         const target = new URL(indicesUrl, window.location.href);
         target.searchParams.set('search', name);
         link.href = target.toString();
-        link.className = 'btn btn-sm btn-outline-primary';
+        link.className = 'favorite-index-name';
         link.textContent = '★ ' + name;
         link.title = favoriteLabels.open;
-        container.appendChild(link);
+        head.appendChild(link);
+        const health = document.createElement('span');
+        const healthValue = String(summary?.health || 'unknown').toLowerCase();
+        health.className = 'badge favorite-index-health ' + (['green', 'yellow', 'red'].includes(healthValue) ? healthValue : 'unknown');
+        health.textContent = summary ? healthValue : '—';
+        head.appendChild(health);
+        card.appendChild(head);
+
+        if (summary) {
+            const metrics = document.createElement('div');
+            metrics.className = 'favorite-index-metrics';
+            [[favoriteLabels.documents, Number(summary.documents_count || 0).toLocaleString()], [favoriteLabels.storage, formatFavoriteBytes(summary.storage_bytes)]].forEach(([label, value]) => {
+                const metric = document.createElement('div');
+                metric.className = 'favorite-index-metric';
+                const caption = document.createElement('span');
+                caption.textContent = label;
+                const number = document.createElement('strong');
+                number.textContent = value;
+                metric.append(caption, number);
+                metrics.appendChild(metric);
+            });
+            card.appendChild(metrics);
+            const activity = document.createElement('p');
+            activity.className = 'favorite-index-activity';
+            activity.textContent = favoriteLabels.indexing + ': ' + Number(summary.indexing?.current || 0).toLocaleString() + ' ' + favoriteLabels.active + ' · ' + Number(summary.indexing?.total || 0).toLocaleString() + ' ' + favoriteLabels.total;
+            card.appendChild(activity);
+        } else {
+            const unavailable = document.createElement('p');
+            unavailable.className = 'favorite-index-unavailable';
+            unavailable.textContent = favoriteSummaryLoading ? favoriteLabels.loading : (favoriteSummaryFailed ? favoriteLabels.loadFailed : favoriteLabels.missing);
+            card.appendChild(unavailable);
+        }
+        container.appendChild(card);
     });
+}
+async function refreshFavoriteIndexSummary() {
+    const favorites = readFavoriteIndexNames();
+    if (favorites.length === 0) {
+        favoriteIndexSummaries = new Map();
+        favoriteSummaryLoading = false;
+        favoriteSummaryFailed = false;
+        renderFavoriteIndices();
+        return;
+    }
+    favoriteSummaryLoading = true;
+    favoriteSummaryFailed = false;
+    renderFavoriteIndices();
+    try {
+        const requestUrl = new URL(favoriteSummaryEndpoint, window.location.href);
+        favorites.slice(0, 30).forEach(name => requestUrl.searchParams.append('indices[]', name));
+        const response = await fetch(requestUrl.toString(), {headers: {'Accept': 'application/json'}, cache: 'no-store'});
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const payload = await response.json();
+        favoriteIndexSummaries = new Map((payload.indices || []).map(index => [index.name, index]));
+    } catch (error) {
+        favoriteSummaryFailed = true;
+    } finally {
+        favoriteSummaryLoading = false;
+        renderFavoriteIndices();
+    }
 }
 const connectionLabels = {connected:@json($t('connection_connected')),slow:@json($t('connection_slow')),disconnected:@json($t('connection_disconnected')),checking:@json($t('connection_checking')),lastSuccess:@json($t('connection_last_success')),never:@json($t('connection_never')),unavailable:@json($t('connection_unavailable'))};
 async function refreshElasticsearchConnection() {
@@ -705,6 +780,7 @@ function scheduleDashboardRefresh(delay = refreshIntervalMs) {
     refreshTimer = window.setTimeout(async () => {
         refreshTimer = null;
         await loadMetrics();
+        await refreshFavoriteIndexSummary();
         scheduleDashboardRefresh();
     }, Math.max(0, delay));
 }
@@ -712,6 +788,7 @@ async function refreshDashboardNow() {
     if (refreshTimer !== null) window.clearTimeout(refreshTimer);
     refreshTimer = null;
     await loadMetrics();
+    await refreshFavoriteIndexSummary();
     scheduleDashboardRefresh();
 }
 function toggleDashboardAutoRefresh() {
@@ -738,6 +815,7 @@ document.addEventListener('visibilitychange', () => {
 });
 async function startDashboardRefresh() {
     await loadMetrics();
+    await refreshFavoriteIndexSummary();
     scheduleDashboardRefresh();
 }
 updateDashboardRefreshControls();
@@ -921,7 +999,7 @@ async function loadMetrics() {
 }
 renderFavoriteIndices();
 loadDashboardNotes();
-window.addEventListener('storage', event => { if (event.key === favoritesStorageKey) renderFavoriteIndices(); });
+window.addEventListener('storage', event => { if (event.key === favoritesStorageKey) refreshFavoriteIndexSummary(); });
 startDashboardRefresh();
 refreshElasticsearchConnection();
 window.setInterval(refreshElasticsearchConnection, 30000);
