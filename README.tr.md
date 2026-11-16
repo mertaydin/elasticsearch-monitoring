@@ -1,6 +1,7 @@
 # Elasticsearch Monitoring
 
 - Node Performans sayfasında seçilen node'un IP, rolleri, CPU, JVM heap, disk kullanımı, doküman/shard sayıları ve üzerindeki indekslerin primary/replica shard sayılarını görüntüleyin.
+- Node karşılaştırma tablosunu CPU, JVM heap (RAM) veya disk kullanımına göre sıralayın; en yüksek kullanım en üstte gösterilir.
 - Dashboard geçmiş grafiklerini son 1, 6, 24 saat, son 7 gün veya özel başlangıç/bitiş tarihine göre filtreleyin. Seçim tarayıcıda saklanır ve büyük tarih aralıklarında yanıt en fazla 2.000 örneklenmiş noktayla sınırlandırılır.
 
 ![CI](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml/badge.svg?branch=main)
