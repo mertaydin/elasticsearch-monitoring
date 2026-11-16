@@ -195,6 +195,7 @@ class IndexManagementTest extends TestCase
         $this->assertSame(28, $payload['total']['segments']['count']);
         $this->assertSame(150, $payload['total']['translog']['operations']);
     }
+
     public function test_it_searches_indices_by_name_and_returns_compact_metrics(): void
     {
         Http::fake(function ($request) {
@@ -239,6 +240,4 @@ class IndexManagementTest extends TestCase
             ->assertSee('globalIndexSearchEndpoint', false)
             ->assertSee('openGlobalIndexSearchResult', false);
     }
-
-
 }
