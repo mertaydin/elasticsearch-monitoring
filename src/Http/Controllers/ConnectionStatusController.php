@@ -5,7 +5,6 @@ namespace ElasticsearchMonitoring\Http\Controllers;
 use ElasticsearchMonitoring\Models\ApiRequestLog;
 use ElasticsearchMonitoring\Services\ElasticsearchClient;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Schema;
 use Throwable;
 
 class ConnectionStatusController

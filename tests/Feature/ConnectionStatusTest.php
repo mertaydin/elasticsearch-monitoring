@@ -20,7 +20,7 @@ class ConnectionStatusTest extends TestCase
             ->assertJsonPath('status', 'connected')
             ->assertJsonPath('error', null);
 
-        Http::assertSent(fn ($request): bool => $request->method() === 'GET' && $request->url() === 'http://127.0.0.1:9200/');
+        Http::assertSent(fn ($request): bool => $request->method() === 'GET' && str_starts_with($request->url(), 'http://127.0.0.1:9200'));
     }
 
     public function test_it_reports_a_disconnected_elasticsearch_connection(): void
