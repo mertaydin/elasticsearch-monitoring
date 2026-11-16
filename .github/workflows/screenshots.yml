@@ -125,6 +125,14 @@ jobs:
           }
           await browser.close();
           NODE
+      - name: Print Laravel exception log
+        if: failure()
+        working-directory: screenshot-app
+        run: |
+          echo "=== Laravel application log ==="
+          tail -n 200 storage/logs/laravel.log || true
+          echo "=== Laravel server output ==="
+          tail -n 100 /tmp/elasticsearch-monitoring-server.log || true
       - name: Commit screenshots
         run: |
           git config user.name "github-actions[bot]"
