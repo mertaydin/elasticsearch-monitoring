@@ -58,7 +58,7 @@ class NodeController
 
             $present = [];
             foreach ((array) data_get($snapshot->metrics, 'node_details', []) as $detail) {
-                if (! is_array($detail)) {
+                if (is_array($detail) === false) {
                     continue;
                 }
 
