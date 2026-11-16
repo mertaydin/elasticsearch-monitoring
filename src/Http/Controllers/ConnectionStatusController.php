@@ -27,11 +27,13 @@ class ConnectionStatusController
             $status = 'slow';
         }
 
-        $lastSuccessfulAt = ApiRequestLog::query()
-            ->where('endpoint', '/')
-            ->where('successful', true)
-            ->latest('created_at')
-            ->value('created_at');
+        $lastSuccessfulAt = Schema::hasTable('elasticsearch_api_request_logs')
+            ? ApiRequestLog::query()
+                ->where('endpoint', '/')
+                ->where('successful', true)
+                ->latest('created_at')
+                ->value('created_at')
+            : null;
 
         return response()->json([
             'status' => $status,
