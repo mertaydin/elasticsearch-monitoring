@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+- Add a global dashboard index search with debounced live results, health, document count, and storage size.
+- Search Elasticsearch index names through a bounded read-only endpoint; rank prefix matches first and open the selected index details directly.
+- Support keyboard navigation, mobile layouts, and localized search labels in all six dashboard languages; preserve dashboard authorization middleware.
+
+
 - Expand dashboard favorite-index quick links into summary cards showing health, document count, storage size, and current/total indexing operations.
 - Add a bounded, read-only favorite-summary endpoint and refresh summaries with the dashboard; keep favorite selection in browser local storage with no database migration.
 - Localize favorite summary labels in all six supported languages and add feature tests.
