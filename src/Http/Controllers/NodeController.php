@@ -35,12 +35,12 @@ class NodeController
             }
 
             foreach ((array) data_get($snapshot->metrics, 'node_details', []) as $detail) {
-                if (! is_array($detail)) {
+                if (is_array($detail) === false) {
                     continue;
                 }
 
                 $id = (string) ($detail['id'] ?? '');
-                if ($id !== '' && ! isset($firstSeen[$id])) {
+                if ($id !== '' && isset($firstSeen[$id]) === false) {
                     $firstSeen[$id] = $collectedAt;
                 }
             }
@@ -99,7 +99,7 @@ class NodeController
                     }
                 }
 
-                if (! isset($nodes[$id])) {
+                if (isset($nodes[$id]) === false) {
                     $nodes[$id] = [
                         'id' => $id,
                         'name' => (string) ($detail['name'] ?? $id),
@@ -112,7 +112,7 @@ class NodeController
 
                 $nodes[$id]['name'] = (string) ($detail['name'] ?? $nodes[$id]['name']);
                 $nodes[$id]['roles'] = (array) ($detail['roles'] ?? $nodes[$id]['roles']);
-                if (! empty($detail['ip'])) {
+                if (empty($detail['ip']) === false) {
                     $nodes[$id]['ip'] = (string) $detail['ip'];
                 }
                 $nodes[$id]['latest'] = $point;
