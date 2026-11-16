@@ -85,10 +85,42 @@ class ElasticsearchClient
         }
     }
 
+    private function assertCredentialsAreNotSentInPlaintext(string $url, bool $hasCredentials): void
+    {
+        if (! $hasCredentials) {
+            return;
+        }
+
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+
+        if ($scheme === 'https') {
+            return;
+        }
+
+        $host = strtolower(trim((string) parse_url($url, PHP_URL_HOST), '[]'));
+        $isLoopback = $host === 'localhost'
+            || $host === '::1'
+            || preg_match('/^127(\.\d{1,3}){3}$/', $host) === 1;
+
+        if ($scheme === 'http' && $isLoopback) {
+            return;
+        }
+
+        throw new RuntimeException(
+            'Refusing to send Elasticsearch credentials over an unencrypted connection. '
+            .'Use an https:// ELASTICSEARCH_MONITORING_URL for non-loopback endpoints.'
+        );
+    }
+
     private function http(): PendingRequest
     {
         $connection = config('elasticsearch-monitoring.connection', []);
-        $request = Http::baseUrl(rtrim((string) ($connection['url'] ?? ''), '/'))
+        $url = rtrim((string) ($connection['url'] ?? ''), '/');
+        $hasCredentials = ! empty($connection['api_key']) || ! empty($connection['username']);
+
+        $this->assertCredentialsAreNotSentInPlaintext($url, $hasCredentials);
+
+        $request = Http::baseUrl($url)
             ->timeout((int) ($connection['timeout'] ?? 10))
             ->acceptJson();
 
