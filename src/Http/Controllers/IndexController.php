@@ -66,9 +66,10 @@ class IndexController
 
             return response()->json(['indices' => array_slice($indices, 0, 12)]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to search Elasticsearch indices.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
@@ -134,9 +135,10 @@ class IndexController
 
             return response()->json(['indices' => $indices]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve Elasticsearch indices.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
@@ -181,9 +183,10 @@ class IndexController
                 ],
             ]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve problematic Elasticsearch indices.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
@@ -237,9 +240,10 @@ class IndexController
 
             return response()->json(['indices' => $indices]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve favorite index summaries.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
@@ -285,9 +289,10 @@ class IndexController
                 ],
             ]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve index details.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
@@ -306,9 +311,10 @@ class IndexController
                 'total' => (array) ($indexStats['total'] ?? []),
             ]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve index performance statistics.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }

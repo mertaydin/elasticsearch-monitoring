@@ -68,9 +68,10 @@ class ShardController
                 ),
             ]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve Elasticsearch shard allocation.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
@@ -99,9 +100,10 @@ class ShardController
 
             return response()->json($this->client->request('_cluster/allocation/explain?'.http_build_query($query)));
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve shard allocation explanation. Check the Elasticsearch monitor cluster privilege.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
