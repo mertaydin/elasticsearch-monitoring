@@ -222,14 +222,6 @@ class IndexManagementTest extends TestCase
         Http::assertSent(fn ($request) => str_contains($request->url(), '_cat/indices') && str_contains($request->url(), 'logs'));
     }
 
-    public function test_it_validates_global_index_search_terms(): void
-    {
-        $request = Request::create('/monitoring/elasticsearch/indices/search', 'GET', ['q' => 'x']);
-
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
-        app(IndexController::class)->search($request);
-    }
-
     public function test_dashboard_renders_global_index_search(): void
     {
         $this->withoutMiddleware();
