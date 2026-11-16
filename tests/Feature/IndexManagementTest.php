@@ -38,6 +38,44 @@ class IndexManagementTest extends TestCase
             ->assertSee('saveViewPreference()', false);
     }
 
+    public function test_it_returns_only_red_and_yellow_indices_for_the_dashboard_panel(): void
+    {
+        Http::fake(function ($request) {
+            if (str_contains($request->url(), '_cat/indices')) {
+                return Http::response([
+                    ['index' => 'yellow-apps', 'health' => 'yellow', 'status' => 'open', 'pri' => '2', 'rep' => '1', 'docs.count' => '120', 'store.size' => '2048'],
+                    ['index' => 'green-logs', 'health' => 'green', 'status' => 'open', 'pri' => '1', 'rep' => '1', 'docs.count' => '900', 'store.size' => '4096'],
+                    ['index' => 'red-orders', 'health' => 'red', 'status' => 'open', 'pri' => '3', 'rep' => '1', 'docs.count' => '12', 'store.size' => '1024'],
+                ]);
+            }
+
+            return Http::response([], 404);
+        });
+
+        $response = app(IndexController::class)->problematic();
+
+        $this->assertSame(200, $response->getStatusCode());
+        $payload = $response->getData(true);
+        $this->assertSame(['red-orders', 'yellow-apps'], array_column($payload['indices'], 'name'));
+        $this->assertSame(['red' => 1, 'yellow' => 1, 'total' => 2], $payload['counts']);
+        $this->assertSame(12, $payload['indices'][0]['documents_count']);
+        $this->assertSame(1024, $payload['indices'][0]['storage_bytes']);
+        Http::assertSent(fn ($request) => str_contains($request->url(), 'health,status,index,pri,rep,docs.count,store.size'));
+    }
+
+    public function test_it_renders_the_problematic_indices_dashboard_panel(): void
+    {
+        $this->withoutMiddleware();
+
+        $response = $this->get('/monitoring/elasticsearch');
+
+        $response->assertOk()
+            ->assertSee('data-dashboard-widget="problematic"', false)
+            ->assertSee('problematic-indices-rows', false)
+            ->assertSee('refreshProblematicIndices()', false)
+            ->assertSee('copyProblematicDiagnostics', false);
+    }
+
     public function test_it_lists_indices_with_data_stream_information(): void
     {
         Http::fake(function ($request) {
