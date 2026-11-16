@@ -26,6 +26,7 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 .page{max-width:1600px}.panel,.chart-panel{background:#fff;border:1px solid #e8ecf3;border-radius:16px;box-shadow:0 5px 22px rgba(26,39,71,.045)}
 .hero{background:linear-gradient(115deg,#171d38,#303b70 62%,#625bdb);color:#fff;border-radius:20px;padding:24px 28px}.hero p{color:#d5d9f2}
 .metric{padding:18px 20px;height:100%}.metric .label{font-size:.82rem;color:#6b7487}.metric .value{font-size:1.65rem;font-weight:750;letter-spacing:-.03em;margin-top:5px}.chart-panel{padding:18px 20px;height:100%;min-height:330px}.chart-panel h2{font-size:1rem;font-weight:700;margin:0}.chart-panel p{font-size:.8rem;color:#7b8496;margin:5px 0 12px}.node-select{min-width:230px}.table thead th{font-size:.76rem;color:#68748a;font-weight:650;white-space:nowrap}.table tbody td{font-size:.86rem;white-space:nowrap}.node-pick{border:0;background:none;color:#334c9b;font-weight:650;padding:0}.muted{color:#7b8496}
+.availability-panel{padding:18px 20px}.availability-track{display:flex;height:13px;overflow:hidden;border-radius:99px;background:#edf0f5;gap:2px}.availability-segment{height:100%;min-width:2px}.availability-segment.online{background:#20a36b}.availability-segment.offline{background:#e05252}.availability-legend{font-size:.78rem;color:#68748a}.availability-period{display:flex;justify-content:space-between;gap:12px;font-size:.82rem;padding:7px 0;border-bottom:1px solid #edf0f5}.availability-period:last-child{border-bottom:0}.availability-state{font-size:.82rem;font-weight:700;border-radius:99px;padding:5px 10px}.availability-state.online{background:#e6f6ee;color:#167448}.availability-state.offline{background:#fff0f0;color:#b83232}.availability-state.unknown{background:#edf0f5;color:#68748a}
 </style>
 </head>
 <body>
@@ -74,6 +75,20 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <thead><tr><th>{{ $locale === 'tr' ? 'İndeks' : 'Index' }}</th><th>{{ $locale === 'tr' ? 'Primary shard' : 'Primary shards' }}</th><th>{{ $locale === 'tr' ? 'Replica shard' : 'Replica shards' }}</th></tr></thead>
 <tbody id="node-detail-indices"><tr><td colspan="3" class="muted">{{ $locale === 'tr' ? 'Yükleniyor…' : 'Loading…' }}</td></tr></tbody>
 </table></div></section>
+<section class="panel availability-panel mb-4" aria-live="polite">
+ <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <div><h2 class="h6 fw-bold mb-1">{{ $locale === 'tr' ? 'Node sağlık geçmişi' : 'Node health history' }}</h2><div class="small muted">{{ $locale === 'tr' ? 'Son 24 saatteki erişilebilirlik değişimleri' : 'Availability changes over the last 24 hours' }}</div></div>
+  <span id="availability-state" class="availability-state unknown">—</span>
+ </div>
+ <div class="availability-track mb-2" id="availability-track" role="img" aria-label="{{ $locale === 'tr' ? 'Node çevrimiçi ve çevrimdışı zaman çizelgesi' : 'Node online and offline timeline' }}"><span class="availability-segment online" style="width:100%"></span></div>
+ <div class="d-flex justify-content-between availability-legend mb-3"><span>{{ $locale === 'tr' ? 'İlk ölçüm' : 'First sample' }}</span><span>{{ $locale === 'tr' ? 'Şimdi' : 'Now' }}</span></div>
+ <div class="d-flex flex-wrap gap-3 small mb-2">
+  <span><span class="availability-segment online d-inline-block rounded-pill me-1" style="width:10px;height:10px"></span>{{ $locale === 'tr' ? 'Çevrimiçi' : 'Online' }}</span>
+  <span><span class="availability-segment offline d-inline-block rounded-pill me-1" style="width:10px;height:10px"></span>{{ $locale === 'tr' ? 'Erişilemiyor' : 'Unreachable' }}</span>
+  <span class="muted" id="availability-duration"></span>
+ </div>
+ <div id="availability-periods" class="mt-2"></div>
+</section>
 <div class="row g-3 mb-4">
 <div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['cpu'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['cpu-chart'], labels.cpu, 'node-cpu-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="cpu-chart"></div></section></div>
 <div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['heap'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['heap-chart'], labels.heap, 'node-heap-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="heap-chart"></div></section></div>
@@ -131,10 +146,42 @@ function drawChart(id,series,suffix='',maximum=null){
  charts[id]=new ApexCharts(document.querySelector('#'+id),options);
  charts[id].render();
 }
+function formatDuration(seconds){
+ const total=Math.max(0,Math.floor(Number(seconds)||0));
+ const hours=Math.floor(total/3600),minutes=Math.floor((total%3600)/60),remaining=total%60;
+ if(hours>0)return hours+'h '+minutes+'m';
+ if(minutes>0)return minutes+'m '+remaining+'s';
+ return remaining+'s';
+}
+function renderAvailability(availability){
+ const state=availability?.status||'unknown';
+ const stateElement=document.getElementById('availability-state');
+ const stateLabels={online:@json($locale === 'tr' ? 'Şu an çevrimiçi' : 'Currently online'),offline:@json($locale === 'tr' ? 'Şu an erişilemiyor' : 'Currently unreachable'),unknown:@json($locale === 'tr' ? 'Durum bilinmiyor' : 'Status unknown')};
+ stateElement.className='availability-state '+state;
+ stateElement.textContent=stateLabels[state]||stateLabels.unknown;
+ const periods=availability?.periods||[];
+ const total=periods.reduce((sum,period)=>sum+Math.max(0,Number(period.duration_seconds)||0),0)||1;
+ document.getElementById('availability-track').innerHTML=periods.map(period=>{
+  const width=Math.max(.5,(Number(period.duration_seconds)||0)/total*100);
+  const from=new Date(period.from).toLocaleString(document.documentElement.lang,{dateStyle:'short',timeStyle:'short'});
+  const to=new Date(period.to).toLocaleString(document.documentElement.lang,{dateStyle:'short',timeStyle:'short'});
+  const statusLabel=period.status==='offline'?@json($locale === 'tr' ? 'Erişilemiyor' : 'Unreachable'):@json($locale === 'tr' ? 'Çevrimiçi' : 'Online');
+  return '<span class="availability-segment '+(period.status==='offline'?'offline':'online')+'" style="width:'+width+'%" title="'+safe(statusLabel+' · '+from+' – '+to)+'"></span>';
+ }).join('')||'<span class="availability-segment online" style="width:100%"></span>';
+ const duration=state==='offline'?(@json($locale === 'tr' ? 'Kesinti süresi: ' : 'Offline for ')+formatDuration(availability.offline_duration_seconds)):'';
+ document.getElementById('availability-duration').textContent=duration;
+ const statusLabels={online:@json($locale === 'tr' ? 'Çevrimiçi' : 'Online'),offline:@json($locale === 'tr' ? 'Erişilemiyor' : 'Unreachable')};
+ document.getElementById('availability-periods').innerHTML=periods.slice().reverse().map(period=>{
+  const from=new Date(period.from).toLocaleString(document.documentElement.lang,{dateStyle:'medium',timeStyle:'short'});
+  const to=new Date(period.to).toLocaleString(document.documentElement.lang,{dateStyle:'medium',timeStyle:'short'});
+  return '<div class="availability-period"><span><strong>'+(statusLabels[period.status]||period.status)+'</strong><span class="muted ms-2">'+from+' – '+to+'</span></span><span class="muted">'+formatDuration(period.duration_seconds)+'</span></div>';
+ }).join('')||'<div class="small muted">'+@json($locale === 'tr' ? 'Henüz yeterli ölçüm yok.' : 'No availability samples yet.')+'</div>';
+}
 function renderSelected(){
  const node=nodes.find(item=>item.id===selectedId);
  if(!node)return;
  const latest=node.latest||{},points=node.history||[];
+ renderAvailability(node.availability);
  document.getElementById('cpu-value').textContent=percent(latest.cpu_percent);
  document.getElementById('heap-value').textContent=percent(latest.heap_percent);
  document.getElementById('disk-value').textContent=percent(latest.filesystem_used_percent);
