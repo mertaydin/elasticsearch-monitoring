@@ -34,9 +34,9 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 </div>
 <div class="row g-3 mb-4" id="metrics"><div class="col-12 text-secondary">{{ $t['loading'] }}</div></div>
 <div class="row g-3 mb-4">
-<div class="col-xl-6"><section class="chart-panel"><h2>{{ $t['diskTrend'] }}</h2><p>{{ $t['description'] }}</p><div id="disk-chart"></div></section></div>
-<div class="col-xl-6"><section class="chart-panel"><h2>{{ $t['storageTrend'] }}</h2><p>{{ $t['storage'] }}</p><div id="storage-chart"></div></section></div>
-<div class="col-xl-6"><section class="chart-panel"><h2>{{ $t['documentTrend'] }}</h2><p>{{ $t['documents'] }}</p><div id="documents-chart"></div></section></div>
+<div class="col-xl-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $t['diskTrend'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['disk-chart'], t.diskTrend, 'capacity-disk-chart')">PNG</button></div><p>{{ $t['description'] }}</p><div id="disk-chart"></div></section></div>
+<div class="col-xl-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $t['storageTrend'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['storage-chart'], t.storageTrend, 'capacity-storage-chart')">PNG</button></div><p>{{ $t['storage'] }}</p><div id="storage-chart"></div></section></div>
+<div class="col-xl-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $t['documentTrend'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['documents-chart'], t.documentTrend, 'capacity-documents-chart')">PNG</button></div><p>{{ $t['documents'] }}</p><div id="documents-chart"></div></section></div>
 <div class="col-xl-6"><section class="chart-panel"><h2>{{ $t['forecast'] }}</h2><p>{{ $t['remaining'] }}</p><div id="forecast-list" class="row g-2"></div></section></div>
 </div>
 <section class="panel p-3 p-lg-4"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $t['fastest'] }}</h2><span class="muted" id="meta"></span></div>
@@ -45,6 +45,45 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 </main>
 <script>
 const endpoint=@json(route('elasticsearch-monitoring.capacity.data',['locale'=>$locale]));const t=@json($t);let charts={};
+const chartExportLabels = {error: @json(trans('elasticsearch-monitoring::messages.chart_export_failed', [], $locale))};
+async function exportMonitoringChartPng(chart, title, filename) {
+    try {
+        if (!chart) throw new Error(chartExportLabels.error);
+        const result = await chart.dataURI({scale: 2});
+        const image = new Image();
+        await new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = () => reject(new Error(chartExportLabels.error));
+            image.src = result.imgURI;
+        });
+        const canvas = document.createElement('canvas');
+        canvas.width = 1400;
+        canvas.height = 900;
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#182238';
+        context.font = '700 34px Arial, sans-serif';
+        context.fillText(String(title), 42, 58, 1316);
+        context.fillStyle = '#77839a';
+        context.font = '18px Arial, sans-serif';
+        context.fillText(new Date().toLocaleString(), 42, 91);
+        const scale = Math.min(1316 / image.width, 760 / image.height);
+        const width = image.width * scale, height = image.height * scale;
+        context.drawImage(image, (1400 - width) / 2, 120 + (760 - height) / 2, width, height);
+        const blob = await new Promise((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error(chartExportLabels.error)), 'image/png'));
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename + '-' + new Date().toISOString().slice(0, 10) + '.png';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        window.alert(chartExportLabels.error);
+    }
+}
 const number=v=>Number(v||0).toLocaleString();const bytes=v=>{v=Number(v||0);if(v<1)return '0 B';const u=['B','KB','MB','GB','TB','PB'];const i=Math.min(Math.floor(Math.log(v)/Math.log(1024)),u.length-1);return (v/Math.pow(1024,i)).toFixed(i>2?2:1)+' '+u[i];};
 function chart(id,series,formatter){if(charts[id])charts[id].destroy();charts[id]=new ApexCharts(document.querySelector('#'+id),{chart:{type:'line',height:260,toolbar:{show:false},animations:{enabled:false}},series,stroke:{curve:'smooth',width:2},dataLabels:{enabled:false},xaxis:{type:'datetime'},yaxis:{labels:{formatter}},legend:{position:'top'},noData:{text:t.unavailable}});charts[id].render();}
 function render(d){const s=d.summary||{},g=s.storage_growth_bytes;const cards=[[t.documents,number(s.documents)],[t.storage,bytes(s.storage_bytes)],[t.disk,bytes(s.filesystem_used_bytes)],[t.growth,g===null?t.unavailable:(g>=0?'+':'')+bytes(g)]];

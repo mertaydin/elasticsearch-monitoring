@@ -55,4 +55,7 @@ return [
     'aggregation_hourly' => 'Hourly averages', 'aggregation_daily' => 'Daily averages',
     'compare_period' => 'Compare with previous period',
     'previous_period' => 'Previous period',
+    'download_chart' => 'Download PNG',
+    'download_all_charts' => 'Download all charts as PNG',
+    'chart_export_failed' => 'Unable to export the charts. Please wait for the charts to load and try again.',
 ];

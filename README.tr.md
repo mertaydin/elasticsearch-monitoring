@@ -16,6 +16,7 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 
 ## Özellikler
 
+- Dashboard grafiklerini tek tek başlıklı PNG olarak indirin veya görünür tüm grafikleri tek bir PNG görselinde birleştirin. Seçili tarih aralığı dışa aktarılan görsele eklenir.
 - Dashboard geçmiş grafiklerini aynı uzunluktaki bir önceki dönemle karşılaştırın. Önceki dönem çizgileri seçili zaman aralığına hizalanır ve karşılaştırma tercihi tarayıcıda saklanır.
 - Daha düzenli gezinme çubuğu, belirgin görsel hiyerarşi, mobil uyumlu kontroller ve tutarlı KPI/sağlık/grafik kartlarıyla yenilenmiş dashboard tasarımı.
 - Uzun dashboard grafiklerinde 24 saati aşan aralıklar saatlik, 7 günü aşan aralıklar günlük ortalamalarla gösterilir. Daha kısa aralıklarda ham ölçümler korunur.
@@ -135,3 +136,7 @@ Bildirimler varsayılan olarak kapalıdır. Yayınladığınız paket yapıland�
 ## Dashboard otomatik yenileme
 
 Dashboard için **15 saniye, 30 saniye, 1 dakika veya 5 dakika** yenileme aralığını seçebilirsiniz. Otomatik yenilemeyi istediğiniz zaman duraklatıp sürdürebilirsiniz. Seçilen aralık mevcut tarayıcı profilinde saklanır ve sonraki ziyaretinizde geri yüklenir. Dashboard sekmesi arka plandayken otomatik istekler durdurulur, sekme yeniden görünür olduğunda yenileme devam eder. Son yenileme denemesinin zamanı da gösterilir. Otomatik yenileme duraklatılsa bile manuel yenileme kullanılabilir.
+
+## Dashboard grafiklerini dışa aktarma
+
+Her grafiğin üzerindeki **PNG indir** seçeneğiyle grafiği başlığı ve seçili tarih aralığıyla birlikte ayrı kaydedebilir, **Tüm grafikleri PNG indir** seçeneğiyle görünür dashboard grafiklerini tek bir görselde birleştirebilirsiniz. Görseller tarayıcıda oluşturulur; ek bir endpoint, veritabanı değişikliği veya Elasticsearch isteği gerekmez.

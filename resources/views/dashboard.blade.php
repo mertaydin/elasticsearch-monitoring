@@ -89,6 +89,10 @@
         #dashboard-history-controls{padding:16px 18px}
         #dashboard-history-controls .form-label{font-weight:700;color:#66728a!important}
         #dashboard-history-summary{font-weight:600}
+        .chart-card-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:1.8rem;margin-bottom:.45rem}
+        .chart-card-heading h2{min-height:0!important;margin:0!important}
+        .chart-export-button{flex:none;border:1px solid #e4e8f1;border-radius:8px;background:#fff;color:#65718a;font-size:.68rem;font-weight:700;padding:5px 8px;line-height:1.2}
+        .chart-export-button:hover{background:#f2f4ff;border-color:#cfd5fb;color:#414fbd}
         .insight-card,.metric-card,.chart-card,.summary-card{background:var(--em-surface);border:1px solid var(--em-line);border-radius:16px;box-shadow:0 5px 20px rgba(31,45,82,.035);height:100%}
         .insight-card{padding:21px}
         .section-title{font-size:.96rem;font-weight:800;color:#26334e;letter-spacing:-.025em}
@@ -196,6 +200,7 @@
                 <input class="form-check-input" type="checkbox" role="switch" id="dashboard-compare-period" onchange="toggleDashboardPeriodComparison(this.checked)">
                 <label class="form-check-label small fw-semibold" for="dashboard-compare-period">{{ $uiText['compare_period'] }}</label>
             </div>
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadAllDashboardCharts()">{{ $t('download_all_charts') }}</button>
             <span id="dashboard-history-summary" class="small text-muted ms-auto"></span>
         </div>
     </div>
@@ -285,15 +290,15 @@
         </table></div>
     </section>
     <div class="row g-3 dashboard-chart-grid" data-dashboard-widget="charts">
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('heap') }}</h2><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $t('filesystem') }}</h2><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['search_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="search-chart"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['indexing_history'] }}</h2><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="indexing-chart"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['disk_history'] }}</h2><p class="text-muted">{{ $uiText['disk_hint'] }}</p><div id="disk-chart"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['segments_history'] }}</h2><p class="text-muted">{{ $uiText['segments_history'] }}</p><div id="segments-chart"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['documents_history'] }}</h2><p class="text-muted">{{ $uiText['documents_history'] }}</p><div id="documents-chart"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['cpu_history'] }}</h2><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
-        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><h2>{{ $uiText['index_history'] }}</h2><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $t('heap') }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('heap')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['heap_hint'] }}</p><div id="heap"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $t('filesystem') }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('filesystem')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['filesystem_hint'] }}</p><div id="filesystem"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['search_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('search-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="search-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['indexing_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('indexing-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['rates_hint'] }}</p><div id="indexing-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['disk_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('disk-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['disk_hint'] }}</p><div id="disk-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['segments_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('segments-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['segments_history'] }}</p><div id="segments-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['documents_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('documents-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['documents_history'] }}</p><div id="documents-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['cpu_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('cpu-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['cpu_hint'] }}</p><div id="cpu-chart"></div></div></div>
+        <div class="col-12 col-md-6 col-xl-4"><div class="chart-card"><div class="chart-card-heading"><h2>{{ $uiText['index_history'] }}</h2><button type="button" class="chart-export-button" onclick="downloadDashboardChart('storage-chart')" title="{{ $t('download_chart') }}">PNG</button></div><p class="text-muted">{{ $uiText['index_hint'] }}</p><div id="storage-chart"></div></div></div>
     </div>
     <p class="small text-muted mt-3" id="updated"></p>
 </main>
@@ -367,6 +372,7 @@ const labels = {
     rangeSummary: @json($t('range_summary')), rangeNoData: @json($t('range_no_data')), invalidRange: @json($t('invalid_range')), previousPeriod: @json($uiText['previous_period']), hourlyAverage: @json($t('aggregation_hourly')), dailyAverage: @json($t('aggregation_daily')),
     lastCollected: @json($t('last_collected')),
     loadError: @json($t('load_error')),
+    chartExportFailed: @json($t('chart_export_failed')),
     heapUsed: @json($t('heap_used')),
     used: @json($t('used')),
     available: @json($t('available')), cpu: @json($uiText['cpu']), storage: @json($t('store_size')), disk: @json($uiText['disk_history']), search: @json($uiText['search_history']), indexing: @json($uiText['indexing_history']), segments: @json($uiText['segments_history']), documents: @json($uiText['documents_history'])
@@ -377,6 +383,80 @@ function renderChart(id, options) {
     if (charts[id]) charts[id].destroy();
     charts[id] = new ApexCharts(document.querySelector(id), options);
     charts[id].render();
+}
+const dashboardChartIds = ['heap', 'filesystem', 'search-chart', 'indexing-chart', 'disk-chart', 'segments-chart', 'documents-chart', 'cpu-chart', 'storage-chart'];
+async function loadDashboardChartImage(id) {
+    const chart = charts['#' + id];
+    const element = document.getElementById(id);
+    if (!chart || !element || !element.closest('.chart-card')) throw new Error(labels.chartExportFailed);
+    const result = await chart.dataURI({scale: 2});
+    const image = new Image();
+    await new Promise((resolve, reject) => {
+        image.onload = resolve;
+        image.onerror = () => reject(new Error(labels.chartExportFailed));
+        image.src = result.imgURI;
+    });
+    return {image, title: element.closest('.chart-card').querySelector('h2')?.textContent?.trim() || id};
+}
+async function createDashboardChartsPng(ids) {
+    const chartImages = await Promise.all(ids.map(loadDashboardChartImage));
+    const columns = ids.length === 1 ? 1 : 2;
+    const tileWidth = 1200, tileHeight = 720, headerHeight = 116;
+    const canvas = document.createElement('canvas');
+    canvas.width = tileWidth * columns;
+    canvas.height = headerHeight + Math.ceil(chartImages.length / columns) * tileHeight;
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = '#182238';
+    context.font = '700 32px Arial, sans-serif';
+    context.fillText('Elasticsearch Monitoring', 36, 42);
+    context.fillStyle = '#77839a';
+    context.font = '17px Arial, sans-serif';
+    context.fillText(new Date().toLocaleString(), 36, 68);
+    const selectedRange = getDashboardHistoryRange();
+    context.fillText(new Date(selectedRange.from).toLocaleString() + ' – ' + new Date(selectedRange.to).toLocaleString(), 36, 96);
+    chartImages.forEach(({image, title}, index) => {
+        const column = index % columns, row = Math.floor(index / columns);
+        const x = column * tileWidth + 24, y = headerHeight + row * tileHeight;
+        context.strokeStyle = '#e7ebf3';
+        context.lineWidth = 2;
+        context.strokeRect(x, y + 8, tileWidth - 48, tileHeight - 24);
+        context.fillStyle = '#26334e';
+        context.font = '700 23px Arial, sans-serif';
+        context.fillText(title, x + 22, y + 48, tileWidth - 92);
+        const maxWidth = tileWidth - 88, maxHeight = tileHeight - 104;
+        const scale = Math.min(maxWidth / image.width, maxHeight / image.height);
+        const width = image.width * scale, height = image.height * scale;
+        context.drawImage(image, x + (tileWidth - 48 - width) / 2, y + 64 + (maxHeight - height) / 2, width, height);
+    });
+    return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error(labels.chartExportFailed)), 'image/png'));
+}
+async function downloadDashboardCharts(ids, filename) {
+    try {
+        const visibleIds = ids.filter(id => {
+            const element = document.getElementById(id);
+            return element && !element.closest('[data-dashboard-widget="charts"]')?.hidden;
+        });
+        if (!visibleIds.length) throw new Error(labels.chartExportFailed);
+        const blob = await createDashboardChartsPng(visibleIds);
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        window.alert(labels.chartExportFailed);
+    }
+}
+function downloadDashboardChart(id) {
+    downloadDashboardCharts([id], 'elasticsearch-' + id + '-' + new Date().toISOString().slice(0, 10) + '.png');
+}
+function downloadAllDashboardCharts() {
+    downloadDashboardCharts(dashboardChartIds, 'elasticsearch-dashboard-charts-' + new Date().toISOString().slice(0, 10) + '.png');
 }
 const refreshPreferenceKey = 'elasticsearch-monitoring:dashboard-refresh-interval';
 const allowedRefreshIntervals = [15000, 30000, 60000, 300000];

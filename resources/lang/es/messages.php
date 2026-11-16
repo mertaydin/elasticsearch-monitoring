@@ -42,4 +42,7 @@ return [
     'aggregation_hourly' => 'Promedios por hora', 'aggregation_daily' => 'Promedios diarios',
     'compare_period' => 'Comparar con el período anterior',
     'previous_period' => 'Período anterior',
+    'download_chart' => 'Descargar PNG',
+    'download_all_charts' => 'Descargar todos los gráficos en PNG',
+    'chart_export_failed' => 'No se pudieron exportar los gráficos. Espera a que se carguen e inténtalo de nuevo.',
 ];

@@ -42,4 +42,7 @@ return [
     'aggregation_hourly' => 'प्रति घंटे का औसत', 'aggregation_daily' => 'दैनिक औसत',
     'compare_period' => 'पिछली अवधि से तुलना करें',
     'previous_period' => 'पिछली अवधि',
+    'download_chart' => 'PNG डाउनलोड करें',
+    'download_all_charts' => 'सभी चार्ट PNG के रूप में डाउनलोड करें',
+    'chart_export_failed' => 'चार्ट निर्यात नहीं हो सके। कृपया चार्ट लोड होने की प्रतीक्षा करें और फिर प्रयास करें।',
 ];

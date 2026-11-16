@@ -56,12 +56,12 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="col-6 col-xl"><div class="panel metric"><div class="label">{{ $text['shards'] }}</div><div class="value" id="shards-value">—</div></div></div>
 </div>
 <div class="row g-3 mb-4">
-<div class="col-12 col-lg-6"><section class="chart-panel"><h2>{{ $text['cpu'] }}</h2><p>{{ $text['percent'] }}</p><div id="cpu-chart"></div></section></div>
-<div class="col-12 col-lg-6"><section class="chart-panel"><h2>{{ $text['heap'] }}</h2><p>{{ $text['percent'] }}</p><div id="heap-chart"></div></section></div>
-<div class="col-12 col-lg-6"><section class="chart-panel"><h2>{{ $text['disk'] }}</h2><p>{{ $text['percent'] }}</p><div id="disk-chart"></div></section></div>
-<div class="col-12 col-lg-6"><section class="chart-panel"><h2>{{ $text['search'] }}</h2><p>{{ $text['per_second'] }}</p><div id="search-chart"></div></section></div>
-<div class="col-12 col-lg-6"><section class="chart-panel"><h2>{{ $text['indexing'] }}</h2><p>{{ $text['per_second'] }}</p><div id="indexing-chart"></div></section></div>
-<div class="col-12 col-lg-6"><section class="chart-panel"><h2>{{ $text['queue'] }} / {{ $text['rejected'] }}</h2><p>{{ $text['search'] }} · {{ $text['indexing'] }}</p><div id="queue-chart"></div></section></div>
+<div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['cpu'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['cpu-chart'], labels.cpu, 'node-cpu-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="cpu-chart"></div></section></div>
+<div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['heap'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['heap-chart'], labels.heap, 'node-heap-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="heap-chart"></div></section></div>
+<div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['disk'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['disk-chart'], labels.disk, 'node-disk-chart')">PNG</button></div><p>{{ $text['percent'] }}</p><div id="disk-chart"></div></section></div>
+<div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['search'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['search-chart'], labels.search, 'node-search-chart')">PNG</button></div><p>{{ $text['per_second'] }}</p><div id="search-chart"></div></section></div>
+<div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['indexing'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['indexing-chart'], labels.indexing, 'node-indexing-chart')">PNG</button></div><p>{{ $text['per_second'] }}</p><div id="indexing-chart"></div></section></div>
+<div class="col-12 col-lg-6"><section class="chart-panel"><div class="chart-title-row d-flex justify-content-between align-items-center gap-2"><h2>{{ $text['queue'] }} / {{ $text['rejected'] }}</h2><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(charts['queue-chart'], labels.queue + ' / ' + labels.rejected, 'node-queue-chart')">PNG</button></div><p>{{ $text['search'] }} · {{ $text['indexing'] }}</p><div id="queue-chart"></div></section></div>
 </div>
 <section class="panel p-3">
 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $text['comparison'] }}</h2><span class="small muted" id="updated"></span></div>
@@ -76,6 +76,25 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <script>
 const endpoint=@json(route('elasticsearch-monitoring.nodes.data',['locale'=>$locale]));
 const labels=@json($text);
+const chartExportLabels = {error: @json(trans('elasticsearch-monitoring::messages.chart_export_failed', [], $locale))};
+async function exportMonitoringChartPng(chart, title, filename) {
+    try {
+        if (!chart) throw new Error(chartExportLabels.error);
+        const result = await chart.dataURI({scale: 2});
+        const image = new Image();
+        await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = () => reject(new Error(chartExportLabels.error)); image.src = result.imgURI; });
+        const canvas = document.createElement('canvas'); canvas.width = 1400; canvas.height = 900;
+        const context = canvas.getContext('2d'); context.fillStyle = '#fff'; context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#182238'; context.font = '700 34px Arial, sans-serif'; context.fillText(String(title), 42, 58, 1316);
+        context.fillStyle = '#77839a'; context.font = '18px Arial, sans-serif'; context.fillText(new Date().toLocaleString(), 42, 91);
+        const scale = Math.min(1316 / image.width, 760 / image.height), width = image.width * scale, height = image.height * scale;
+        context.drawImage(image, (1400 - width) / 2, 120 + (760 - height) / 2, width, height);
+        const blob = await new Promise((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error(chartExportLabels.error)), 'image/png'));
+        const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url;
+        link.download = filename + '-' + new Date().toISOString().slice(0, 10) + '.png';
+        document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    } catch (error) { window.alert(chartExportLabels.error); }
+}
 const copyLabels={"tr":{"copy":"Kopyala","all":"Tüm mapping'i kopyala","field":"Alanı kopyala","done":"Panoya kopyalandı","fail":"Kopyalama başarısız"},"en":{"copy":"Copy","all":"Copy entire mapping","field":"Copy field","done":"Copied to clipboard","fail":"Copy failed"},"es":{"copy":"Copiar","all":"Copiar todo el mapping","field":"Copiar campo","done":"Copiado al portapapeles","fail":"Error al copiar"},"zh_CN":{"copy":"复制","all":"复制完整 mapping","field":"复制字段","done":"已复制到剪贴板","fail":"复制失败"},"hi":{"copy":"कॉपी करें","all":"पूरा mapping कॉपी करें","field":"फ़ील्ड कॉपी करें","done":"क्लिपबोर्ड पर कॉपी किया गया","fail":"कॉपी विफल"},"ar":{"copy":"نسخ","all":"نسخ mapping بالكامل","field":"نسخ الحقل","done":"تم النسخ إلى الحافظة","fail":"فشل النسخ"}}[@json($locale)] || {"copy":"Copy","all":"Copy entire mapping","field":"Copy field","done":"Copied to clipboard","fail":"Copy failed"};
 function showCopyToast(message){const el=document.getElementById('copy-toast');if(!el)return;el.textContent=message;el.classList.add('show');clearTimeout(window.__copyToastTimer);window.__copyToastTimer=setTimeout(()=>el.classList.remove('show'),1800);}
 async function copyText(value){try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(String(value));else{const el=document.createElement('textarea');el.value=String(value);el.style.position='fixed';el.style.opacity='0';document.body.append(el);el.select();const ok=document.execCommand('copy');el.remove();if(!ok)throw new Error('Clipboard unavailable');}showCopyToast(copyLabels.done);}catch(e){showCopyToast(copyLabels.fail);}}

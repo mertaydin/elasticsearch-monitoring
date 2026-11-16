@@ -42,12 +42,51 @@ body{background:#f4f6fb;color:#182238;font-family:Inter,system-ui,-apple-system,
 <div class="col-6 col-xl"><div class="panel metric"><small>{{ $texts['queue'] }}</small><strong id="search-queue">—</strong></div></div>
 <div class="col-6 col-xl"><div class="panel metric"><small>{{ $texts['rejected_rate'] }}</small><strong id="rejected-rate">—</strong></div></div>
 </div>
-<div class="panel chart mb-4"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2"><div><h2>{{ $texts['history'] }}</h2><p>{{ $texts['query_rate'] }}, {{ $texts['fetch_rate'] }}, {{ $texts['rejected_rate'] }}</p></div><span id="updated" class="small text-secondary"></span></div><div id="history-chart"></div><p class="mb-0 mt-2">{{ $texts['auto'] }}</p></div>
+<div class="panel chart mb-4"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2"><div><h2>{{ $texts['history'] }}</h2><p>{{ $texts['query_rate'] }}, {{ $texts['fetch_rate'] }}, {{ $texts['rejected_rate'] }}</p></div><div class="d-flex align-items-center gap-2"><button type="button" class="btn btn-sm btn-outline-secondary" onclick="exportMonitoringChartPng(chart, labels.history, 'query-activity-history')">PNG</button><span id="updated" class="small text-secondary"></span></div></div><div id="history-chart"></div><p class="mb-0 mt-2">{{ $texts['auto'] }}</p></div>
 <section class="panel p-3"><div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><h2 class="h6 fw-bold mb-0">{{ $texts['node'] }}</h2><span id="sample-count" class="small text-secondary"></span></div><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>{{ $texts['node'] }}</th><th>{{ $texts['roles'] }}</th><th>{{ $texts['query_rate'] }}</th><th>{{ $texts['query_time'] }}</th><th>{{ $texts['fetch_rate'] }}</th><th>{{ $texts['fetch_time'] }}</th><th>{{ $texts['active_queries'] }}</th><th>{{ $texts['active_fetches'] }}</th><th>{{ $texts['queue'] }}</th><th>{{ $texts['rejected_rate'] }}</th></tr></thead><tbody id="node-table"><tr><td colspan="10" class="text-center py-4 text-secondary">{{ $texts['loading'] }}</td></tr></tbody></table></div></section>
 </main>
 <script>
 const endpoint=@json(route('elasticsearch-monitoring.query-activity.data',['locale'=>$locale]));
 const labels=@json($texts);
+const chartExportLabels = {error: @json(trans('elasticsearch-monitoring::messages.chart_export_failed', [], $locale))};
+async function exportMonitoringChartPng(chart, title, filename) {
+    try {
+        if (!chart) throw new Error(chartExportLabels.error);
+        const result = await chart.dataURI({scale: 2});
+        const image = new Image();
+        await new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = () => reject(new Error(chartExportLabels.error));
+            image.src = result.imgURI;
+        });
+        const canvas = document.createElement('canvas');
+        canvas.width = 1400;
+        canvas.height = 900;
+        const context = canvas.getContext('2d');
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#182238';
+        context.font = '700 34px Arial, sans-serif';
+        context.fillText(String(title), 42, 58, 1316);
+        context.fillStyle = '#77839a';
+        context.font = '18px Arial, sans-serif';
+        context.fillText(new Date().toLocaleString(), 42, 91);
+        const scale = Math.min(1316 / image.width, 760 / image.height);
+        const width = image.width * scale, height = image.height * scale;
+        context.drawImage(image, (1400 - width) / 2, 120 + (760 - height) / 2, width, height);
+        const blob = await new Promise((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error(chartExportLabels.error)), 'image/png'));
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename + '-' + new Date().toISOString().slice(0, 10) + '.png';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        window.alert(chartExportLabels.error);
+    }
+}
 const fmt=value=>value===null||value===undefined?'—':Number(value).toLocaleString(document.documentElement.lang,{maximumFractionDigits:2});
 const esc=value=>String(value??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 let nodes=[],selectedId='all',chart=null,summary={};

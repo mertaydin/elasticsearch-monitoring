@@ -42,4 +42,7 @@ return [
     'aggregation_hourly' => '每小时平均值', 'aggregation_daily' => '每日平均值',
     'compare_period' => '与上一周期比较',
     'previous_period' => '上一周期',
+    'download_chart' => '下载 PNG',
+    'download_all_charts' => '下载所有图表为 PNG',
+    'chart_export_failed' => '无法导出图表。请等待图表加载完成后重试。',
 ];

@@ -14,6 +14,7 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Features
 
+- Export any dashboard chart as a titled PNG or combine all visible dashboard charts into one PNG directly in the browser.
 - Compare dashboard history charts with the immediately preceding period of equal duration; previous-period lines are aligned to the selected time window and can be toggled locally.
 - Refreshed dashboard layout with a compact navigation bar, clearer visual hierarchy, responsive controls, and consistent cards for KPIs, health, and charts.
 - Automatically aggregate long dashboard chart ranges into hourly averages (over 24 hours) or daily averages (over 7 days); shorter ranges retain raw observations.
@@ -189,3 +190,7 @@ Use **Customize dashboard** to hide or show the summary, favorites, health, metr
 ## Dashboard automatic refresh
 
 Choose a dashboard refresh interval of **15 seconds, 30 seconds, 1 minute, or 5 minutes**. Pause and resume automatic refresh at any time. The selected interval is saved in the current browser profile and restored on your next visit. Automatic requests are suspended while the dashboard tab is in the background and resume when it becomes visible again. The dashboard also shows the time of the last refresh attempt. Manual refresh remains available while automatic refresh is paused.
+
+## Dashboard chart exports
+
+Use the **Download PNG** action on an individual chart to save a titled image, or choose **Download all charts as PNG** to create one combined image containing the visible dashboard charts. The selected date range is included in the image. Exports are generated in the browser; no export endpoint, database change, or additional Elasticsearch request is required.

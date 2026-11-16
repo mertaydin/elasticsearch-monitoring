@@ -55,4 +55,7 @@ return [
     'aggregation_hourly' => 'Saatlik ortalama', 'aggregation_daily' => 'Günlük ortalama',
     'compare_period' => 'Önceki dönemle karşılaştır',
     'previous_period' => 'Önceki dönem',
+    'download_chart' => 'PNG indir',
+    'download_all_charts' => 'Tüm grafikleri PNG indir',
+    'chart_export_failed' => 'Grafikler dışa aktarılamadı. Lütfen grafiklerin yüklenmesini bekleyip tekrar deneyin.',
 ];

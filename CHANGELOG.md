@@ -1,3 +1,10 @@
+## [0.28.0] - 2026-11-16
+
+- Add one-click PNG export for each dashboard chart, including its localized title and selected date range.
+- Add a combined PNG export that arranges all visible dashboard charts into one image.
+- Generate chart images in the browser without an export endpoint, database changes, or additional Elasticsearch requests.
+- Localize chart export controls and error feedback in all six supported languages; document the feature in both READMEs.
+
 ## [0.27.0] - 2026-11-16
 
 - Add an optional comparison overlay for the immediately preceding period of equal duration across dashboard history charts.

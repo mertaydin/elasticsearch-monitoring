@@ -42,4 +42,7 @@ return [
     'aggregation_hourly' => 'متوسطات كل ساعة', 'aggregation_daily' => 'متوسطات يومية',
     'compare_period' => 'مقارنة بالفترة السابقة',
     'previous_period' => 'الفترة السابقة',
+    'download_chart' => 'تنزيل PNG',
+    'download_all_charts' => 'تنزيل جميع الرسوم بصيغة PNG',
+    'chart_export_failed' => 'تعذر تصدير الرسوم. يرجى الانتظار حتى تحميلها ثم المحاولة مرة أخرى.',
 ];
