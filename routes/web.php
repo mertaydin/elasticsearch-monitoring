@@ -13,8 +13,8 @@ use ElasticsearchMonitoring\Http\Controllers\QueryActivityController;
 use ElasticsearchMonitoring\Http\Controllers\ShardController;
 use ElasticsearchMonitoring\Http\Controllers\SnapshotController;
 use ElasticsearchMonitoring\Http\Controllers\ThreadPoolController;
-use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use ElasticsearchMonitoring\Http\Middleware\ApplyDashboardTheme;
+use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['web', 'auth']), AuthorizeDashboard::class, ApplyDashboardTheme::class])
