@@ -215,9 +215,9 @@ class IndexManagementTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
         $payload = $response->getData(true);
         $this->assertSame(['logs-2026', 'app-logs'], array_column($payload['indices'], 'name'));
-        $this->assertSame('yellow', $payload['indices'][0]['health']);
-        $this->assertSame(300, $payload['indices'][0]['documents_count']);
-        $this->assertSame(2048, $payload['indices'][0]['storage_bytes']);
+        $this->assertSame('green', $payload['indices'][0]['health']);
+        $this->assertSame(1200, $payload['indices'][0]['documents_count']);
+        $this->assertSame(4096, $payload['indices'][0]['storage_bytes']);
         Http::assertSent(fn ($request) => str_contains($request->url(), '_cat/indices') && str_contains($request->url(), 'logs'));
     }
 
