@@ -1,11 +1,11 @@
 <?php
 
-namespace ElasticsearchMonitoring\\Http\\Controllers;
+namespace ElasticsearchMonitoring\Http\Controllers;
 
-use ElasticsearchMonitoring\\Models\\MetricSnapshot;
-use Illuminate\\Http\\JsonResponse;
-use Illuminate\\Support\\Carbon;
-use Illuminate\\View\\View;
+use ElasticsearchMonitoring\Models\MetricSnapshot;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
+use Illuminate\View\View;
 
 class NodeController
 {
