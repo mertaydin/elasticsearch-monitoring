@@ -1,3 +1,10 @@
+## [0.31.0] - 2026-11-16
+
+- Add independent summary KPI card customization: show/hide, drag-and-drop ordering, and pin important cards to the top.
+- Persist KPI card preferences in browser local storage and reset them together with the dashboard layout.
+- Localize KPI customization controls in all six supported languages; update both READMEs and feature tests.
+- Keep the feature client-side with no database migration or additional Elasticsearch requests.
+
 ## [0.30.0] - 2026-11-16
 
 - Add browser-generated PDF dashboard reports with cluster name, report timestamp, selected date range, and key KPI values.
@@ -66,13 +73,6 @@
 - Record endpoint, HTTP status, duration, success/failure, and error details; show top-called and slowest endpoints.
 - Strip URL query parameters and never record credentials or request bodies.
 - Add a localized history page and feature tests.
-
-## [0.31.0] - 2026-11-16
-
-- Add independent summary KPI card customization: show/hide, drag-and-drop ordering, and pin important cards to the top.
-- Persist KPI card preferences in browser local storage and reset them together with the dashboard layout.
-- Localize KPI customization controls in all six supported languages; update both READMEs and feature tests.
-- Keep the feature client-side with no database migration or additional Elasticsearch requests.
 
 # Changelog
 
