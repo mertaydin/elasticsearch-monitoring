@@ -7,6 +7,7 @@ use ElasticsearchMonitoring\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 
 class DashboardNoteTest extends TestCase
 {
@@ -56,7 +57,7 @@ class DashboardNoteTest extends TestCase
 
     public function test_note_chart_key_is_validated(): void
     {
-        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $this->expectException(ValidationException::class);
         app(DashboardNoteController::class)->store($this->request('POST', [
             'chart_key' => 'unknown-chart', 'noted_at' => '2026-11-15T14:30:00+03:00', 'note' => 'Invalid chart',
         ]));
@@ -66,8 +67,14 @@ class DashboardNoteTest extends TestCase
     {
         $request = Request::create('/monitoring/elasticsearch/notes', $method, $data);
         $request->setUserResolver(fn () => new class($userId) {
-            public function __construct(private string $id) {}
-            public function getAuthIdentifier(): string { return $this->id; }
+            public function __construct(private string $id)
+            {
+            }
+
+            public function getAuthIdentifier(): string
+            {
+                return $this->id;
+            }
         });
         return $request;
     }

@@ -3,12 +3,13 @@
 namespace ElasticsearchMonitoring\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
  * @property string|null $user_id
  * @property string $chart_key
- * @property \Illuminate\Support\Carbon $noted_at
+ * @property Carbon $noted_at
  * @property string $note
  */
 class DashboardNote extends Model
