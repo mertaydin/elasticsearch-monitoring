@@ -66,9 +66,10 @@ class NodeExplorerController
                 'indices' => array_values($indices),
             ]);
         } catch (Throwable $exception) {
+            report($exception);
+
             return response()->json([
                 'message' => 'Unable to retrieve node details.',
-                'error' => $exception->getMessage(),
             ], 502);
         }
     }
