@@ -45,4 +45,5 @@ return [
     'download_chart' => 'Descargar PNG',
     'download_all_charts' => 'Descargar todos los gráficos en PNG',
     'chart_export_failed' => 'No se pudieron exportar los gráficos. Espera a que se carguen e inténtalo de nuevo.',
+    'notes_title'=>'Notas del panel','notes_hint'=>'Registra eventos importantes junto a un gráfico y una fecha. Las notas son privadas de tu cuenta.','notes_chart'=>'Gráfico relacionado','notes_time'=>'Fecha y hora','notes_text'=>'Nota','notes_placeholder'=>'Ej. La CPU aumentó durante una carga masiva.','notes_save'=>'Guardar nota','notes_update_button'=>'Actualizar nota','notes_cancel'=>'Cancelar edición','notes_loading'=>'Cargando notas…','notes_empty'=>'Aún no hay notas. Añade una para recordar un evento.','notes_load_failed'=>'No se pudieron cargar las notas.','notes_save_failed'=>'No se pudo guardar la nota. Comprueba los campos e inténtalo de nuevo.','notes_delete_confirm'=>'¿Eliminar esta nota?','notes_delete'=>'Eliminar','notes_edit'=>'Editar','notes_saved'=>'Nota guardada.','notes_updated'=>'Nota actualizada.','notes_deleted'=>'Nota eliminada.','notes_error'=>'Introduce una fecha, hora y nota.',
 ];

@@ -36,6 +36,8 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 - Node bazında query/fetch hızlarını, ortalama işlem sürelerini, aktif arama işlemlerini, search kuyruğunu ve reddedilme oranlarını geçmiş grafiklerle izleyin.
 - Dashboard bölümlerini gizleyin, sürükleyerek sıralayın ve varsayılan düzene dönün. Tercihler mevcut tarayıcı profilinde saklanır.
 
+- İlgili geçmiş grafiğine ve tam tarih/saat bilgisine bağlı kalıcı dashboard notları ekleyin. Notlar hesap bazında saklanır ve seçili tarih aralığında ilgili grafikte işaretlenir.
+
 ## Kurulum
 
 ```bash
@@ -98,6 +100,10 @@ Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca me
 ## İndeks listesini sıralama
 
 İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez. Seçtiğiniz sütun ve sıralama yönü tarayıcının yerel depolama alanına kaydedilir ve sayfaya tekrar geldiğinizde geri yüklenir.
+
+## Dashboard notları
+
+**Dashboard notları** bölümünden önemli olayları ilgili geçmiş grafiğine ve kesin tarih/saat bilgisine bağlayabilirsiniz. Notlar paket veritabanında oturum açmış kullanıcı bazında saklanır; zaman damgası seçili grafik aralığına denk geldiğinde ilgili grafikte işaret olarak görünür. Not ekleyebilir, düzenleyebilir ve silebilirsiniz; en son 200 not listelenir. `elasticsearch_dashboard_notes` tablosunu oluşturmak için güncelleme sonrasında `php artisan migrate` çalıştırın. Notlar Elasticsearch'e yazılmaz.
 
 ## İndeks listesi tercihlerini hatırlama
 

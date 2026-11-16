@@ -45,4 +45,5 @@ return [
     'download_chart' => '下载 PNG',
     'download_all_charts' => '下载所有图表为 PNG',
     'chart_export_failed' => '无法导出图表。请等待图表加载完成后重试。',
+    'notes_title'=>'仪表板备注','notes_hint'=>'将重要事件与相关图表和时间一起记录。备注仅对你的账户可见。','notes_chart'=>'相关图表','notes_time'=>'日期和时间','notes_text'=>'备注','notes_placeholder'=>'例如：批量导入期间 CPU 使用率升高。','notes_save'=>'保存备注','notes_update_button'=>'更新备注','notes_cancel'=>'取消编辑','notes_loading'=>'正在加载备注…','notes_empty'=>'暂无备注。添加备注以记录重要事件。','notes_load_failed'=>'无法加载仪表板备注。','notes_save_failed'=>'无法保存备注。请检查字段后重试。','notes_delete_confirm'=>'确定删除此备注吗？','notes_delete'=>'删除','notes_edit'=>'编辑','notes_saved'=>'备注已保存。','notes_updated'=>'备注已更新。','notes_deleted'=>'备注已删除。','notes_error'=>'请输入日期、时间和备注内容。',
 ];

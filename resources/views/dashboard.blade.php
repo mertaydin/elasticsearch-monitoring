@@ -55,6 +55,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $t('title') }}</title>
     @if ($locale === 'ar')
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
@@ -93,6 +94,7 @@
         .chart-card-heading h2{min-height:0!important;margin:0!important}
         .chart-export-button{flex:none;border:1px solid #e4e8f1;border-radius:8px;background:#fff;color:#65718a;font-size:.68rem;font-weight:700;padding:5px 8px;line-height:1.2}
         .chart-export-button:hover{background:#f2f4ff;border-color:#cfd5fb;color:#414fbd}
+        .dashboard-note-item{border:1px solid #e9edf4;border-radius:12px;padding:12px 14px;background:#fcfdff}.dashboard-note-item p{white-space:pre-wrap;overflow-wrap:anywhere}.dashboard-note-meta{font-size:.72rem;color:#7c879b}
         .insight-card,.metric-card,.chart-card,.summary-card{background:var(--em-surface);border:1px solid var(--em-line);border-radius:16px;box-shadow:0 5px 20px rgba(31,45,82,.035);height:100%}
         .insight-card{padding:21px}
         .section-title{font-size:.96rem;font-weight:800;color:#26334e;letter-spacing:-.025em}
@@ -204,6 +206,19 @@
             <span id="dashboard-history-summary" class="small text-muted ms-auto"></span>
         </div>
     </div>
+    <section id="dashboard-notes" class="insight-card mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"><div><h2 class="section-title mb-1">{{ $t('notes_title') }}</h2><p class="small text-muted mb-0">{{ $t('notes_hint') }}</p></div><span class="badge text-bg-light" id="dashboard-notes-count">0</span></div>
+        <form id="dashboard-note-form" class="border rounded-3 p-3 mb-3" novalidate><input type="hidden" id="dashboard-note-id">
+            <div class="row g-2 align-items-end">
+                <div class="col-12 col-md-4"><label for="dashboard-note-chart" class="form-label small fw-semibold">{{ $t('notes_chart') }}</label><select id="dashboard-note-chart" class="form-select form-select-sm" required>
+                    <option value="cpu-chart">{{ $uiText['cpu_history'] }}</option><option value="storage-chart">{{ $uiText['index_history'] }}</option><option value="disk-chart">{{ $uiText['disk_history'] }}</option><option value="search-chart">{{ $uiText['search_history'] }}</option><option value="indexing-chart">{{ $uiText['indexing_history'] }}</option><option value="segments-chart">{{ $uiText['segments_history'] }}</option><option value="documents-chart">{{ $uiText['documents_history'] }}</option>
+                </select></div>
+                <div class="col-12 col-md-3"><label for="dashboard-note-time" class="form-label small fw-semibold">{{ $t('notes_time') }}</label><input type="datetime-local" id="dashboard-note-time" class="form-control form-control-sm" required></div>
+                <div class="col-12 col-md-5"><label for="dashboard-note-text" class="form-label small fw-semibold">{{ $t('notes_text') }}</label><textarea id="dashboard-note-text" class="form-control form-control-sm" rows="2" maxlength="2000" required placeholder="{{ $t('notes_placeholder') }}"></textarea></div>
+                <div class="col-12 d-flex gap-2 justify-content-end"><button type="button" id="dashboard-note-cancel" class="btn btn-sm btn-outline-secondary d-none">{{ $t('notes_cancel') }}</button><button type="submit" id="dashboard-note-submit" class="btn btn-sm btn-primary">{{ $t('notes_save') }}</button></div>
+            </div><div id="dashboard-note-feedback" class="small mt-2 d-none" role="status" aria-live="polite"></div>
+        </form><div id="dashboard-notes-list" class="d-grid gap-2"><p class="small text-muted mb-0">{{ $t('notes_loading') }}</p></div>
+    </section>
     <div id="alert" class="alert alert-warning d-none"></div>
     <section id="dashboard-customizer" class="insight-card mb-4 d-none">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
@@ -304,6 +319,12 @@
 </main>
 <script>
 const endpoint = @json(route('elasticsearch-monitoring.data'));
+const notesEndpoint = @json(route('elasticsearch-monitoring.notes.index'));
+const notesStoreEndpoint = @json(route('elasticsearch-monitoring.notes.store'));
+const notesUpdateEndpoint = @json(route('elasticsearch-monitoring.notes.update', ['note' => '__NOTE__']));
+const notesDeleteEndpoint = @json(route('elasticsearch-monitoring.notes.destroy', ['note' => '__NOTE__']));
+const noteChartLabels = {'cpu-chart':@json($uiText['cpu_history']),'storage-chart':@json($uiText['index_history']),'disk-chart':@json($uiText['disk_history']),'search-chart':@json($uiText['search_history']),'indexing-chart':@json($uiText['indexing_history']),'segments-chart':@json($uiText['segments_history']),'documents-chart':@json($uiText['documents_history'])};
+let dashboardNotes = [];
 const favoritesStorageKey = 'elasticsearch-monitoring:favorites';
 const favoriteLabels = @json($favoriteText);
 const indicesUrl = @json(route('elasticsearch-monitoring.indices', ['locale' => $locale]));
@@ -373,6 +394,7 @@ const labels = {
     lastCollected: @json($t('last_collected')),
     loadError: @json($t('load_error')),
     chartExportFailed: @json($t('chart_export_failed')),
+    notesEmpty:@json($t('notes_empty')),notesLoadFailed:@json($t('notes_load_failed')),notesSaveFailed:@json($t('notes_save_failed')),notesDeleteConfirm:@json($t('notes_delete_confirm')),notesDelete:@json($t('notes_delete')),notesEdit:@json($t('notes_edit')),notesSaved:@json($t('notes_saved')),notesUpdated:@json($t('notes_updated')),notesUpdateButton:@json($t('notes_update_button')),notesDeleted:@json($t('notes_deleted')),notesError:@json($t('notes_error')),
     heapUsed: @json($t('heap_used')),
     used: @json($t('used')),
     available: @json($t('available')), cpu: @json($uiText['cpu']), storage: @json($t('store_size')), disk: @json($uiText['disk_history']), search: @json($uiText['search_history']), indexing: @json($uiText['indexing_history']), segments: @json($uiText['segments_history']), documents: @json($uiText['documents_history'])
@@ -452,6 +474,19 @@ async function downloadDashboardCharts(ids, filename) {
         window.alert(labels.chartExportFailed);
     }
 }
+function dashboardNoteDateValue(value){const date=value?new Date(value):new Date(),pad=n=>String(n).padStart(2,'0');return date.getFullYear()+'-'+pad(date.getMonth()+1)+'-'+pad(date.getDate())+'T'+pad(date.getHours())+':'+pad(date.getMinutes());}
+function dashboardNoteRequestHeaders(){return {'Accept':'application/json','Content-Type':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name="csrf-token"]').content};}
+function showDashboardNoteFeedback(message,isError=false){const el=document.getElementById('dashboard-note-feedback');el.textContent=message;el.className='small mt-2 '+(isError?'text-danger':'text-success');}
+function renderDashboardNotes(){const container=document.getElementById('dashboard-notes-list');document.getElementById('dashboard-notes-count').textContent=dashboardNotes.length.toLocaleString();container.replaceChildren();if(!dashboardNotes.length){const empty=document.createElement('p');empty.className='small text-muted mb-0';empty.textContent=labels.notesEmpty;container.appendChild(empty);return;}dashboardNotes.forEach(note=>{const item=document.createElement('article');item.className='dashboard-note-item';const header=document.createElement('div');header.className='d-flex justify-content-between align-items-start gap-2 flex-wrap';const title=document.createElement('strong');title.className='small';title.textContent=noteChartLabels[note.chart_key]||note.chart_key;const time=document.createElement('span');time.className='dashboard-note-meta';time.textContent=new Date(note.noted_at).toLocaleString();header.append(title,time);const body=document.createElement('p');body.className='small mb-2 mt-2';body.textContent=note.note;const actions=document.createElement('div');actions.className='d-flex justify-content-end gap-2';const edit=document.createElement('button');edit.type='button';edit.className='btn btn-sm btn-outline-secondary';edit.textContent=labels.notesEdit;edit.addEventListener('click',()=>editDashboardNote(note));const remove=document.createElement('button');remove.type='button';remove.className='btn btn-sm btn-outline-danger';remove.textContent=labels.notesDelete;remove.addEventListener('click',()=>deleteDashboardNote(note.id));actions.append(edit,remove);item.append(header,body,actions);container.appendChild(item);});}
+async function loadDashboardNotes(){try{const response=await fetch(notesEndpoint,{headers:{'Accept':'application/json'}});if(!response.ok)throw new Error('HTTP '+response.status);dashboardNotes=(await response.json()).notes||[];renderDashboardNotes();applyDashboardNoteAnnotations();}catch(error){document.getElementById('dashboard-notes-list').textContent=labels.notesLoadFailed;}}
+function resetDashboardNoteForm(){document.getElementById('dashboard-note-form').reset();document.getElementById('dashboard-note-id').value='';document.getElementById('dashboard-note-time').value=dashboardNoteDateValue();document.getElementById('dashboard-note-submit').textContent=labels.notesSave;document.getElementById('dashboard-note-cancel').classList.add('d-none');}
+function editDashboardNote(note){document.getElementById('dashboard-note-id').value=note.id;document.getElementById('dashboard-note-chart').value=note.chart_key;document.getElementById('dashboard-note-time').value=dashboardNoteDateValue(note.noted_at);document.getElementById('dashboard-note-text').value=note.note;document.getElementById('dashboard-note-submit').textContent=labels.notesUpdateButton;document.getElementById('dashboard-note-cancel').classList.remove('d-none');document.getElementById('dashboard-note-form').scrollIntoView({behavior:'smooth',block:'center'});}
+async function deleteDashboardNote(id){if(!window.confirm(labels.notesDeleteConfirm))return;try{const response=await fetch(notesDeleteEndpoint.replace('__NOTE__',String(id)),{method:'DELETE',headers:dashboardNoteRequestHeaders()});if(!response.ok)throw new Error('HTTP '+response.status);dashboardNotes=dashboardNotes.filter(note=>Number(note.id)!==Number(id));renderDashboardNotes();applyDashboardNoteAnnotations();showDashboardNoteFeedback(labels.notesDeleted);}catch(error){showDashboardNoteFeedback(labels.notesSaveFailed,true);}}
+document.getElementById('dashboard-note-time').value=dashboardNoteDateValue();
+document.getElementById('dashboard-note-cancel').addEventListener('click',resetDashboardNoteForm);
+document.getElementById('dashboard-note-form').addEventListener('submit',async event=>{event.preventDefault();const id=document.getElementById('dashboard-note-id').value,dateValue=document.getElementById('dashboard-note-time').value,noteText=document.getElementById('dashboard-note-text').value.trim(),button=document.getElementById('dashboard-note-submit');if(!noteText||!dateValue){showDashboardNoteFeedback(labels.notesError,true);return;}const payload={chart_key:document.getElementById('dashboard-note-chart').value,noted_at:new Date(dateValue).toISOString(),note:noteText};button.disabled=true;try{const response=await fetch(id?notesUpdateEndpoint.replace('__NOTE__',id):notesStoreEndpoint,{method:id?'PATCH':'POST',headers:dashboardNoteRequestHeaders(),body:JSON.stringify(payload)});if(!response.ok)throw new Error('HTTP '+response.status);resetDashboardNoteForm();await loadDashboardNotes();showDashboardNoteFeedback(id?labels.notesUpdated:labels.notesSaved);}catch(error){showDashboardNoteFeedback(labels.notesSaveFailed,true);}finally{button.disabled=false;}});
+function applyDashboardNoteAnnotations(){const range=getDashboardHistoryRange(),from=new Date(range.from).getTime(),to=new Date(range.to).getTime();['cpu-chart','storage-chart','disk-chart','search-chart','indexing-chart','segments-chart','documents-chart'].forEach(key=>{const chart=charts['#'+key];if(!chart||typeof chart.addXaxisAnnotation!=='function')return;dashboardNotes.filter(note=>note.chart_key===key).forEach(note=>{const timestamp=new Date(note.noted_at).getTime();if(!Number.isFinite(timestamp)||timestamp<from||timestamp>to)return;chart.addXaxisAnnotation({x:timestamp,borderColor:'#d28a25',strokeDashArray:4,label:{text:note.note.length>32?note.note.slice(0,32)+'…':note.note,orientation:'horizontal',style:{background:'#fff3d6',color:'#7a5312',fontSize:'10px'}}});});});}
+
 function downloadDashboardChart(id) {
     downloadDashboardCharts([id], 'elasticsearch-' + id + '-' + new Date().toISOString().slice(0, 10) + '.png');
 }
@@ -728,6 +763,7 @@ async function loadMetrics() {
         renderChart('#disk-chart',{...chartBase,colors:['#e39a36','#a4abc8'],series:chartSeries(labels.disk,diskPoints,comparisonDiskPoints),yaxis:{labels:{formatter:formatBytes}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:formatBytes}}});
         renderChart('#segments-chart',{...chartBase,colors:['#8064c8','#a4abc8','#bda76a'],series:[...chartSeries(labels.segments,segmentPoints,comparisonSegmentPoints),{name:'Primary Segments',data:primarySegmentPoints}],yaxis:{min:0,labels:{formatter:v=>Math.round(v)}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
         renderChart('#documents-chart',{...chartBase,colors:['#16a085'],series:chartSeries(labels.documents,documentPoints,comparisonDocumentPoints),yaxis:{labels:{formatter:v=>v.toLocaleString()}},tooltip:{x:{format:'dd MMM HH:mm'},y:{formatter:v=>Math.round(v).toLocaleString()}}});
+        applyDashboardNoteAnnotations();
     } catch (error) {
         alert.textContent = labels.loadError + ': ' + error.message;
         alert.classList.remove('d-none');
@@ -738,6 +774,7 @@ async function loadMetrics() {
     }
 }
 renderFavoriteIndices();
+loadDashboardNotes();
 window.addEventListener('storage', event => { if (event.key === favoritesStorageKey) renderFavoriteIndices(); });
 startDashboardRefresh();
 </script>

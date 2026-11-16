@@ -58,4 +58,5 @@ return [
     'download_chart' => 'Download PNG',
     'download_all_charts' => 'Download all charts as PNG',
     'chart_export_failed' => 'Unable to export the charts. Please wait for the charts to load and try again.',
+    'notes_title'=>'Dashboard notes','notes_hint'=>'Record important events alongside a chart and timestamp. Notes are private to your account.','notes_chart'=>'Related chart','notes_time'=>'Date and time','notes_text'=>'Note','notes_placeholder'=>'e.g. CPU increased during a bulk import.','notes_save'=>'Save note','notes_update_button'=>'Update note','notes_cancel'=>'Cancel edit','notes_loading'=>'Loading notes…','notes_empty'=>'No notes yet. Add one to remember an event.','notes_load_failed'=>'Unable to load dashboard notes.','notes_save_failed'=>'Unable to save the note. Check the fields and try again.','notes_delete_confirm'=>'Delete this note?','notes_delete'=>'Delete','notes_edit'=>'Edit','notes_saved'=>'Note saved.','notes_updated'=>'Note updated.','notes_deleted'=>'Note deleted.','notes_error'=>'Please enter a date, time, and note.',
 ];

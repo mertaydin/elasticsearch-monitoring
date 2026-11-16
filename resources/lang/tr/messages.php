@@ -58,4 +58,5 @@ return [
     'download_chart' => 'PNG indir',
     'download_all_charts' => 'Tüm grafikleri PNG indir',
     'chart_export_failed' => 'Grafikler dışa aktarılamadı. Lütfen grafiklerin yüklenmesini bekleyip tekrar deneyin.',
+    'notes_title'=>'Dashboard notları','notes_hint'=>'Önemli olayları ilgili grafik ve zaman bilgisiyle kaydedin. Notlar hesabınıza özeldir.','notes_chart'=>'İlgili grafik','notes_time'=>'Tarih ve saat','notes_text'=>'Not','notes_placeholder'=>'Örn. Toplu veri aktarımı sırasında CPU yükseldi.','notes_save'=>'Notu kaydet','notes_update_button'=>'Notu güncelle','notes_cancel'=>'Düzenlemeyi iptal et','notes_loading'=>'Notlar yükleniyor…','notes_empty'=>'Henüz not yok. Bir olayı hatırlamak için not ekleyin.','notes_load_failed'=>'Dashboard notları yüklenemedi.','notes_save_failed'=>'Not kaydedilemedi. Alanları kontrol edip tekrar deneyin.','notes_delete_confirm'=>'Bu not silinsin mi?','notes_delete'=>'Sil','notes_edit'=>'Düzenle','notes_saved'=>'Not kaydedildi.','notes_updated'=>'Not güncellendi.','notes_deleted'=>'Not silindi.','notes_error'=>'Lütfen tarih, saat ve not metni girin.',
 ];

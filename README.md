@@ -35,6 +35,8 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 - Monitor per-node query/fetch rates, average operation latency, active search/fetch operations, search queues, and rejection rates with historical trends.
 - Customize the dashboard by hiding sections, dragging them into a preferred order, and restoring the default layout. Preferences are stored in the current browser profile.
 
+- Add private dashboard notes to a selected history chart and timestamp. Notes persist in the package database, appear as markers on the matching chart, and can be edited or deleted.
+
 ## Requirements
 
 - PHP 8.2+ for Laravel 12; PHP 8.3+ for Laravel 13
@@ -115,6 +117,10 @@ The Index Management page saves the current search query and favorites-only sele
 ## Resetting the index list
 
 Use **Clear filters** on the Index Management page to clear the search query, favorites-only selection, and hidden/rollup index filters, and restore the default index sorting. The reset is applied in the browser and refreshes the index list using the default visibility options.
+
+## Dashboard notes
+
+Use **Dashboard notes** to record an operational event against a history chart and exact date/time. Notes are stored in the package database, isolated by the authenticated account, and displayed as markers on the corresponding chart when the timestamp is inside the selected date range. You can create, edit, and delete notes; up to the latest 200 are shown. Run `php artisan migrate` after updating to create `elasticsearch_dashboard_notes`. Notes do not write to Elasticsearch.
 
 ## Index exports
 

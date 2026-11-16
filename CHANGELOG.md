@@ -1,3 +1,11 @@
+## [0.29.0] - 2026-11-16
+
+- Add persistent dashboard notes linked to a selected history chart and exact date/time.
+- Display note markers on the corresponding chart when the note timestamp falls inside the selected history range.
+- Support creating, editing, deleting, and listing up to the latest 200 notes per account with ownership isolation.
+- Add a dedicated notes table, CSRF-protected endpoints, validation, feature tests, and localized controls in all six supported languages.
+- Update English and Turkish documentation; notes are stored in the package database and never written to Elasticsearch.
+
 ## [0.28.0] - 2026-11-16
 
 - Add one-click PNG export for each dashboard chart, including its localized title and selected date range.

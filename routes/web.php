@@ -4,6 +4,7 @@ use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\ApiRequestHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\CapacityController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
+use ElasticsearchMonitoring\Http\Controllers\DashboardNoteController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Controllers\NodeController;
 use ElasticsearchMonitoring\Http\Controllers\QueryActivityController;
@@ -19,6 +20,10 @@ Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['
     ->group(function (): void {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::get('/data', [DashboardController::class, 'data'])->name('data');
+        Route::get('/notes', [DashboardNoteController::class, 'index'])->name('notes.index');
+        Route::post('/notes', [DashboardNoteController::class, 'store'])->name('notes.store');
+        Route::patch('/notes/{note}', [DashboardNoteController::class, 'update'])->whereNumber('note')->name('notes.update');
+        Route::delete('/notes/{note}', [DashboardNoteController::class, 'destroy'])->whereNumber('note')->name('notes.destroy');
         Route::get('/indices', [IndexController::class, 'index'])->name('indices');
         Route::get('/indices/data', [IndexController::class, 'data'])->name('indices.data');
         Route::get('/indices/{index}/indexing-stats', [IndexController::class, 'indexingStats'])->where('index', '[A-Za-z0-9_.-]+')->name('indices.indexing-stats');
