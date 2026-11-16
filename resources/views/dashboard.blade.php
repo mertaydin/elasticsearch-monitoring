@@ -376,7 +376,7 @@ function saveDashboardKpis(state) { try { localStorage.setItem(dashboardKpiKey, 
 function applyDashboardKpis(state) {
     const container = document.getElementById('summary-cards');
     const cards = new Map([...container.querySelectorAll('[data-dashboard-card]')].map(card => [card.dataset.dashboardCard, card]));
-    const ordered = [...state.pinned.filter(id => state.order.includes(id)), ...state.order.filter(id => !state.pinned.includes(id))];
+    const ordered = [...state.order.filter(id => state.pinned.includes(id)), ...state.order.filter(id => !state.pinned.includes(id))];
     ordered.forEach(id => { const card = cards.get(id); if (card) { container.appendChild(card); card.hidden = state.hidden.includes(id); card.classList.toggle('dashboard-kpi-pinned', state.pinned.includes(id)); } });
 }
 function renderDashboardKpiList(state) {

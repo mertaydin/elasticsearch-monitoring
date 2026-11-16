@@ -34,7 +34,8 @@ class DashboardChartExportTest extends TestCase
 
         $this->assertStringContainsString('dashboard-kpi-list', $html);
         $this->assertStringContainsString('readDashboardKpis()', $html);
-        $this->assertStringContainsString('applyDashboardKpis()', $html);
+        $this->assertStringContainsString('function applyDashboardKpis(state)', $html);
+        $this->assertStringContainsString('state.order.filter(id => state.pinned.includes(id))', $html);
         $this->assertStringContainsString('defaultDashboardKpiOrder', $html);
         $this->assertStringContainsString('dashboardKpiKey', $html);
     }
