@@ -47,16 +47,17 @@ class DashboardAuthorizationTest extends TestCase
         $this->assertFalse(Route::has('elasticsearch-monitoring.data-streams.data'));
     }
 
-    public function test_dashboard_is_denied_when_no_callback_is_registered(): void
+    public function test_dashboard_allows_authenticated_route_access_when_no_callback_is_registered(): void
     {
         $authorizer = app(DashboardAuthorizer::class);
 
         $this->assertFalse($authorizer->isConfigured());
 
-        $this->expectException(HttpException::class);
-        app(AuthorizeDashboard::class)->handle(
+        $response = app(AuthorizeDashboard::class)->handle(
             Request::create('/monitoring/elasticsearch'),
             fn () => response('allowed')
         );
+
+        $this->assertSame('allowed', $response->getContent());
     }
 }

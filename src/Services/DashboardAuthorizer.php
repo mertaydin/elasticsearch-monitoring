@@ -21,9 +21,10 @@ class DashboardAuthorizer
 
     public function allows(Request $request): bool
     {
-        // Fail closed: without an explicit host-registered callback no request is authorized.
+        // The route group already applies the configured middleware (web, auth by default).
+        // A host callback is optional and can add application-specific authorization rules.
         if ($this->callback === null) {
-            return false;
+            return true;
         }
 
         return (bool) ($this->callback)($request);

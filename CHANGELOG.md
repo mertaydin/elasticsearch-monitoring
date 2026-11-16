@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [0.32.1] - 2026-11-16
+
+- Fix dashboard authorization so the default `web,auth` middleware grants access to authenticated users when no custom authorization callback is configured.
+- Keep optional `ElasticsearchMonitoring::auth()` callbacks available for application-specific role checks.
+
 ## [0.32.0] - 2026-11-16
 
 - Add a browser-only JSON Viewer at `monitoring/elasticsearch/tools/json` with a collapsible tree, key/value search, source editing, pretty printing, minifying, copy, and download. JSON content remains in the browser and is never sent to Elasticsearch or uploaded to the application.
