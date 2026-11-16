@@ -100,6 +100,10 @@ Sorgu Aktivitesi ekranı node bazında query ve fetch sayaçlarını, anlık que
 
 Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca mevcut tarayıcı ve tarayıcı profili için geçerlidir; kullanıcılar veya cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.
 
+## Global indeks arama
+
+Dashboard üzerinden indeks adını yazarak tüm indekslerde canlı arama yapabilirsiniz. Sonuçlarda sağlık durumu, belge sayısı ve depolama boyutu gösterilir; bir sonucu seçtiğinizde indeksin detayları açılır. Arama klavye ile de kullanılabilir ve mevcut dashboard erişim yetkilerini korur.
+
 ## İndeks listesini sıralama
 
 İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez. Seçtiğiniz sütun ve sıralama yönü tarayıcının yerel depolama alanına kaydedilir ve sayfaya tekrar geldiğinizde geri yüklenir.
