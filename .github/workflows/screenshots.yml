@@ -10,8 +10,7 @@ on:
       - 'resources/views/**'
       - 'resources/**/css/**'
 
-permissions:
-  contents: write
+permissions: {}
 
 concurrency:
   group: package-screenshots
@@ -20,6 +19,8 @@ concurrency:
 jobs:
   capture:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     timeout-minutes: 5
     services:
       elasticsearch:
