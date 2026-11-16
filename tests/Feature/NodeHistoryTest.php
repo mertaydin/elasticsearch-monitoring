@@ -102,6 +102,67 @@ class NodeHistoryTest extends TestCase
         $this->assertSame(2, $payload['meta']['snapshots']);
     }
 
+    public function test_it_tracks_node_offline_and_recovery_periods(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:00:00'));
+
+        MetricSnapshot::query()->create([
+            'collected_at' => now(),
+            'elasticsearch_version' => '8.19.14',
+            'metrics' => ['node_details' => [['id' => 'node-a', 'name' => 'data-01']]],
+        ]);
+
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:01:00'));
+        MetricSnapshot::query()->create([
+            'collected_at' => now(),
+            'elasticsearch_version' => '8.19.14',
+            'metrics' => ['node_details' => []],
+        ]);
+
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:02:00'));
+        MetricSnapshot::query()->create([
+            'collected_at' => now(),
+            'elasticsearch_version' => '8.19.14',
+            'metrics' => ['node_details' => [['id' => 'node-a', 'name' => 'data-01']]],
+        ]);
+
+        $payload = app(NodeController::class)->data()->getData(true);
+        $node = collect($payload['nodes'])->firstWhere('id', 'node-a');
+
+        $this->assertNotNull($node);
+        $this->assertSame('online', $node['availability']['status']);
+        $this->assertCount(3, $node['availability']['periods']);
+        $this->assertSame('offline', $node['availability']['periods'][1]['status']);
+        $this->assertSame(60, $node['availability']['periods'][1]['duration_seconds']);
+        $this->assertNull($node['availability']['offline_since']);
+    }
+
+    public function test_it_reports_the_duration_of_an_ongoing_node_outage(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:00:00'));
+        MetricSnapshot::query()->create([
+            'collected_at' => now(),
+            'elasticsearch_version' => '8.19.14',
+            'metrics' => ['node_details' => [['id' => 'node-a', 'name' => 'data-01']]],
+        ]);
+
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:01:00'));
+        MetricSnapshot::query()->create([
+            'collected_at' => now(),
+            'elasticsearch_version' => '8.19.14',
+            'metrics' => ['node_details' => []],
+        ]);
+
+        Carbon::setTestNow(Carbon::parse('2026-11-13 10:04:00'));
+        $payload = app(NodeController::class)->data()->getData(true);
+        $node = collect($payload['nodes'])->firstWhere('id', 'node-a');
+
+        $this->assertNotNull($node);
+        $this->assertSame('offline', $node['availability']['status']);
+        $this->assertSame(180, $node['availability']['offline_duration_seconds']);
+        $this->assertSame('2026-11-13T10:01:00+00:00', $node['availability']['offline_since']);
+    }
+
     public function test_it_returns_an_empty_node_list_when_no_snapshots_exist(): void
     {
         $payload = app(NodeController::class)->data()->getData(true);
