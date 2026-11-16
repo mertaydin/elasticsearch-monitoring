@@ -3,9 +3,9 @@
 use ElasticsearchMonitoring\Http\Controllers\AlertHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\ApiRequestHistoryController;
 use ElasticsearchMonitoring\Http\Controllers\CapacityController;
+use ElasticsearchMonitoring\Http\Controllers\ConnectionStatusController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardController;
 use ElasticsearchMonitoring\Http\Controllers\DashboardNoteController;
-use ElasticsearchMonitoring\Http\Controllers\ConnectionStatusController;
 use ElasticsearchMonitoring\Http\Controllers\IndexController;
 use ElasticsearchMonitoring\Http\Controllers\NodeController;
 use ElasticsearchMonitoring\Http\Controllers\QueryActivityController;

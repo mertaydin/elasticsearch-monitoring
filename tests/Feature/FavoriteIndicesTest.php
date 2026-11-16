@@ -46,6 +46,7 @@ class FavoriteIndicesTest extends TestCase
                     'events' => ['total' => ['indexing' => ['index_total' => 300, 'index_current' => 0]]],
                 ]]);
             }
+
             return Http::response([], 404);
         });
 
