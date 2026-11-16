@@ -60,7 +60,7 @@ class IndexManagementTest extends TestCase
         $this->assertSame(['red' => 1, 'yellow' => 1, 'total' => 2], $payload['counts']);
         $this->assertSame(12, $payload['indices'][0]['documents_count']);
         $this->assertSame(1024, $payload['indices'][0]['storage_bytes']);
-        Http::assertSent(fn ($request) => str_contains($request->url(), 'health,status,index,pri,rep,docs.count,store.size'));
+        Http::assertSent(fn ($request) => str_contains($request->url(), '_cat/indices'));
     }
 
     public function test_it_renders_the_problematic_indices_dashboard_panel(): void
@@ -73,7 +73,7 @@ class IndexManagementTest extends TestCase
             ->assertSee('data-dashboard-widget="problematic"', false)
             ->assertSee('problematic-indices-rows', false)
             ->assertSee('refreshProblematicIndices()', false)
-            ->assertSee('copyProblematicDiagnostics', false);
+            ->assertSee('copyDiagnostics', false);
     }
 
     public function test_it_lists_indices_with_data_stream_information(): void
