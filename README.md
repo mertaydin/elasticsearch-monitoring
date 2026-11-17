@@ -156,7 +156,7 @@ Copy buttons are available for index names, node names and IP addresses, shard i
 
 ## Dashboard URL
 
-The dashboard is available at `/monitoring/elasticsearch` by default. Change `dashboard.path` in `config/elasticsearch-monitoring.php` to a nested path such as `panel/super/elasticsearch`. Leading and trailing slashes are normalized automatically:
+The dashboard is available at `/monitoring/elasticsearch` by default. Change `dashboard.path` in `config/elasticsearch-monitoring.php` to a nested path such as `panel/super/elasticsearch`. Leading and trailing slashes are normalized automatically. Configure `dashboard.middleware` in `config/elasticsearch-monitoring.php` to apply your application's middleware to every dashboard route. For example, use `['web', 'auth', 'super-admin', 'super-ip']` to require your existing super-admin and IP restrictions:
 
 ```php
 'dashboard' => [

@@ -1,5 +1,6 @@
 ## [Unreleased]
 
+- Add feature-test coverage and documentation for applying custom application middleware (for example, `super-admin` and `super-ip`) to all dashboard routes through `dashboard.middleware`.
 - Normalize the configurable dashboard URL prefix and document nested dashboard paths in English and Turkish.
 
 ## [0.32.1] - 2026-11-16
