@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+- Move dashboard theme and language preference handling into published same-origin CSS and JavaScript assets for strict Content Security Policy compatibility.
+- Add the `elasticsearch-monitoring-assets` publish tag for dashboard theme assets.
+
+## [0.32.9] - 2026-11-17
+
+- Fix dashboard theme and language selection on CSP-restricted deployments.
+
 - Keep dashboard routes on the package's fixed `web` and `auth` middleware instead of exposing middleware selection in package configuration.
 - Normalize the configurable dashboard URL prefix and document nested dashboard paths in English and Turkish.
 
