@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Normalize the configurable dashboard URL prefix and document nested dashboard paths in English and Turkish.
+
 ## [0.32.1] - 2026-11-16
 
 - Fix dashboard authorization so the default `web,auth` middleware grants access to authenticated users when no custom authorization callback is configured.

@@ -154,6 +154,16 @@ Snapshot Monitoring requires the Elasticsearch `monitor_snapshot` cluster privil
 
 Copy buttons are available for index names, node names and IP addresses, shard index/node identifiers, and snapshot repository/snapshot names. The Index Management details modal supports copying the complete formatted mapping JSON or an individual top-level mapping section. Clipboard feedback is localized across all six supported languages. Node IP addresses are taken from the node statistics response and stored with subsequent metric snapshots; historical snapshots are not backfilled.
 
+## Dashboard URL
+
+The dashboard is available at `/monitoring/elasticsearch` by default. Change `dashboard.path` in `config/elasticsearch-monitoring.php` to a nested path such as `panel/super/elasticsearch`. Leading and trailing slashes are normalized automatically:
+
+```php
+'dashboard' => [
+    'path' => 'panel/super/elasticsearch',
+],
+```
+
 ## Compatibility
 
 The package detects the Elasticsearch version from `GET /` and supports Elasticsearch 8.18+ and 9.x. It uses Laravel's HTTP client; the official Elasticsearch PHP SDK is not required.
