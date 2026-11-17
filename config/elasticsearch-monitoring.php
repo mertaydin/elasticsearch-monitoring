@@ -13,6 +13,9 @@ return [
     'collection' => [
         'retention_days' => 90,
     ],
+    'authorization' => [
+        'gate' => 'viewElasticsearchMonitoring',
+    ],
     'dashboard' => [
         'path' => 'monitoring/elasticsearch',
         'middleware' => ['web', 'auth'],

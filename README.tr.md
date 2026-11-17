@@ -160,3 +160,6 @@ Her grafiğin üzerindeki **PNG indir** seçeneğiyle grafiği başlığı ve se
 ## Elasticsearch bağlantı durumu
 
 Dashboard başlığında Elasticsearch bağlantısı **Bağlı**, **Yavaş yanıt** veya **Bağlantı kesildi** olarak gösterilir; son başarılı bağlantı zamanı ve kontrol yanıt süresi de görüntülenir. Durum, metrik toplama işleminden bağımsız olarak 30 saniyede bir kontrol edilir. Yavaş yanıt eşiği varsayılan olarak 1.000 ms'dir; `ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS` ortam değişkeniyle veya yayınlanan yapılandırmadaki `connection.slow_response_ms` değeriyle değiştirilebilir. Kontrol kimlik doğrulamalı, salt okunur bir GET isteği kullanır ve küme durumunu değiştirmez.
+
+
+`viewElasticsearchMonitoring` Gate'i tanımlarsanız tüm dashboard rotalarında uygulanır; tanımlı değilse yapılandırılmış route middleware'lerinden geçen kullanıcılara erişim verilir. Gate adı `authorization.gate` ile değiştirilebilir. Mevcut `ElasticsearchMonitoring::auth(...)` callback'i ek bir kısıtlama olarak kullanılmaya devam eder.
