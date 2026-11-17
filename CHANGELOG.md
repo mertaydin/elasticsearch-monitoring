@@ -1,4 +1,6 @@
-## [Unreleased]
+## Unreleased
+
+## [0.32.11] - 2026-11-17
 
 - Move dashboard theme and language preference handling into published same-origin CSS and JavaScript assets for strict Content Security Policy compatibility.
 - Add the `elasticsearch-monitoring-assets` publish tag for dashboard theme assets.
