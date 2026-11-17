@@ -1,22 +1,2 @@
-<style>
-html[data-theme="dark"]{color-scheme:dark;background:#0b1220}
-html[data-theme="dark"] body,html[data-theme="dark"] body.bg-light{background:#0b1220!important;color:#e5eaf3!important}
-html[data-theme="dark"] .card,html[data-theme="dark"] .panel,html[data-theme="dark"] .bg-white,html[data-theme="dark"] .dashboard-header,html[data-theme="dark"] .dashboard-nav,html[data-theme="dark"] #dashboard-refresh-controls,html[data-theme="dark"] #dashboard-history-controls,html[data-theme="dark"] .global-index-search,html[data-theme="dark"] .global-index-search-results,html[data-theme="dark"] .global-index-search-result,html[data-theme="dark"] .favorite-index-card,html[data-theme="dark"] .dashboard-note-item,html[data-theme="dark"] .chart-card,html[data-theme="dark"] .metric-card,html[data-theme="dark"] .dashboard-widget,html[data-theme="dark"] .alert-card,html[data-theme="dark"] .modal-content,html[data-theme="dark"] .dropdown-menu{background:#151f30!important;border-color:#2b394d!important;color:#e5eaf3!important}
-html[data-theme="dark"] h1,html[data-theme="dark"] h2,html[data-theme="dark"] h3,html[data-theme="dark"] h4,html[data-theme="dark"] label,html[data-theme="dark"] .section-title,html[data-theme="dark"] .favorite-index-name,html[data-theme="dark"] .favorite-index-metric strong{color:#e5eaf3!important}
-html[data-theme="dark"] p,html[data-theme="dark"] small,html[data-theme="dark"] .text-muted{color:#aab8cc}
-html[data-theme="dark"] .table{--bs-table-bg:transparent;--bs-table-color:#d5deeb;--bs-table-border-color:#2b394d;color:#d5deeb}
-html[data-theme="dark"] .table thead th,html[data-theme="dark"] .table-light th{background:#101a29!important;color:#aab8cc!important}
-html[data-theme="dark"] .table td,html[data-theme="dark"] .table th{border-color:#2b394d!important}
-html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea,html[data-theme="dark"] .form-control,html[data-theme="dark"] .form-select{background:#101a29!important;color:#e5eaf3!important;border-color:#39485e!important}
-html[data-theme="dark"] .form-control::placeholder,html[data-theme="dark"] textarea::placeholder{color:#7f8da3!important}
-html[data-theme="dark"] .favorite-index-metric{background:#101a29!important}
-html[data-theme="dark"] .alert-warning{background:#3d3016!important;color:#f5d58b!important;border-color:#70551b!important}
-html[data-theme="dark"] .btn-light,html[data-theme="dark"] .btn-outline-secondary{background:#202d40!important;color:#dbe5f2!important;border-color:#46566d!important}
-html[data-theme="dark"] .dashboard-hero{background:linear-gradient(112deg,#10182d 0%,#1b2c51 58%,#373d91 100%)}
-#elasticsearch-monitoring-theme-picker{background:#182437!important;color:#e5eaf3!important;border-color:#39485e!important}
-html[data-theme="dark"] [class*="-card"],html[data-theme="dark"] [class*="-panel"],html[data-theme="dark"] [class*="-widget"]{background:#151f30!important;border-color:#2b394d!important;color:#e5eaf3!important}
-html[data-theme="dark"] .chart-card-heading{background:#101a29!important;color:#cbd5e1!important}
-
-#elasticsearch-monitoring-theme-picker{position:fixed;top:18px;right:18px;bottom:auto;left:auto;z-index:99999;}
-</style>
-<script>(function(){var r=document.documentElement,k='elasticsearch-monitoring-theme',a=['light','dark','system'];function s(){return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}function read(){try{var v=localStorage.getItem(k);return a.includes(v)?v:'system'}catch(e){return 'system'}}var p=read();function apply(){var v=p==='system'?s():p;r.dataset.theme=v;r.setAttribute('data-bs-theme',v);r.style.colorScheme=v}function mount(){apply();if(document.getElementById('elasticsearch-monitoring-theme-picker'))return;var w=document.createElement('label');w.id='elasticsearch-monitoring-theme-picker';w.innerHTML='<span>◐</span><select aria-label="Tema"><option value="light">Gündüz</option><option value="dark">Gece</option><option value="system">Sistem</option></select>';var x=w.querySelector('select');x.value=p;x.onchange=function(){p=x.value;try{localStorage.setItem(k,p)}catch(e){}apply()};document.body.appendChild(w)}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();var m=matchMedia('(prefers-color-scheme: dark)');m.addEventListener?m.addEventListener('change',function(){if(p==='system')apply()}):m.addListener(function(){if(p==='system')apply()})})();</script>
+<link rel="stylesheet" href="{{ asset('vendor/elasticsearch-monitoring/css/theme.css') }}">
+<script src="{{ asset('vendor/elasticsearch-monitoring/js/theme.js') }}" defer></script>

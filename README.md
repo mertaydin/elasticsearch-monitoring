@@ -235,3 +235,15 @@ The dashboard header checks the Elasticsearch root information endpoint and disp
 
 
 If the `viewElasticsearchMonitoring` Gate is defined, it is enforced for every dashboard route; if it is not defined, access is allowed for users who pass the configured route middleware. The Gate name can be changed with `authorization.gate`. The existing `ElasticsearchMonitoring::auth(...)` callback remains available as an additional restriction.
+
+
+### Publishing dashboard assets
+
+After updating the package, publish its external dashboard theme assets:
+
+```bash
+php artisan vendor:publish --tag=elasticsearch-monitoring-assets --force
+php artisan optimize:clear
+```
+
+Theme and language preferences use external same-origin JavaScript and CSS assets, so they work with Content Security Policies that disallow inline scripts and styles.

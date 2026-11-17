@@ -37,6 +37,11 @@ class ElasticsearchMonitoringServiceProvider extends ServiceProvider
             __DIR__.'/../config/elasticsearch-monitoring.php' => config_path('elasticsearch-monitoring.php'),
         ], 'elasticsearch-monitoring-config');
 
+        $this->publishes([
+            __DIR__.'/../resources/css/theme.css' => public_path('vendor/elasticsearch-monitoring/css/theme.css'),
+            __DIR__.'/../resources/js/theme.js' => public_path('vendor/elasticsearch-monitoring/js/theme.js'),
+        ], 'elasticsearch-monitoring-assets');
+
         if ($this->app->runningInConsole()) {
             $this->commands([CollectMetricsCommand::class]);
         }

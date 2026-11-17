@@ -164,7 +164,7 @@
                 <form method="GET" action="{{ route('elasticsearch-monitoring.index') }}" class="d-flex align-items-center gap-2">
                     <label for="dashboard-locale" class="visually-hidden">Dashboard language</label>
                     <select id="dashboard-locale" name="locale" class="form-select form-select-sm dashboard-language-select" aria-label="Dashboard language"
-                        onchange="document.cookie = 'elasticsearch_monitoring_locale=' + encodeURIComponent(this.value) + '; path=/; max-age=31536000; SameSite=Lax' + (location.protocol === 'https:' ? '; Secure' : ''); this.form.submit()">
+                        data-em-locale-picker>
                         @foreach ($availableLocales as $availableLocale)
                             <option value="{{ $availableLocale }}" @selected($locale === $availableLocale)>{{ $languageNames[$availableLocale] ?? strtoupper($availableLocale) }}</option>
                         @endforeach
