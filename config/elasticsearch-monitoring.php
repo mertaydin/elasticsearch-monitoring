@@ -18,7 +18,6 @@ return [
     ],
     'dashboard' => [
         'path' => 'monitoring/elasticsearch',
-        'middleware' => ['web', 'auth'],
         'locale' => 'en',
         'available_locales' => ['tr', 'en', 'zh_CN', 'hi', 'es', 'ar'],
     ],

@@ -16,7 +16,7 @@ use ElasticsearchMonitoring\Http\Controllers\ThreadPoolController;
 use ElasticsearchMonitoring\Http\Middleware\AuthorizeDashboard;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware([...config('elasticsearch-monitoring.dashboard.middleware', ['web', 'auth']), AuthorizeDashboard::class])
+Route::middleware(['web', 'auth', AuthorizeDashboard::class])
     ->prefix(trim((string) config('elasticsearch-monitoring.dashboard.path', 'monitoring/elasticsearch'), '/'))
     ->name('elasticsearch-monitoring.')
     ->group(function (): void {

@@ -93,7 +93,7 @@ Alert history: `/monitoring/elasticsearch/alerts`
 Notification delivery history: `/monitoring/elasticsearch/alerts/notifications`  
 Query Activity: `/monitoring/elasticsearch/query-activity`
 
-The index details modal includes a read-only performance analyzer for indexing, search, merge, refresh, flush, query/request cache, segments, and translog statistics. It compares primary-shard values with totals across primary and replica shards and refreshes only the selected index. The Elasticsearch `monitor` index privilege is required. The dashboard uses `web` and `auth` middleware by default. Configure the middleware, dashboard path, and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
+The index details modal includes a read-only performance analyzer for indexing, search, merge, refresh, flush, query/request cache, segments, and translog statistics. It compares primary-shard values with totals across primary and replica shards and refreshes only the selected index. The Elasticsearch `monitor` index privilege is required. The dashboard always uses Laravel's `web` and `auth` middleware. Configure the dashboard path and locale in `config/elasticsearch-monitoring.php`. Set `register_schedule` to `true` to register a one-minute collection task and ensure Laravel's scheduler is running.
 
 ### Dashboard authorization
 
@@ -110,7 +110,7 @@ public function boot(): void
 }
 ```
 
-If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, dashboard access is denied (HTTP 403), even when the middleware stack is customized. Register an explicit callback before exposing the dashboard. Keep the `auth` middleware enabled unless your callback intentionally handles authentication itself.
+If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, authenticated users can access the dashboard. The optional authorization Gate is also enforced when defined. The package always keeps the `web` and `auth` middleware enabled.
 
 ## Query Activity Monitor
 
