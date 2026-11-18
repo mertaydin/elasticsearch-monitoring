@@ -1,5 +1,9 @@
 ## Unreleased
 
+## [0.32.13] - 2026-11-18
+
+- Refresh the README with newly captured screenshots of the live cluster dashboard, index management, and thread-pool pages.
+
 
 ## [0.32.12] - 2026-11-18
 
