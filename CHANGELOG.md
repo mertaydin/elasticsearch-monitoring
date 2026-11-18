@@ -1,5 +1,10 @@
 ## Unreleased
 
+
+## [0.32.12] - 2026-11-18
+
+- Publish a patch release; no functional code changes.
+
 ## [0.32.11] - 2026-11-17
 
 - Move dashboard theme and language preference handling into published same-origin CSS and JavaScript assets for strict Content Security Policy compatibility.
