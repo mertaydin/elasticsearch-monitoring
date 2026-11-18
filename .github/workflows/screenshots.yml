@@ -79,6 +79,7 @@ jobs:
           touch database/database.sqlite
           php artisan vendor:publish --tag=elasticsearch-monitoring-config --force
           sed -i "s/'middleware' => \['web', 'auth'\]/'middleware' => ['web']/" config/elasticsearch-monitoring.php
+          sed -i "s/'web', 'auth', AuthorizeDashboard::class/'web', AuthorizeDashboard::class/" vendor/mertaydin/elasticsearch-monitoring/routes/web.php
           cat > app/Providers/AppServiceProvider.php <<'PHP'
           <?php
           namespace App\Providers;
