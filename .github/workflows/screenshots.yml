@@ -85,7 +85,7 @@ jobs:
           use Illuminate\Support\ServiceProvider;
           class AppServiceProvider extends ServiceProvider {
               public function boot(): void {
-                  config(['elasticsearch-monitoring.dashboard.middleware' => ['web']]);
+                  config(['elasticsearch-monitoring.authorization.gate' => 'screenshotDashboard']);
               }
           }
           PHP
