@@ -54,5 +54,11 @@
   "support": {
     "issues": "https://github.com/mertaydin/elasticsearch-monitoring/issues",
     "source": "https://github.com/mertaydin/elasticsearch-monitoring"
+  },
+  "config": {
+    "preferred-install": {
+      "phpstan/phpstan": "source",
+      "*": "dist"
+    }
   }
 }
