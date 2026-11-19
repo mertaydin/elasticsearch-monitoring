@@ -1,11 +1,11 @@
 # Elasticsearch Monitoring
 
-![CI](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml/badge.svg?branch=main)
-[![Latest Version](https://img.shields.io/packagist/v/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![Total Downloads](https://img.shields.io/packagist/dt/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![Monthly Downloads](https://img.shields.io/packagist/dm/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![Daily Downloads](https://img.shields.io/packagist/dd/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![License](https://img.shields.io/packagist/l/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](LICENSE)
+[![Latest Version](https://img.shields.io/packagist/v/elasticsearch-monitoring?label=Packagist)](https://packagist.org/packages/elasticsearch-monitoring)
+[![Total Downloads](https://img.shields.io/packagist/dt/elasticsearch-monitoring?label=downloads)](https://packagist.org/packages/elasticsearch-monitoring)
+[![PHP](https://img.shields.io/packagist/php-v/elasticsearch-monitoring?label=PHP)](https://packagist.org/packages/elasticsearch-monitoring)
+[![Laravel](https://img.shields.io/badge/Laravel-12%20%7C%2013-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
+[![CI](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml/badge.svg?branch=main&label=CI)](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 
 A Laravel package for monitoring Elasticsearch clusters with metric collection and a lightweight dashboard.
