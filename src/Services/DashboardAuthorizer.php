@@ -21,12 +21,8 @@ class DashboardAuthorizer
 
     public function allows(Request $request): bool
     {
-        // The route group already applies the configured middleware (web, auth by default).
-        // A host callback is optional and can add application-specific authorization rules.
-        if ($this->callback === null) {
-            return true;
-        }
-
-        return (bool) ($this->callback)($request);
+        // Cluster metadata and operational history are sensitive. Require the
+        // host application to explicitly authorize dashboard access.
+        return $this->callback !== null && (bool) ($this->callback)($request);
     }
 }
