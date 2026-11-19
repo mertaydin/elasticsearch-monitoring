@@ -110,7 +110,7 @@ public function boot(): void
 }
 ```
 
-If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, authenticated users can access the dashboard. The optional authorization Gate is also enforced when defined. The package always keeps the `web` and `auth` middleware enabled.
+If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, authenticated users can access the dashboard.  The package always keeps the `web` and `auth` middleware enabled.
 
 ## Query Activity Monitor
 
@@ -234,7 +234,7 @@ Use the **Download PNG** action on an individual chart to save a titled image, o
 The dashboard header checks the Elasticsearch root information endpoint and displays **Connected**, **Slow response**, or **Connection lost**, along with the latest successful connection time and check latency. The status is refreshed every 30 seconds independently of metric collection. The slow-response threshold defaults to 1,000 ms and can be changed with `ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS` (or `connection.slow_response_ms` in the published configuration). The check uses an authenticated, read-only GET request and does not change cluster state.
 
 
-If the `viewElasticsearchMonitoring` Gate is defined, it is enforced for every dashboard route; if it is not defined, access is allowed for users who pass the configured route middleware. The Gate name can be changed with `authorization.gate`. The existing `ElasticsearchMonitoring::auth(...)` callback remains available as an additional restriction.
+The callback is the package's application-specific authorization mechanism. If no callback is registered, access follows the configured route middleware (`web` and `auth` by default).
 
 
 ### Publishing dashboard assets
