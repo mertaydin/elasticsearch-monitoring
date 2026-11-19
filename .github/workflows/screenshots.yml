@@ -55,7 +55,7 @@ jobs:
           done
           exit 1
       - name: Create temporary Laravel host application
-        run: composer create-project laravel/laravel screenshot-app '^12.0' --no-interaction
+        run: composer create-project laravel/laravel screenshot-app '12.0.0' --no-interaction
       - name: Install package and prepare host application
         working-directory: screenshot-app
         run: |
@@ -91,7 +91,7 @@ jobs:
           }
           PHP
           php artisan migrate --force
-          npm install --no-audit --no-fund playwright
+          npm install --save-exact --no-audit --no-fund playwright@1.65.1
           npx playwright install --with-deps chromium
       - name: Seed demo Elasticsearch documents and collect real metrics
         working-directory: screenshot-app
