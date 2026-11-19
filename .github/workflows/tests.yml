@@ -40,7 +40,7 @@ jobs:
             "illuminate/view:${{ matrix.laravel }}" \
             "orchestra/testbench:${{ matrix.testbench }}"
           for attempt in 1 2 3; do
-            if COMPOSER_MAX_PARALLEL_HTTP=2 composer update --prefer-dist --no-interaction --no-audit; then
+            if COMPOSER_MAX_PARALLEL_HTTP=2 composer update --no-interaction --no-audit; then
               exit 0
             fi
             if [ "$attempt" -lt 3 ]; then
