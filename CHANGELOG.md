@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.32.17 - 2026-11-19
+
+- Refresh the real dashboard, index-management and thread-pool screenshots; align README screenshot documentation.
+
+
 ## 0.32.16 - 2026-11-19
 
 - Recapture the cluster dashboard, index management, and thread-pool screenshots from the current package UI using a disposable Elasticsearch cluster.
