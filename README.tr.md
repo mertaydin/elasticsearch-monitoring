@@ -1,48 +1,53 @@
 # Elasticsearch Monitoring
 
-- Node Performans sayfasında seçilen node'un IP, rolleri, CPU, JVM heap, disk kullanımı, doküman/shard sayıları ve üzerindeki indekslerin primary/replica shard sayılarını görüntüleyin.
-- Node karşılaştırma tablosunu CPU, JVM heap (RAM) veya disk kullanımına göre sıralayın; en yüksek kullanım en üstte gösterilir.
-- Dashboard geçmiş grafiklerini son 1, 6, 24 saat, son 7 gün veya özel başlangıç/bitiş tarihine göre filtreleyin. Seçim tarayıcıda saklanır ve büyük tarih aralıklarında yanıt en fazla 2.000 örneklenmiş noktayla sınırlandırılır.
+Elasticsearch kümelerini metrik toplama ve hafif bir yönetim paneliyle izlemek için Laravel paketi.
 
-![CI](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml/badge.svg?branch=main)
-[![Latest Version](https://img.shields.io/packagist/v/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![Total Downloads](https://img.shields.io/packagist/dt/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![Monthly Downloads](https://img.shields.io/packagist/dm/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![Daily Downloads](https://img.shields.io/packagist/dd/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](https://packagist.org/packages/mertaydin/elasticsearch-monitoring)
-[![License](https://img.shields.io/packagist/l/mertaydin/elasticsearch-monitoring.svg?style=flat-square)](LICENSE)
+**Salt okunur tasarım:** Paket Elasticsearch metriklerini, indeks metadata bilgilerini, mapping, ayar ve yaşam döngüsü bilgilerini okur. İndeks oluşturmaz, değiştirmez, kapatmaz veya silmez; mapping, shard dağılımı ya da ILM politikalarını değiştirmez.
 
+## Ekran görüntüleri
 
-Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
+<!-- Ekran görüntüleri GitHub Actions tarafından güncel paket arayüzünden üretilir. -->
 
-**Tasarım gereği salt okunurdur:** paket yalnızca Elasticsearch metriklerini, indeks metaverilerini, mapping, settings ve lifecycle bilgilerini okur. İndeks oluşturmaz, güncellemez, kapatmaz veya silmez; mapping, settings, shard dağılımı ya da ILM politikalarını değiştirmez.
+Görüntüler, GitHub Actions içinde geçici Laravel uygulamasında ve geçici Elasticsearch 8.18 kümesinde çalışan gerçek paket arayüzünden alınır. Elasticsearch yanıtları canlıdır; yalnızca demo indeks belgeleri örnek veridir.
+
+| Küme paneli | İndeks yönetimi |
+| --- | --- |
+| ![Küme paneli](docs/screenshots/cluster-dashboard.png) | ![İndeks yönetimi](docs/screenshots/index-management.png) |
+
+![Thread pool analizi](docs/screenshots/thread-pools.png)
 
 ## Özellikler
 
-- Tarayıcıda çalışan JSON Görüntüleyici ile JSON dosyalarını açın; daraltılabilir ağaç görünümünde inceleyin, anahtar/değer arayın, kaynak metni düzenleyin, biçimlendirin, sıkıştırın, kopyalayın veya indirin. İçerik tarayıcıda kalır; Elasticsearch'e gönderilmez ve sunucuya yüklenmez.
-- Seçili tarih aralığı, küme adı, temel metrikler, görünür performans grafikleri, varsa önceki dönem karşılaştırması ve o dönemde kaydedilen notları içeren PDF dashboard raporu oluşturun. PDF tarayıcıda hazırlanır; ek Elasticsearch isteği veya sunucu tarafı PDF bağımlılığı gerektirmez.
+- Tarayıcıda çalışan JSON Viewer: katlanabilir ağaç, anahtar/değer arama, kaynak düzenleme, biçimlendirme, küçültme, kopyalama ve indirme. Dosyalar tarayıcıdan dışarı gönderilmez.
+- Node Performance: seçili düğümün IP, roller, CPU, JVM heap, disk, belge/shard ve primary/replica shard bilgileri.
+- Düğümler arasında Elasticsearch sürüm karşılaştırması, sürüm dağılımı özeti ve sürüm farklılığı uyarısı. Veriler salt okunur `/_nodes` API'sinden alınır.
+- Node Performance tablosunu CPU, JVM heap (RAM) veya disk kullanımına göre sıralama; en yüksek kullanım ilk sıradadır.
+- Seçili tarih aralığı, küme adı, metrikler, görünür grafikler, önceki dönem karşılaştırması ve dönem notlarıyla PDF raporu. Tarayıcıda oluşturulur; ek Elasticsearch isteği veya sunucu PDF bağımlılığı gerektirmez.
+- Grafikleri başlıklı PNG olarak ayrı ayrı veya görünür tüm grafikleri tek PNG olarak dışa aktarma.
+- Geçmiş grafiklerini eşit uzunluktaki önceki dönemle karşılaştırma; önceki dönem çizgileri seçili aralığa hizalanır ve açılıp kapatılabilir.
+- KPI, sağlık ve grafikler için kompakt gezinme, duyarlı kontroller ve tutarlı kartlarla yenilenmiş panel.
+- 24 saati aşan aralıkları saatlik, 7 günü aşan aralıkları günlük ortalamalara dönüştürme; kısa aralıklarda ham gözlemleri koruma.
+- Grafikleri son 1/6/24 saat, son 7 gün veya özel tarih aralığına göre filtreleme; seçimi yerel saklama ve yanıtları en fazla 2.000 örnek noktayla sınırlama.
+- Otomatik yenileme aralıkları: 15 saniye, 30 saniye, 1 dakika veya 5 dakika. Duraklatma/sürdürme ve arka plan sekmesinde istekleri askıya alma.
+- Shard Allocation Explorer: atanmış/atanmamış shard tahsis açıklamaları. Elasticsearch `monitor` küme yetkisi gerektirir ve küme durumunu değiştirmez.
+- Sık kullanılan indeksleri tarayıcı favorilerine kaydetme, favorilere göre filtreleme ve panelden hızlı açma. Favori kartlarında sağlık, belge, depolama ve indeksleme işlem özetleri bulunur; migration gerekmez.
+- Görünen indeks listesini arama/favori filtreleriyle birlikte UTF-8 CSV veya JSON dışa aktarma.
+- İndeks/düğüm adlarını, IP adreslerini, shard indeks/düğüm kimliklerini ve snapshot repository/adlarını tek tıklamayla kopyalama.
+- Index Management ayrıntılarından biçimlendirilmiş mapping JSON'un tamamını veya üst düzey bölümlerini kopyalama.
+- Altı dilde yerelleştirilmiş pano geri bildirimi.
+- İndeks adı, sağlık, primary/replica shard, belge sayısı ve depolama boyutu sütunlarında sıralama.
+- Panelden canlı öneriler ve sağlık/belge/depolama özetleriyle genel indeks araması.
+- Arama sorgusu, favori filtresi ve sıralama tercihlerini tarayıcı local storage alanında hatırlama; filtreleri tek tıklamayla sıfırlama.
+- Düğüm bazında query/fetch hızları, ortalama gecikme, etkin işlemler, arama kuyrukları ve reddedilme oranlarının geçmiş takibi.
+- Panel bölümlerini gizleme, sürükleyerek sıralama ve varsayılan düzeni geri yükleme.
+- Yedi KPI kartını ayrı ayrı gösterme/gizleme, sıralama ve üste sabitleme.
+- Seçili geçmiş grafiğine zaman damgalı özel operasyon notları ekleme; notlar veritabanında saklanır, ilgili grafikte gösterilir, düzenlenebilir ve silinebilir.
 
-- Dashboard grafiklerini tek tek başlıklı PNG olarak indirin veya görünür tüm grafikleri tek bir PNG görselinde birleştirin. Seçili tarih aralığı dışa aktarılan görsele eklenir.
-- Dashboard geçmiş grafiklerini aynı uzunluktaki bir önceki dönemle karşılaştırın. Önceki dönem çizgileri seçili zaman aralığına hizalanır ve karşılaştırma tercihi tarayıcıda saklanır.
-- Daha düzenli gezinme çubuğu, belirgin görsel hiyerarşi, mobil uyumlu kontroller ve tutarlı KPI/sağlık/grafik kartlarıyla yenilenmiş dashboard tasarımı.
-- Uzun dashboard grafiklerinde 24 saati aşan aralıklar saatlik, 7 günü aşan aralıklar günlük ortalamalarla gösterilir. Daha kısa aralıklarda ham ölçümler korunur.
+## Gereksinimler
 
-- Dashboard otomatik yenileme aralığını (15 saniye, 30 saniye, 1 dakika veya 5 dakika) seçin; yenilemeyi duraklatın/sürdürün ve arka planda gereksiz istekleri durdurun.
-
-- Atanmamış veya atanmış shard'lar için node bazında dağıtım kararlarını açıklayan Shard Allocation Explorer. Bu teşhis endpoint'i Elasticsearch cluster `monitor` yetkisi gerektirir ve cluster durumunu değiştirmez.
-- Sık kullanılan indeksleri tarayıcıda favorilere ekleyin, listeyi favorilere göre filtreleyin ve dashboard üzerinden hızlıca açın. Dashboard favori kartları ayrıca indeks sağlığını, belge sayısını, depolama boyutunu ve aktif/toplam indeksleme işlemlerini gösterir; özetler dashboard ile yenilenir ve veritabanı migration'ı gerektirmez.
-- Arama ve favori filtreleriyle görünen indeks listesini tarayıcıdan UTF-8 CSV veya JSON olarak indirin.
-- İndeks, node, shard ve snapshot bilgilerini tek tıkla kopyalayın.
-- Mapping içeriğinin tamamını biçimlendirilmiş JSON olarak veya üst seviye bölümlerini ayrı ayrı kopyalayın.
-- Kopyalama bildirimlerini altı dilde gösterin ve node geçmişinde IP adreslerini görüntüleyin.
-- İndeks Yönetimi ekranına indeks adı, sağlık, primary/replica shard sayısı, belge sayısı ve depolama boyutu için sütun sıralama eklendi.
-- İndeks Yönetimi arama metnini ve yalnızca favoriler seçimini tarayıcının yerel depolama alanında hatırlayın.
-- Tek tıkla tüm indeks filtrelerini temizleyin ve sıralamayı varsayılana döndürün.
-- Elasticsearch API İstek Geçmişi ekranında endpoint, HTTP durum kodu, yanıt süresi, hata kayıtları ve en çok/en yavaş endpoint sıralamalarını inceleyin.
-- Node bazında query/fetch hızlarını, ortalama işlem sürelerini, aktif arama işlemlerini, search kuyruğunu ve reddedilme oranlarını geçmiş grafiklerle izleyin.
-- Dashboard bölümlerini gizleyin, sürükleyerek sıralayın ve varsayılan düzene dönün. Tercihler mevcut tarayıcı profilinde saklanır.
-- Yedi özet KPI kartını bağımsız yönetin: kartları gösterin/gizleyin, sürükleyerek sıralayın ve önemli kartları üste sabitleyin. Tercihler tarayıcıda saklanır; migration veya ek Elasticsearch isteği gerekmez.
-
-- İlgili geçmiş grafiğine ve tam tarih/saat bilgisine bağlı kalıcı dashboard notları ekleyin. Notlar hesap bazında saklanır ve seçili tarih aralığında ilgili grafikte işaretlenir.
+- Laravel 12 için PHP 8.2+; Laravel 13 için PHP 8.3+
+- Laravel 12 veya 13
+- Elasticsearch 8.18+ veya 9.x
 
 ## Kurulum
 
@@ -50,10 +55,9 @@ Laravel 12 ve 13 uygulamaları için Elasticsearch 8.18+ ve 9.x izleme paketi.
 composer require mertaydin/elasticsearch-monitoring
 php artisan vendor:publish --tag=elasticsearch-monitoring-config
 php artisan migrate
-php artisan elasticsearch:collect
 ```
 
-Örnek ortam değişkenleri:
+`.env` bağlantı ayarları:
 
 ```dotenv
 ELASTICSEARCH_MONITORING_URL=http://127.0.0.1:9200
@@ -64,11 +68,27 @@ ELASTICSEARCH_MONITORING_TIMEOUT=10
 ELASTICSEARCH_MONITORING_VERIFY=true
 ```
 
-Panel: `/monitoring/elasticsearch`. İndeks yönetimi ve indeks bazlı performans analizi: `/monitoring/elasticsearch/indices`. Node performans geçmişi: `/monitoring/elasticsearch/nodes`. Thread Pool analizi: `/monitoring/elasticsearch/thread-pools`. Yedekleme izleme: `/monitoring/elasticsearch/snapshots`. Shard dağılımı: `/monitoring/elasticsearch/shards`. Kapasite analizi: `/monitoring/elasticsearch/capacity`. Alarm geçmişi: `/monitoring/elasticsearch/alerts`. Bildirim gönderim geçmişi: `/monitoring/elasticsearch/alerts/notifications`. Sorgu Aktivitesi: `/monitoring/elasticsearch/query-activity`. Panel rotalarında `web,auth` middleware'i sabit olarak kullanılır. Panel adresini `config/elasticsearch-monitoring.php` içindeki `dashboard.path` ayarıyla değiştirebilirsiniz. Örneğin `'path' => 'panel/super/elasticsearch'` değeri paneli `/panel/super/elasticsearch` adresinde açar. Başta ve sonda bulunan `/` karakterleri otomatik temizlenir. Panel rotalarının middleware listesi paket tarafından sabit olarak `web,auth` şeklinde uygulanır.
+Metrik anlık görüntüsü toplamak için `php artisan elasticsearch:collect` çalıştırın.
+
+| Sayfa | Varsayılan adres |
+| --- | --- |
+| Panel | `/monitoring/elasticsearch` |
+| İndeks yönetimi ve indeks performansı | `/monitoring/elasticsearch/indices` |
+| Düğüm performans geçmişi | `/monitoring/elasticsearch/nodes` |
+| Thread pool analizi | `/monitoring/elasticsearch/thread-pools` |
+| Snapshot ve yedek izleme | `/monitoring/elasticsearch/snapshots` |
+| Shard tahsisi | `/monitoring/elasticsearch/shards` |
+| Kapasite analizi | `/monitoring/elasticsearch/capacity` |
+| Uyarı geçmişi | `/monitoring/elasticsearch/alerts` |
+| Bildirim teslim geçmişi | `/monitoring/elasticsearch/alerts/notifications` |
+| Sorgu etkinliği | `/monitoring/elasticsearch/query-activity` |
+| API istek geçmişi | `/monitoring/elasticsearch/api-requests` |
+
+İndeks ayrıntı penceresindeki salt okunur performans analiz aracı indexing, search, merge, refresh, flush, query/request cache, segments ve translog istatistiklerini gösterir. Primary shard değerlerini primary+replica toplamlarıyla karşılaştırır ve yalnızca seçili indeksi yeniler. Elasticsearch `monitor` indeks yetkisi gerekir. Panel daima Laravel `web` ve `auth` middleware'lerini kullanır. Panel yolu ve dili `config/elasticsearch-monitoring.php` içinden ayarlanır. Bir dakikalık toplama görevi kaydetmek için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
 
 ### Panel yetkilendirmesi
 
-LogViewer benzeri bir callback'i `AppServiceProvider::boot()` içinde tanımlayabilirsiniz. Callback mevcut HTTP isteğini alır; `true` dönerse erişim verilir, `false` dönerse HTTP 403 yanıtı döner:
+Uygulamanızın `AppServiceProvider::boot()` metodunda callback kaydedebilirsiniz:
 
 ```php
 use ElasticsearchMonitoring\Facades\ElasticsearchMonitoring;
@@ -81,85 +101,116 @@ public function boot(): void
 }
 ```
 
-Callback tanımlamazsanız mevcut davranış korunur; varsayılan `web,auth` middleware'i oturum açmış kullanıcıları kabul eder. Callback'iniz kimlik doğrulamayı da kendisi yapmıyorsa `auth` middleware'ini kaldırmayın.
+Callback `true` döndürerek erişime izin verir; `false` HTTP 403 üretir. Callback tanımlanmazsa kimliği doğrulanmış kullanıcılar erişebilir. `web` ve `auth` middleware'leri daima etkindir.
 
-İndeks detay penceresindeki performans analizinde indeksleme, arama, merge, refresh, flush, query/request cache, segment ve translog istatistikleri primary ve toplam (primary + replica) değerleriyle karşılaştırılır. Yalnızca seçilen indeks sorgulanır; performans sekmesi açıkken 30 saniyede bir yenilenir. Elasticsearch tarafında ilgili indeks için `monitor` yetkisi gerekir.
+## Sorgu etkinliği
 
-Shard dağılımı ekranında primary/replica yerleşimi, shard durumları, atanmama nedenleri ve node başına shard sayıları görüntülenir. Küme sağlık puanı, aktif uyarılar, node bazında CPU/JVM/disk kullanımı, belge/shard sayıları, thread-pool kuyrukları ve reddedilen işler izlenir. Thread Pool Analyzer ekranında node ve thread pool bazında aktif iş, kuyruk, thread, tamamlanan ve reddedilen işlem sayılarını; geçmiş kuyruk ve rejection hızlarını inceleyebilirsiniz. Yedekleme izleme ekranında kayıtlı repository'leri, son snapshot'ları, shard sonuçlarını, hataları ve son başarılı yedeklemeyi görüntüleyebilirsiniz. `/monitoring/elasticsearch/nodes` ekranında node seçerek CPU, JVM heap, disk, arama/indeksleme hızı ve kuyruk geçmişini son 1.440 ölçüme kadar grafiklerle inceleyebilirsiniz. Uyarı eşikleri paket yapılandırmasındaki `alerts.thresholds` altında değiştirilebilir. Arama ve indeksleme hızları sayaç farklarından hesaplanır; ilk ölçümden sonra ikinci başarılı ölçüm gerekir. Alarm geçmişi, alarmın ilk oluşma zamanını, sonraki gözlemleri, son değerini ve çözülme zamanını kaydeder. Aktif ve çözülmüş kayıtları `/monitoring/elasticsearch/alerts` adresinden inceleyebilirsiniz. Güncelleme sonrasında mevcut kurulumlarda `php artisan migrate` çalıştırılmalıdır.
+Query Activity sayfası düğüm bazında query/fetch sayaçlarını ve işlemlerini, scroll/suggest hızlarını, işlem başına ortalama süreyi, search thread-pool kuyruk derinliğini ve reddedilme oranını gösterir. Hız ve ortalama süre sayaç farklarından hesaplandığı için en az iki başarılı toplama gerekir. Sayfa en son 1.440 saklanan anlık görüntüyü okur, görünümünü 30 saniyede bir yeniler ve ek Elasticsearch isteği göndermez. Güncelleme sonrası `php artisan elasticsearch:collect` çalıştırın; eski örnekler query activity verisi içermez.
 
-Dakikalık otomatik toplama için `register_schedule=true` yapın ve Laravel scheduler'ı çalıştırın.
+## Elasticsearch API istek geçmişi
 
-Yedekleme izleme ekranı Elasticsearch tarafında `monitor_snapshot` cluster yetkisi gerektirir. Her repository için en son 50 snapshot kaydını okur, sonuçları 60 saniye önbelleğe alır; repository ayarlarını göstermez ve yedekleme işlemi başlatmaz.
+`/monitoring/elasticsearch/api-requests` panelin Elasticsearch'e gönderdiği GET isteklerini kaydeder: uç nokta, HTTP durumu, yanıt süresi, başarı/başarısızlık ve hata ayrıntıları. Son 500 istek listelenir; URL sorgu parametreleri ayıklanır, kimlik bilgileri ve istek gövdeleri kaydedilmez. `elasticsearch_api_request_logs` tablosu için güncelleme sonrası `php artisan migrate` çalıştırın.
 
-## Sorgu Aktivitesi İzleme
+## Favoriler, sıralama ve filtreler
 
-Sorgu Aktivitesi ekranı node bazında query ve fetch sayaçlarını, anlık query/fetch işlemlerini, scroll ve suggest hızlarını, ortalama query/fetch sürelerini, search thread pool kuyruğunu ve reddedilme hızını gösterir. Hızlar ve ortalama süreler başarılı ölçümler arasındaki sayaç farklarından hesaplanır; değerlerin oluşması için en az iki ölçüm gerekir. Ekran son 1.440 metrik kaydını kullanır, görünümü 30 saniyede bir yeniler ve Elasticsearch'e ek istek göndermez. Güncellemeden sonra `php artisan elasticsearch:collect` çalıştırılmalıdır; özellik öncesinde alınan geçmiş ölçümlerde sorgu aktivitesi alanları bulunmaz.
+Favoriler tarayıcının local storage alanında tutulur; tarayıcı/profil bazındadır, kullanıcılar veya cihazlar arasında eşitlenmez ve migration gerektirmez. **Name**, **Health**, **Primaries**, **Replicas**, **Documents count** ve **Storage size** sütunları sıralanabilir. İlk tıklama artan, ikinci tıklama azalan sıralar; sağlık Green, Yellow, Red şeklindedir. Arama, favori filtresi ve sıralama tercihleri yerel saklanır. URL'deki `search` parametresi kaydedilmiş arama metnine önceliklidir. **Clear filters** arama, favori, gizli/rollup filtrelerini temizler ve varsayılan sıralamayı geri yükler. Tarayıcı depolaması kullanılamazsa varsayılan görünüm kullanılır.
 
-## Elasticsearch API İstek Geçmişi
+## Panel notları
 
-`/monitoring/elasticsearch/api-requests` ekranı, izleme panelinin Elasticsearch'e gönderdiği GET isteklerini kaydeder. Endpoint, HTTP durum kodu, yanıt süresi, başarılı/başarısız sonucu ve hata mesajı görüntülenir; en çok çağrılan ve ortalama yanıt süresi en yüksek endpoint'ler ayrıca sıralanır. Son 500 istek listelenir. URL sorgu parametreleri kaydedilmez; kimlik bilgileri ve istek gövdeleri loglanmaz. Özellik `elasticsearch_api_request_logs` tablosunu oluşturur; güncelleme sonrası `php artisan migrate` çalıştırın.
-
-## Favoriler
-
-Favori indeksler tarayıcının yerel depolama alanında saklanır. Yalnızca mevcut tarayıcı ve tarayıcı profili için geçerlidir; kullanıcılar veya cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.
-
-## Global indeks arama
-
-Dashboard üzerinden indeks adını yazarak tüm indekslerde canlı arama yapabilirsiniz. Sonuçlarda sağlık durumu, belge sayısı ve depolama boyutu gösterilir; bir sonucu seçtiğinizde indeksin detayları açılır. Arama klavye ile de kullanılabilir ve mevcut dashboard erişim yetkilerini korur.
-
-## İndeks listesini sıralama
-
-İndeks listesini sıralamak için **Ad**, **Sağlık**, **Primary**, **Replica**, **Belge sayısı** veya **Depolama boyutu** sütun başlığına tıklayın. İlk tıklama artan, aynı başlığa ikinci tıklama azalan sıralama yapar. Sağlık sırası Green, Yellow ve Red şeklindedir. Sıralama tarayıcıda yapılır; arama ve favori filtreleriyle birlikte çalışır ve Elasticsearch'e ek istek göndermez. Seçtiğiniz sütun ve sıralama yönü tarayıcının yerel depolama alanına kaydedilir ve sayfaya tekrar geldiğinizde geri yüklenir.
-
-## Dashboard notları
-
-**Dashboard notları** bölümünden önemli olayları ilgili geçmiş grafiğine ve kesin tarih/saat bilgisine bağlayabilirsiniz. Notlar paket veritabanında oturum açmış kullanıcı bazında saklanır; zaman damgası seçili grafik aralığına denk geldiğinde ilgili grafikte işaret olarak görünür. Not ekleyebilir, düzenleyebilir ve silebilirsiniz; en son 200 not listelenir. `elasticsearch_dashboard_notes` tablosunu oluşturmak için güncelleme sonrasında `php artisan migrate` çalıştırın. Notlar Elasticsearch'e yazılmaz.
-
-## İndeks listesi tercihlerini hatırlama
-
-İndeks Yönetimi ekranı mevcut arama metnini ve yalnızca favoriler seçimini tarayıcının yerel depolama alanına kaydeder; sayfaya tekrar geldiğinizde bu tercihler geri yüklenir. Sayfa URL'sinde `search` parametresi varsa kayıtlı arama metni yerine URL'deki değer kullanılır. Tercihler yalnızca mevcut tarayıcı profiline aittir, kullanıcılar veya cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez. Tarayıcı depolaması kullanılamıyorsa ekran varsayılan görünümle çalışmaya devam eder.
-
-## İndeks listesini sıfırlama
-
-İndeks Yönetimi ekranındaki **Filtreleri temizle** düğmesi arama metnini, yalnızca favoriler seçimini ve gizli/rollup indeks filtrelerini temizler; sıralamayı varsayılana döndürür. İşlem tarayıcıda yapılır ve indeks listesi varsayılan görünürlük seçenekleriyle yeniden yüklenir.
+**Dashboard notes** ile geçmiş grafiğine kesin tarih/saatte operasyonel olay ekleyin. Notlar kimliği doğrulanmış hesaba özel olarak paket veritabanında saklanır ve seçili tarih aralığına denk gelirse grafikte işaretçi olarak görünür. Notlar oluşturulabilir, düzenlenebilir ve silinebilir; en son 200 not gösterilir. `elasticsearch_dashboard_notes` tablosu için `php artisan migrate` çalıştırın. Notlar Elasticsearch'e yazılmaz.
 
 ## İndeks dışa aktarma
 
-İndeks Yönetimi ekranındaki **CSV indir** veya **JSON indir** düğmeleriyle mevcut filtrelenmiş listeyi indirebilirsiniz. Dışa aktarma arama metnini ve yalnızca favoriler filtresini dikkate alır. İndeks adı, sağlık, durum, belge sayısı, depolama baytı, primary/replica shard sayıları, Elasticsearch tarafından döndürülüyorsa oluşturulma tarihi, data stream ve lifecycle bilgilerini içerir. Dosya tarayıcıda oluşturulur; ek endpoint, veritabanı migration'ı veya Elasticsearch yazma isteği kullanılmaz.
+**Export CSV** veya **Export JSON**, geçerli arama ve favori filtrelerine uyan listeyi indirir. İndeks adı, sağlık, durum, belge sayısı, depolama baytları, primary/replica shard sayıları, varsa oluşturulma tarihi, data stream ve lifecycle metadata içerir. Dosyalar tarayıcıda üretilir; export endpoint, migration veya Elasticsearch yazma isteği yoktur.
 
-## Kopyalama
+## Metrikler ve uyarılar
 
-İndeks Yönetimi, Node Geçmişi, Shard Dağılımı ve Snapshot ekranlarında indeks adlarını, node adı/IP adresini, shard indeks/node bilgilerini ve repository/snapshot adlarını tek tıkla kopyalayabilirsiniz. İndeks detaylarında mapping'in tamamını biçimlendirilmiş JSON olarak veya üst seviye mapping bölümlerini ayrı ayrı kopyalamak mümkündür. Kopyalama bildirimi altı dilde gösterilir. Node IP adresleri node istatistikleri yanıtından alınır ve sonraki ölçümlerde saklanır; geçmiş ölçümler geriye dönük güncellenmez.
+Panel küme sağlık puanı, etkin uyarılar, düğüm CPU/JVM/disk kullanımı, belgeler, shard'lar, search/write thread-pool kuyrukları ve retleri ile sayaç farklarından hesaplanan arama/indeksleme hızlarını gösterir. Thread Pool Analyzer kuyruk, etkin, thread, tamamlanan ve reddedilen metrikleri ile geçmiş grafikler sunar. Snapshot Monitoring repository'leri, son snapshot'ları, shard sonuçlarını, hataları ve son başarılı yedeği listeler; `monitor_snapshot` küme yetkisi gerekir. Repository başına son 50 snapshot okunur, sonuçlar 60 saniye önbelleğe alınır; repository ayarları gösterilmez ve yedekleme işlemi yapılmaz.
 
-## Güvenlik ve salt okunur çalışma
+Node Performance History en son 1.440 saklanan anlık görüntüden düğüm CPU, JVM heap, dosya sistemi, arama/indeksleme hızı ve thread-pool kuyruklarını grafikler. Shard Allocation sayfası CAT Shards salt okunur API'siyle primary/replica yerleşimini, shard durumlarını, atanmama nedenlerini ve düğüm dağılımını gösterir.
 
-Paket Elasticsearch üzerinde hiçbir veri veya yapılandırma değişikliği yapmaz. İndeks, mapping, settings, shard veya ILM politikalarını değiştiren bir özellik içermez. İndeks detaylarında ILM politikası, aşama, işlem, adım, indeks yaşı, rollover alias ve varsa hata adımı salt okunur olarak görüntülenir.
+Uyarı eşikleri `alerts.thresholds` altında yapılandırılır. E-posta, Slack ve Microsoft Teams kanalları `alerts.notifications.channels` altında ayrı ayrı etkinleştirilebilir. Alıcıları/webhook URL'lerini ve cooldown süresini ayarlayın. Teslim denemeleri, hatalar ve cooldown nedeniyle bastırmalar `/monitoring/elasticsearch/alerts/notifications` sayfasında görünür. Asenkron teslimat için queue worker önerilir; senkron sürücü de çalışır. Hızlar iki başarılı toplamadan sonra kullanılabilir. Uyarı geçmişi olayın ilk görülmesini, sonraki gözlemleri, son değerini ve çözülme zamanını kaydeder. Mevcut kurulumlar güncelleme sonrası `php artisan migrate` çalıştırmalıdır.
 
-## Lisans
+## Kimlik ve mapping kopyalama
 
-MIT
+İndeks/düğüm adları, IP adresleri, shard kimlikleri ve snapshot repository/snapshot adları kopyalanabilir. Index Management ayrıntı penceresi mapping JSON'un tamamını veya üst düzey bölümlerini kopyalar. Pano geri bildirimi altı dilde yerelleştirilmiştir. Düğüm IP'leri node statistics yanıtından alınır ve sonraki anlık görüntülere yazılır; geçmiş anlık görüntüler geriye dönük doldurulmaz.
 
+## Panel URL'si
 
-### Alarm bildirimleri
+Varsayılan adres `/monitoring/elasticsearch` şeklindedir. `config/elasticsearch-monitoring.php` içindeki `dashboard.path` değerini `panel/super/elasticsearch` gibi iç içe bir yola ayarlayabilirsiniz. Baştaki/sondaki slash karakterleri normalize edilir. Panel rotaları sabit `web` ve `auth` middleware'lerini kullanır:
 
-Bildirimler varsayılan olarak kapalıdır. Yayınladığınız paket yapılandırmasında `alerts.notifications.channels` altında e-posta, Slack ve Microsoft Teams kanallarını ayrı ayrı etkinleştirebilirsiniz. E-posta alıcılarını, webhook adreslerini ve `cooldown_minutes` bekleme süresini belirleyin. Yeni alarm olayları kanal başına bir kez gönderilir; aktif alarmın sonraki ölçümleri tekrar bildirim oluşturmaz. Çözülüp bekleme süresi içinde yeniden oluşan alarmlar bastırılır ve geçmişe kaydedilir. Başarısız kuyruk işleri en fazla üç kez yeniden denenir. Asenkron kuyruk kullanıyorsanız Laravel queue worker çalıştırın. Gönderim, hata ve beklemeye alınan kayıtları `/monitoring/elasticsearch/alerts/notifications` adresinden inceleyebilirsiniz.
+```php
+'dashboard' => [
+    'path' => 'panel/super/elasticsearch',
+],
+```
 
+## Uyumluluk
 
-## Dashboard düzeni tercihleri
+Sürüm `GET /` ile algılanır. Elasticsearch 8.18+ ve 9.x desteklenir. Laravel HTTP client kullanılır; resmi Elasticsearch PHP SDK gerekmez.
 
-**Paneli düzenle** seçeneğiyle özet, favoriler, küme sağlığı, metrikler, node karşılaştırması ve grafik bölümlerini gizleyebilir veya gösterebilirsiniz. Listedeki bölümleri sürükleyerek sıralayabilir, varsayılan düzene dönebilirsiniz. Tercihler mevcut tarayıcı profilinin localStorage alanında tutulur; cihazlar arasında eşitlenmez ve veritabanı migration'ı gerektirmez.
+## Yerelleştirme
 
-## Dashboard otomatik yenileme
+Türkçe (`tr`), İngilizce (`en`), Basitleştirilmiş Çince (`zh_CN`), Hintçe (`hi`), İspanyolca (`es`) ve Arapça (`ar`). Arapça RTL düzeni kullanır.
 
-Dashboard için **15 saniye, 30 saniye, 1 dakika veya 5 dakika** yenileme aralığını seçebilirsiniz. Otomatik yenilemeyi istediğiniz zaman duraklatıp sürdürebilirsiniz. Seçilen aralık mevcut tarayıcı profilinde saklanır ve sonraki ziyaretinizde geri yüklenir. Dashboard sekmesi arka plandayken otomatik istekler durdurulur, sekme yeniden görünür olduğunda yenileme devam eder. Son yenileme denemesinin zamanı da gösterilir. Otomatik yenileme duraklatılsa bile manuel yenileme kullanılabilir.
+## Güvenlik
 
-## Dashboard grafiklerini dışa aktarma
+Paneli kimlik doğrulama ve yetkilendirme arkasında tutun. Kimlik bilgilerini ortam değişkenlerinde saklayın ve üretimde TLS doğrulamasını açık bırakın. Paket Elasticsearch'e karşı salt okunurdur; indeks, mapping, ayar, shard veya ILM değişikliği yapmaz. İndeks ayrıntıları ILM politikası, aşama, eylem, adım, indeks yaşı, rollover alias ve başarısız adım bilgisini salt okunur gösterir.
 
-Her grafiğin üzerindeki **PNG indir** seçeneğiyle grafiği başlığı ve seçili tarih aralığıyla birlikte ayrı kaydedebilir, **Tüm grafikleri PNG indir** seçeneğiyle görünür dashboard grafiklerini tek bir görselde birleştirebilirsiniz. Görseller tarayıcıda oluşturulur; ek bir endpoint, veritabanı değişikliği veya Elasticsearch isteği gerekmez.
+## Geliştirme
+
+```bash
+composer install
+composer test
+composer analyse
+composer pint-test
+```
+
+## Bildirim ayarları
+
+Bildirimler varsayılan olarak kapalıdır. Kullanacağınız kanalları yayımlanan yapılandırmada açın:
+
+```php
+'alerts' => [
+    'notifications' => [
+        'cooldown_minutes' => 30,
+        'channels' => [
+            'mail' => ['enabled' => true, 'recipients' => ['ops@example.com']],
+            'slack' => ['enabled' => true, 'webhook_url' => env('ELASTICSEARCH_MONITORING_SLACK_WEBHOOK')],
+            'teams' => ['enabled' => true, 'webhook_url' => env('ELASTICSEARCH_MONITORING_TEAMS_WEBHOOK')],
+        ],
+    ],
+],
+```
+
+Slack/Teams webhook değişkenlerini ortamda tanımlayın. Yeni uyarı her kanala bir kez gönderilir; etkin olayın tekrar gözlemlenmesi yeniden gönderim yapmaz. Olay cooldown süresinde çözülüp tekrar oluşursa gönderim bastırılır ve kaydedilir. Kuyruk teslimatları başarısız olursa artan beklemeyle üç defaya kadar yeniden denenir. Asenkron queue bağlantısında worker çalıştırın.
+
+## Panel düzeni ve otomatik yenileme
+
+**Customize dashboard** ile özet, favoriler, sağlık, metrikler, düğüm karşılaştırması ve grafik bölümlerini gizleyip gösterin, sürükleyerek sıralayın veya varsayılan düzene dönün. Tercihler tarayıcı profiline özel local storage alanında tutulur.
+
+Otomatik yenileme 15 saniye, 30 saniye, 1 dakika veya 5 dakika seçilebilir; duraklatılıp sürdürülebilir. Tercih tarayıcıda saklanır. Panel arka plandayken otomatik istekler askıya alınır ve tekrar görünür olduğunda devam eder. Son yenileme denemesi zamanı gösterilir; otomatik yenileme duraklatılsa da manuel yenileme kullanılabilir.
+
+## Grafik dışa aktarma
+
+Bir grafikte **Download PNG** ile başlıklı görüntü kaydedin veya **Download all charts as PNG** ile görünür grafikleri tek görselde birleştirin. Seçili tarih aralığı görsele eklenir. Dışa aktarma tarayıcıda yapılır; endpoint, veritabanı değişikliği veya ek Elasticsearch isteği gerekmez.
 
 ## Elasticsearch bağlantı durumu
 
-Dashboard başlığında Elasticsearch bağlantısı **Bağlı**, **Yavaş yanıt** veya **Bağlantı kesildi** olarak gösterilir; son başarılı bağlantı zamanı ve kontrol yanıt süresi de görüntülenir. Durum, metrik toplama işleminden bağımsız olarak 30 saniyede bir kontrol edilir. Yavaş yanıt eşiği varsayılan olarak 1.000 ms'dir; `ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS` ortam değişkeniyle veya yayınlanan yapılandırmadaki `connection.slow_response_ms` değeriyle değiştirilebilir. Kontrol kimlik doğrulamalı, salt okunur bir GET isteği kullanır ve küme durumunu değiştirmez.
+Panel başlığı Elasticsearch root bilgi uç noktasını kontrol eder ve **Connected**, **Slow response** veya **Connection lost** durumunu; son başarılı bağlantı zamanı ve gecikmeyle birlikte gösterir. Durum metrik toplamadan bağımsız olarak 30 saniyede bir yenilenir. Yavaş yanıt eşiği varsayılan 1.000 ms'dir; `ELASTICSEARCH_MONITORING_SLOW_RESPONSE_MS` veya `connection.slow_response_ms` ile değiştirilebilir. Kontrol kimlik doğrulamalı, salt okunur GET isteğidir ve küme durumunu değiştirmez.
 
+## Asset yayımlama
 
-`viewElasticsearchMonitoring` Gate'i tanımlarsanız tüm dashboard rotalarında uygulanır; tanımlı değilse yapılandırılmış route middleware'lerinden geçen kullanıcılara erişim verilir. Gate adı `authorization.gate` ile değiştirilebilir. Mevcut `ElasticsearchMonitoring::auth(...)` callback'i ek bir kısıtlama olarak kullanılmaya devam eder.
+Paket güncellemesinden sonra panel tema asset'lerini yayımlayın:
+
+```bash
+php artisan vendor:publish --tag=elasticsearch-monitoring-assets --force
+```
+
+## Dokümantasyon ve lisans
+
+- [Değişiklik günlüğü](CHANGELOG.md)
+- [Katkıda bulunma](CONTRIBUTING.md)
+- [Güvenlik](SECURITY.md)
+
+MIT
