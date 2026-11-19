@@ -32,7 +32,7 @@ jobs:
       - name: Resolve development dependencies
         run: |
           for attempt in 1 2 3; do
-            if composer update --prefer-dist --no-interaction --no-progress --no-scripts; then
+            if composer update --no-interaction --no-progress --no-scripts; then
               exit 0
             fi
             if [ "$attempt" -lt 3 ]; then
