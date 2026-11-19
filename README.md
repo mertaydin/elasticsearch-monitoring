@@ -247,3 +247,9 @@ php artisan optimize:clear
 ```
 
 Theme and language preferences use external same-origin JavaScript and CSS assets, so they work with Content Security Policies that disallow inline scripts and styles.
+
+## Documentation and support
+
+- [Changelog](CHANGELOG.md)
+- [GitHub releases](https://github.com/mertaydin/elasticsearch-monitoring/releases)
+- [Report an issue or request a feature](https://github.com/mertaydin/elasticsearch-monitoring/issues)
