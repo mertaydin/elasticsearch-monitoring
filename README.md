@@ -255,3 +255,7 @@ Theme and language preferences use external same-origin JavaScript and CSS asset
 - [Changelog](CHANGELOG.md)
 - [GitHub releases](https://github.com/mertaydin/elasticsearch-monitoring/releases)
 - [Report an issue or request a feature](https://github.com/mertaydin/elasticsearch-monitoring/issues)
+
+---
+
+**Dil / Language:** [Türkçe README](README.tr.md) · [English README](README.md)
