@@ -1,5 +1,13 @@
 # Elasticsearch Monitoring
 
+[![Latest Version](https://img.shields.io/packagist/v/elasticsearch-monitoring?label=Packagist)](https://packagist.org/packages/elasticsearch-monitoring)
+[![Total Downloads](https://img.shields.io/packagist/dt/elasticsearch-monitoring?label=downloads)](https://packagist.org/packages/elasticsearch-monitoring)
+[![PHP](https://img.shields.io/packagist/php-v/elasticsearch-monitoring?label=PHP)](https://packagist.org/packages/elasticsearch-monitoring)
+[![Laravel](https://img.shields.io/badge/Laravel-12%20%7C%2013-FF2D20?logo=laravel&logoColor=white)](https://laravel.com)
+[![CI](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml/badge.svg?branch=main&label=CI)](https://github.com/mertaydin/elasticsearch-monitoring/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+
 Elasticsearch kümelerini metrik toplama ve hafif bir yönetim paneliyle izlemek için Laravel paketi.
 
 **Salt okunur tasarım:** Paket Elasticsearch metriklerini, indeks metadata bilgilerini, mapping, ayar ve yaşam döngüsü bilgilerini okur. İndeks oluşturmaz, değiştirmez, kapatmaz veya silmez; mapping, shard dağılımı ya da ILM politikalarını değiştirmez.
