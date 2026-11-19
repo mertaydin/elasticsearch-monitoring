@@ -1,3 +1,8 @@
+## [0.34.0] - 2026-11-19
+
+- Add a dedicated security CI workflow with Composer vulnerability auditing, PHPStan/Larastan analysis, Pint checks, PHP syntax validation, and the test suite.
+- Add weekly Dependabot updates for Composer dependencies and GitHub Actions.
+
 # Changelog
 
 ## 0.32.17 - 2026-11-19
