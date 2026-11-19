@@ -14,6 +14,8 @@ A Laravel package for monitoring Elasticsearch clusters with metric collection a
 
 ## Screenshots
 
+<!-- Screenshots are generated from the current package UI by GitHub Actions. -->
+
 These screenshots are captured from the package running inside a temporary Laravel application connected to a disposable Elasticsearch 8.18 cluster in GitHub Actions. The pages are rendered by the package's real views and use live Elasticsearch responses; only the indexed demo documents are synthetic.
 
 | Cluster dashboard | Index management |
