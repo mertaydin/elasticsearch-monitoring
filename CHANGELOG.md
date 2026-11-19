@@ -1,3 +1,9 @@
+# Changelog
+
+## 0.32.15 - 2026-11-19
+
+- Audit and complete the README documentation links for changelog, releases, and support.
+- Keep the documentation aligned with the published dashboard and security guidance.
 ## Unreleased
 
 ## 0.32.14 - 2026-11-19
