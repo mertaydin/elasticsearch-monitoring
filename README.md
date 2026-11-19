@@ -112,7 +112,7 @@ public function boot(): void
 }
 ```
 
-If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, authenticated users can access the dashboard.  The package always keeps the `web` and `auth` middleware enabled.
+If the callback returns `false`, the package responds with HTTP 403. If no callback is registered, access is denied with HTTP 403. Register a callback that checks the current user and an administrator role before deploying the dashboard.  The package always keeps the `web` and `auth` middleware enabled.
 
 ## Query Activity Monitor
 
