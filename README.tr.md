@@ -109,7 +109,7 @@ public function boot(): void
 }
 ```
 
-Callback `true` döndürerek erişime izin verir; `false` HTTP 403 üretir. Callback tanımlanmazsa kimliği doğrulanmış kullanıcılar erişebilir. `web` ve `auth` middleware'leri daima etkindir.
+Callback `true` döndürerek erişime izin verir; `false` HTTP 403 üretir. Callback tanımlanmazsa erişim HTTP 403 ile reddedilir. `web` ve `auth` middleware'leri daima etkindir.
 
 ## Sorgu etkinliği
 
