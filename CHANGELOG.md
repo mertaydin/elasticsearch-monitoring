@@ -1,3 +1,8 @@
+## [0.34.1] - 2026-11-22
+
+- Add `barryvdh/laravel-ide-helper` as a development dependency, selecting a compatible release for the supported Laravel versions.
+- Run Laravel Pint across the PHP codebase and add an automated formatting workflow.
+
 ## [0.34.0] - 2026-11-19
 
 - Add a dedicated security CI workflow with Composer vulnerability auditing, PHPStan/Larastan analysis, Pint checks, PHP syntax validation, and the test suite.
